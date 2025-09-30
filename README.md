@@ -167,8 +167,13 @@ Este proyecto está bajo la Licencia MIT. Ver el archivo `LICENSE` para más det
 
 ## 👨‍💻 Autor
 
-**Leonardo Damaceno** - [leodamac](https://github.com/leodamac)
-
+**Leonardo Macias** - FIEC - [leodamac](https://github.com/leodamac)
+**Carlos Abel Cabanilla Tomala** - FIEC
+**David Eduardo Solorzano Flores** - FCSH
+**Dereck Oscar Enriquez Perez** - FIEC
+**Alexander Joshue Barco Lascano** - FCSH
+**Valeska Anahi Sanchez Ramirez** - FCSH
+**Kevin Santiago Mejia Parra** - FIEC
 ---
 
 ¡Disfruta creando postres saludables virtuales! 🍰✨
