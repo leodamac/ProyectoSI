@@ -69,7 +69,7 @@ export default function ContactPage() {
               <h3 className="text-xl font-semibold text-gray-900 mb-2">WhatsApp</h3>
               <p className="text-gray-600 mb-4">Respuesta inmediata</p>
               <a 
-                href="https://wa.me/1234567890?text=¡Hola! Me interesa conocer más sobre sus postres saludables."
+                href="https://wa.me/+593971227655?text=¡Hola! Me interesa conocer más sobre sus postres saludables."
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-block bg-emerald-600 text-white px-6 py-2 rounded-lg hover:bg-emerald-700 transition-colors"
@@ -94,7 +94,7 @@ export default function ContactPage() {
                 href="tel:+1234567890"
                 className="inline-block bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors"
               >
-                +1 (555) 123-4567
+                +593 97 122 7655
               </a>
             </motion.div>
 
@@ -130,7 +130,7 @@ export default function ContactPage() {
               </div>
               <h3 className="text-xl font-semibold text-gray-900 mb-2">Ubicación</h3>
               <p className="text-gray-600 mb-4">Visítanos</p>
-              <p className="text-amber-600 font-semibold">Ciudad, País</p>
+              <p className="text-amber-600 font-semibold">Samborondón, Ecuador</p>
             </motion.div>
           </div>
         </div>

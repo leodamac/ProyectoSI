@@ -508,7 +508,7 @@ export default function Home() {
             >
               <div className="flex items-center justify-center gap-3">
                 <Phone className="w-6 h-6" />
-                <span>+1 (555) 123-4567</span>
+                <span>+593 97 122 7655</span>
               </div>
               <div className="flex items-center justify-center gap-3">
                 <MessageCircle className="w-6 h-6" />
@@ -552,7 +552,7 @@ export default function Home() {
                 <li><Link href="/productos" className="hover:text-emerald-400 transition-colors">Catálogo Completo</Link></li>
                 <li><Link href="/about" className="hover:text-emerald-400 transition-colors">Nuestra Historia</Link></li>
                 <li><Link href="/contacto" className="hover:text-emerald-400 transition-colors">Contacto</Link></li>
-                <li><a href="#" className="hover:text-emerald-400 transition-colors">Blog de Salud</a></li>
+                <li><a href="/blog" className="hover:text-emerald-400 transition-colors">Blog de Salud</a></li>
               </ul>
             </div>
             
@@ -561,15 +561,15 @@ export default function Home() {
               <ul className="space-y-3 text-gray-300">
                 <li className="flex items-center gap-2">
                   <MessageCircle className="w-4 h-4" />
-                  info@sweethealthy.com
+                  info@alkadamiketo.com
                 </li>
                 <li className="flex items-center gap-2">
                   <Phone className="w-4 h-4" />
-                  +1 (555) 123-4567
+                  +593 97 122 7655
                 </li>
                 <li className="flex items-center gap-2">
                   <span>📍</span>
-                  Ciudad, País
+                  Samborondón, Ecuador 
                 </li>
                 <li>
                   <a 
@@ -606,7 +606,7 @@ export default function Home() {
           <div className="border-t border-gray-800 mt-12 pt-8">
             <div className="flex flex-col md:flex-row justify-between items-center gap-4">
               <p className="text-gray-400">
-                &copy; 2024 Sweet & Healthy. Todos los derechos reservados.
+                &copy; 2025 Sweet & Healthy. Todos los derechos reservados.
               </p>
               <div className="flex gap-6 text-gray-400">
                 <a href="#" className="hover:text-emerald-400 transition-colors">Política de Privacidad</a>
