@@ -6,7 +6,7 @@ export const sampleProducts: Product[] = [
     name: 'Brownie de Chocolate Negro',
     description: 'Rico brownie con cacao orgánico y endulzado con stevia. Una delicia sin culpa que satisface todos tus antojos de chocolate.',
     price: 15.00,
-    image: '🍫',
+    image: '/images/brownie.png',
     category: 'chocolates',
     ingredients: ['cacao orgánico', 'stevia', 'harina de almendra', 'huevos orgánicos', 'aceite de coco'],
     nutritionInfo: {
@@ -26,7 +26,7 @@ export const sampleProducts: Product[] = [
     name: 'Cheesecake de Frutos Rojos',
     description: 'Cremoso cheesecake con fresas y arándanos frescos. Base de galletas de avena sin azúcar refinada.',
     price: 18.00,
-    image: '🍰',
+    image: '/images/cheesecakes.jpg',
     category: 'tortas',
     ingredients: ['queso crema orgánico', 'fresas frescas', 'arándanos', 'galletas de avena', 'miel de agave'],
     nutritionInfo: {
@@ -46,7 +46,7 @@ export const sampleProducts: Product[] = [
     name: 'Muffins de Plátano',
     description: 'Esponjosos muffins con plátano maduro y avena. Perfectos para el desayuno o merienda.',
     price: 12.00,
-    image: '🧁',
+    image: '/images/muffinplatano.jpg',
     category: 'muffins',
     ingredients: ['plátano maduro', 'harina de avena', 'huevos orgánicos', 'miel', 'nueces'],
     nutritionInfo: {
@@ -66,7 +66,7 @@ export const sampleProducts: Product[] = [
     name: 'Cookies de Chía y Limón',
     description: 'Crujientes galletas con semillas de chía y ralladura de limón orgánico. Ricas en omega-3.',
     price: 10.00,
-    image: '🍪',
+    image: '/images/cookies-chia-limon.png',
     category: 'galletas',
     ingredients: ['harina de almendra', 'semillas de chía', 'limón orgánico', 'stevia', 'aceite de coco'],
     nutritionInfo: {
@@ -86,7 +86,7 @@ export const sampleProducts: Product[] = [
     name: 'Tarta de Zanahoria',
     description: 'Clásica tarta de zanahoria con especias naturales y frosting de queso crema. Endulzada con miel.',
     price: 22.00,
-    image: '🥕',
+    image: '/images/carrotcake.jpg',
     category: 'tortas',
     ingredients: ['zanahoria orgánica', 'canela', 'nuez moscada', 'harina de espelta', 'queso crema', 'miel'],
     nutritionInfo: {
@@ -106,7 +106,7 @@ export const sampleProducts: Product[] = [
     name: 'Helado de Coco y Mango',
     description: 'Refrescante helado vegano de coco con trozos de mango natural. Sin lácteos ni azúcar añadida.',
     price: 14.00,
-    image: '🥭',
+    image: '/images/helado-coco.png',
     category: 'helados',
     ingredients: ['leche de coco', 'mango maduro', 'endulzante natural de fruta del monje'],
     nutritionInfo: {
