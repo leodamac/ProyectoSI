@@ -9,7 +9,7 @@ import { Heart, Leaf, Shield, Star, Users, MessageCircle, Phone } from "lucide-r
 
 export default function Home() {
   const { addToCart } = useCart();
-  
+
   const featuredProducts = sampleProducts.filter(product => product.featured);
 
   return (
@@ -19,7 +19,7 @@ export default function Home() {
       {/* Enhanced Hero Section */}
       <section className="relative py-24 px-4 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-r from-emerald-100/30 to-amber-100/30"></div>
-        <motion.div 
+        <motion.div
           className="max-w-7xl mx-auto text-center relative z-10"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -36,8 +36,8 @@ export default function Home() {
               100% Natural • Sin Azúcar Refinada • Keto Friendly
             </span>
           </motion.div>
-          
-          <motion.h1 
+
+          <motion.h1
             className="text-6xl md:text-7xl font-bold text-gray-900 mb-6 leading-tight"
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
@@ -47,30 +47,30 @@ export default function Home() {
             <br />
             sabores que <span className="text-amber-600">enamoran</span>
           </motion.h1>
-          
-          <motion.p 
+
+          <motion.p
             className="text-xl text-gray-700 mb-10 max-w-3xl mx-auto leading-relaxed"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5, duration: 0.8 }}
           >
-            Disfruta sin culpa de postres deliciosos y nutritivos. Cada bocado está creado con 
+            Disfruta sin culpa de postres deliciosos y nutritivos. Cada bocado está creado con
             ingredientes premium y técnicas especiales para cuidar tu bienestar sin renunciar al sabor.
           </motion.p>
-          
-          <motion.div 
+
+          <motion.div
             className="flex flex-col sm:flex-row gap-4 justify-center"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.7, duration: 0.8 }}
           >
-            <Link 
+            <Link
               href="/productos"
               className="group bg-emerald-600 text-white px-8 py-4 rounded-xl text-lg font-semibold hover:bg-emerald-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
             >
               🛍️ Haz tu Pedido
             </Link>
-            <a 
+            <a
               href="https://wa.me/1234567890"
               target="_blank"
               rel="noopener noreferrer"
@@ -81,23 +81,23 @@ export default function Home() {
             </a>
           </motion.div>
         </motion.div>
-        
+
         {/* Floating elements for visual appeal */}
-        <motion.div 
+        <motion.div
           className="absolute top-20 left-10 text-4xl opacity-20"
           animate={{ y: [0, -10, 0] }}
           transition={{ repeat: Infinity, duration: 3 }}
         >
           🍰
         </motion.div>
-        <motion.div 
+        <motion.div
           className="absolute top-32 right-16 text-3xl opacity-20"
           animate={{ y: [0, 15, 0] }}
           transition={{ repeat: Infinity, duration: 4, delay: 1 }}
         >
           🥧
         </motion.div>
-        <motion.div 
+        <motion.div
           className="absolute bottom-20 left-20 text-5xl opacity-20"
           animate={{ y: [0, -20, 0] }}
           transition={{ repeat: Infinity, duration: 5, delay: 2 }}
@@ -109,7 +109,7 @@ export default function Home() {
       {/* Problem/Solution Section */}
       <section className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4">
-          <motion.div 
+          <motion.div
             className="text-center mb-16"
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -121,7 +121,7 @@ export default function Home() {
             </h2>
             <div className="max-w-4xl mx-auto">
               <div className="grid md:grid-cols-2 gap-12 items-center">
-                <motion.div 
+                <motion.div
                   className="text-left"
                   initial={{ opacity: 0, x: -30 }}
                   whileInView={{ opacity: 1, x: 0 }}
@@ -151,8 +151,8 @@ export default function Home() {
                     </li>
                   </ul>
                 </motion.div>
-                
-                <motion.div 
+
+                <motion.div
                   className="text-left"
                   initial={{ opacity: 0, x: 30 }}
                   whileInView={{ opacity: 1, x: 0 }}
@@ -191,7 +191,7 @@ export default function Home() {
       {/* Enhanced Benefits Section */}
       <section className="py-20 bg-gradient-to-br from-emerald-50 to-amber-50">
         <div className="max-w-7xl mx-auto px-4">
-          <motion.div 
+          <motion.div
             className="text-center mb-16"
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -205,9 +205,9 @@ export default function Home() {
               Cada postre está diseñado pensando en tu bienestar integral
             </p>
           </motion.div>
-          
+
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-            <motion.div 
+            <motion.div
               className="text-center p-8 bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 group"
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -223,8 +223,8 @@ export default function Home() {
                 Endulzamos con stevia, monk fruit y frutas naturales para cuidar tu salud.
               </p>
             </motion.div>
-            
-            <motion.div 
+
+            <motion.div
               className="text-center p-8 bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 group"
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -240,8 +240,8 @@ export default function Home() {
                 Perfectos para personas con intolerancia al gluten o enfermedad celíaca.
               </p>
             </motion.div>
-            
-            <motion.div 
+
+            <motion.div
               className="text-center p-8 bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 group"
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -257,8 +257,8 @@ export default function Home() {
                 Solo utilizamos ingredientes orgánicos premium sin conservantes artificiales.
               </p>
             </motion.div>
-            
-            <motion.div 
+
+            <motion.div
               className="text-center p-8 bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 group"
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -281,7 +281,7 @@ export default function Home() {
       {/* Enhanced Featured Products */}
       <section className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4">
-          <motion.div 
+          <motion.div
             className="text-center mb-16"
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -295,11 +295,11 @@ export default function Home() {
               Descubre nuestros postres más populares, perfectos para cualquier ocasión
             </p>
           </motion.div>
-          
+
           <div className="grid lg:grid-cols-3 gap-8">
             {featuredProducts.map((product, index) => (
-              <motion.div 
-                key={product.id} 
+              <motion.div
+                key={product.id}
                 className="bg-white rounded-2xl shadow-xl overflow-hidden hover:shadow-2xl transition-all duration-300 group"
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -308,7 +308,16 @@ export default function Home() {
                 whileHover={{ y: -10 }}
               >
                 <div className="h-64 bg-gradient-to-br from-emerald-100 to-amber-100 flex items-center justify-center text-8xl relative overflow-hidden">
-                  {product.image}
+                  {typeof product.image === "string" && product.image.startsWith("/images/") ? (
+                    <img
+                      src={product.image}
+                      alt={product.name}
+                      className="object-cover w-full h-full"
+                      style={{ objectFit: "cover" }}
+                    />
+                  ) : (
+                    product.image
+                  )}
                   <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-10 transition-opacity"></div>
                 </div>
                 <div className="p-8">
@@ -327,15 +336,15 @@ export default function Home() {
                       )}
                     </div>
                   </div>
-                  
+
                   <p className="text-gray-600 mb-6 leading-relaxed">{product.description}</p>
-                  
+
                   <div className="flex justify-between items-center">
                     <div className="text-left">
                       <span className="text-3xl font-bold text-emerald-600">${product.price.toFixed(2)}</span>
                       <p className="text-sm text-gray-500">Porción individual</p>
                     </div>
-                    <button 
+                    <button
                       onClick={() => addToCart(product)}
                       className="bg-emerald-600 text-white px-6 py-3 rounded-xl hover:bg-emerald-700 transition-all duration-300 font-semibold shadow-lg hover:shadow-xl transform hover:-translate-y-1"
                     >
@@ -346,15 +355,15 @@ export default function Home() {
               </motion.div>
             ))}
           </div>
-          
-          <motion.div 
+
+          <motion.div
             className="text-center mt-12"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.3 }}
             viewport={{ once: true }}
           >
-            <Link 
+            <Link
               href="/productos"
               className="inline-block bg-emerald-600 text-white px-10 py-4 rounded-xl text-lg font-semibold hover:bg-emerald-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
             >
@@ -367,7 +376,7 @@ export default function Home() {
       {/* Testimonials Section */}
       <section className="py-20 bg-gradient-to-br from-emerald-50 to-amber-50">
         <div className="max-w-7xl mx-auto px-4">
-          <motion.div 
+          <motion.div
             className="text-center mb-16"
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -381,9 +390,9 @@ export default function Home() {
               Miles de personas ya disfrutan de nuestros postres saludables
             </p>
           </motion.div>
-          
+
           <div className="grid md:grid-cols-3 gap-8">
-            <motion.div 
+            <motion.div
               className="bg-white p-8 rounded-2xl shadow-lg"
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -408,8 +417,8 @@ export default function Home() {
                 </div>
               </div>
             </motion.div>
-            
-            <motion.div 
+
+            <motion.div
               className="bg-white p-8 rounded-2xl shadow-lg"
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -434,8 +443,8 @@ export default function Home() {
                 </div>
               </div>
             </motion.div>
-            
-            <motion.div 
+
+            <motion.div
               className="bg-white p-8 rounded-2xl shadow-lg"
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -479,16 +488,16 @@ export default function Home() {
             <p className="text-xl text-emerald-100 mb-10 max-w-2xl mx-auto">
               Únete a miles de personas que ya disfrutan de postres deliciosos sin comprometer su salud
             </p>
-            
+
             <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
-              <Link 
+              <Link
                 href="/productos"
                 className="bg-white text-emerald-600 px-8 py-4 rounded-xl text-lg font-semibold hover:bg-emerald-50 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
               >
                 🛍️ Ver Catálogo Completo
               </Link>
-              
-              <a 
+
+              <a
                 href="https://wa.me/1234567890?text=¡Hola! Me interesa conocer más sobre sus postres saludables."
                 target="_blank"
                 rel="noopener noreferrer"
@@ -498,8 +507,8 @@ export default function Home() {
                 Contactar por WhatsApp
               </a>
             </div>
-            
-            <motion.div 
+
+            <motion.div
               className="mt-12 grid md:grid-cols-3 gap-8 text-emerald-100"
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -530,7 +539,7 @@ export default function Home() {
             <div>
               <h4 className="text-2xl font-bold mb-4 text-emerald-400">Sweet & Healthy</h4>
               <p className="text-gray-300 mb-6">
-                Transformando vidas a través de postres deliciosos y nutritivos. 
+                Transformando vidas a través de postres deliciosos y nutritivos.
                 Tu bienestar es nuestra pasión.
               </p>
               <div className="flex space-x-4">
@@ -545,7 +554,7 @@ export default function Home() {
                 </a>
               </div>
             </div>
-            
+
             <div>
               <h4 className="text-lg font-semibold mb-6 text-emerald-400">Enlaces Rápidos</h4>
               <ul className="space-y-3 text-gray-300">
@@ -555,7 +564,7 @@ export default function Home() {
                 <li><a href="/blog" className="hover:text-emerald-400 transition-colors">Blog de Salud</a></li>
               </ul>
             </div>
-            
+
             <div>
               <h4 className="text-lg font-semibold mb-6 text-emerald-400">Contacto</h4>
               <ul className="space-y-3 text-gray-300">
@@ -569,10 +578,10 @@ export default function Home() {
                 </li>
                 <li className="flex items-center gap-2">
                   <span>📍</span>
-                  Samborondón, Ecuador 
+                  Samborondón, Ecuador
                 </li>
                 <li>
-                  <a 
+                  <a
                     href="https://wa.me/1234567890"
                     target="_blank"
                     rel="noopener noreferrer"
@@ -584,15 +593,15 @@ export default function Home() {
                 </li>
               </ul>
             </div>
-            
+
             <div>
               <h4 className="text-lg font-semibold mb-6 text-emerald-400">Newsletter</h4>
               <p className="text-gray-300 mb-4">
                 Recibe recetas exclusivas y ofertas especiales
               </p>
               <div className="flex gap-2">
-                <input 
-                  type="email" 
+                <input
+                  type="email"
                   placeholder="Tu email"
                   className="flex-1 px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg focus:border-emerald-500 focus:outline-none text-white"
                 />
@@ -602,7 +611,7 @@ export default function Home() {
               </div>
             </div>
           </div>
-          
+
           <div className="border-t border-gray-800 mt-12 pt-8">
             <div className="flex flex-col md:flex-row justify-between items-center gap-4">
               <p className="text-gray-400">

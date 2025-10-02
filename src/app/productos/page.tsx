@@ -11,7 +11,7 @@ export default function ProductsPage() {
   const [sortBy, setSortBy] = useState<string>('name');
   const { addToCart } = useCart();
 
-  const filteredProducts = sampleProducts.filter(product => 
+  const filteredProducts = sampleProducts.filter(product =>
     selectedCategory === 'todos' || product.category === selectedCategory
   );
 
@@ -94,14 +94,23 @@ export default function ProductsPage() {
   );
 }
 
-function ProductCard({ product, onAddToCart }: { 
-  product: Product; 
+function ProductCard({ product, onAddToCart }: {
+  product: Product;
   onAddToCart: (product: Product) => void;
 }) {
   return (
     <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
-      <div className="h-48 bg-gradient-to-br from-green-100 to-pink-100 flex items-center justify-center text-6xl">
-        {product.image}
+      <div className="h-48 bg-gradient-to-br from-green-100 to-pink-100 flex items-center justify-center text-6xl overflow-hidden">
+        {typeof product.image === "string" && product.image.startsWith("/images/") ? (
+          <img
+            src={product.image}
+            alt={product.name}
+            className="object-cover w-full h-full"
+            style={{ objectFit: "cover" }}
+          />
+        ) : (
+          product.image
+        )}
       </div>
       <div className="p-6">
         <div className="flex justify-between items-start mb-2">
@@ -111,9 +120,9 @@ function ProductCard({ product, onAddToCart }: {
             {product.isGlutenFree && <span className="text-blue-600 text-sm">🚫🌾</span>}
           </div>
         </div>
-        
+
         <p className="text-gray-600 mb-4 text-sm line-clamp-2">{product.description}</p>
-        
+
         <div className="mb-4">
           <div className="text-xs text-gray-500 mb-1">
             {product.nutritionInfo.calories} cal | Proteína: {product.nutritionInfo.protein}g
@@ -132,14 +141,14 @@ function ProductCard({ product, onAddToCart }: {
 
         <div className="flex justify-between items-center">
           <span className="text-2xl font-bold text-green-600">${product.price.toFixed(2)}</span>
-          <button 
+          <button
             onClick={() => onAddToCart(product)}
             className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors"
           >
             Agregar al carrito
           </button>
         </div>
-        
+
         <div className="mt-2 text-right">
           <span className="text-sm text-gray-500">Stock: {product.stock}</span>
         </div>
