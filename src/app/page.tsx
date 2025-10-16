@@ -5,7 +5,7 @@ import Navigation from "@/components/Navigation";
 import { useCart } from "@/components/CartContext";
 import { sampleProducts } from "@/data/products";
 import { motion } from "framer-motion";
-import { Heart, Leaf, Shield, Star, Users, MessageCircle, Phone } from "lucide-react";
+import { Heart, Leaf, Shield, Star, Users, MessageCircle, Phone, Sparkles } from "lucide-react";
 
 export default function Home() {
   const { addToCart } = useCart();
@@ -18,7 +18,7 @@ export default function Home() {
 
       {/* Enhanced Hero Section */}
       <section className="relative py-24 px-4 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-r from-emerald-100/30 to-amber-100/30"></div>
+        <div className="absolute inset-0 bg-gradient-to-r from-emerald-100/30 to-teal-100/30"></div>
         <motion.div
           className="max-w-7xl mx-auto text-center relative z-10"
           initial={{ opacity: 0, y: 20 }}
@@ -33,7 +33,7 @@ export default function Home() {
           >
             <span className="inline-flex items-center px-4 py-2 bg-emerald-100 text-emerald-800 rounded-full text-sm font-medium mb-4">
               <Leaf className="w-4 h-4 mr-2" />
-              100% Natural • Sin Azúcar Refinada • Keto Friendly
+              Servicio Freemium • IA Personalizada • Nutricionistas Certificados
             </span>
           </motion.div>
 
@@ -43,9 +43,9 @@ export default function Home() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3, duration: 0.8 }}
           >
-            Postres que <span className="text-emerald-600">cuidan</span>,
+            Tu <span className="text-emerald-600">Asistente Keto</span>
             <br />
-            sabores que <span className="text-amber-600">enamoran</span>
+            con <span className="text-teal-600">IA Inteligente</span>
           </motion.h1>
 
           <motion.p
@@ -54,8 +54,8 @@ export default function Home() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5, duration: 0.8 }}
           >
-            Disfruta sin culpa de postres deliciosos y nutritivos. Cada bocado está creado con
-            ingredientes premium y técnicas especiales para cuidar tu bienestar sin renunciar al sabor.
+            Conversa con nuestra IA especializada en nutrición keto. Recibe recetas personalizadas,
+            planes nutricionales y acceso a nutricionistas certificados. ¡Empieza gratis hoy!
           </motion.p>
 
           <motion.div
@@ -65,21 +65,29 @@ export default function Home() {
             transition={{ delay: 0.7, duration: 0.8 }}
           >
             <Link
-              href="/productos"
-              className="group bg-emerald-600 text-white px-8 py-4 rounded-xl text-lg font-semibold hover:bg-emerald-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+              href="/chat-ia"
+              className="group bg-gradient-to-r from-emerald-600 to-teal-600 text-white px-8 py-4 rounded-xl text-lg font-semibold hover:from-emerald-700 hover:to-teal-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1 flex items-center justify-center gap-2"
             >
-              🛍️ Haz tu Pedido
+              <Sparkles className="w-5 h-5" />
+              Chatear con IA Gratis
             </Link>
-            <a
-              href="https://wa.me/1234567890"
-              target="_blank"
-              rel="noopener noreferrer"
+            <Link
+              href="/nutricionistas"
               className="group border-2 border-emerald-600 text-emerald-600 px-8 py-4 rounded-xl text-lg font-semibold hover:bg-emerald-50 transition-all duration-300 flex items-center justify-center gap-2"
             >
-              <MessageCircle className="w-5 h-5" />
-              WhatsApp
-            </a>
+              <Users className="w-5 h-5" />
+              Ver Nutricionistas
+            </Link>
           </motion.div>
+
+          <motion.p
+            className="mt-6 text-gray-600"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 1, duration: 0.8 }}
+          >
+            ✨ Versión gratuita disponible • 🎯 Consultas premium con profesionales
+          </motion.p>
         </motion.div>
 
         {/* Floating elements for visual appeal */}
@@ -88,22 +96,174 @@ export default function Home() {
           animate={{ y: [0, -10, 0] }}
           transition={{ repeat: Infinity, duration: 3 }}
         >
-          🍰
+          🥑
         </motion.div>
         <motion.div
           className="absolute top-32 right-16 text-3xl opacity-20"
           animate={{ y: [0, 15, 0] }}
           transition={{ repeat: Infinity, duration: 4, delay: 1 }}
         >
-          🥧
+          🥗
         </motion.div>
         <motion.div
           className="absolute bottom-20 left-20 text-5xl opacity-20"
           animate={{ y: [0, -20, 0] }}
           transition={{ repeat: Infinity, duration: 5, delay: 2 }}
         >
-          🧁
+          🤖
         </motion.div>
+      </section>
+
+      {/* AI Services Section - NEW */}
+      <section className="py-20 bg-white">
+        <div className="max-w-7xl mx-auto px-4">
+          <motion.div
+            className="text-center mb-16"
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+          >
+            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
+              Servicios <span className="text-emerald-600">Inteligentes</span> para tu Estilo Keto
+            </h2>
+            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+              Tecnología de IA combinada con experiencia profesional para tu bienestar
+            </p>
+          </motion.div>
+
+          <div className="grid md:grid-cols-2 gap-8 mb-12">
+            {/* AI Chat Service */}
+            <motion.div
+              className="bg-gradient-to-br from-emerald-50 to-teal-50 rounded-2xl p-8 shadow-lg hover:shadow-xl transition-shadow"
+              initial={{ opacity: 0, x: -30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8 }}
+              viewport={{ once: true }}
+            >
+              <div className="flex items-center gap-4 mb-6">
+                <div className="w-16 h-16 bg-gradient-to-br from-emerald-500 to-teal-500 rounded-2xl flex items-center justify-center">
+                  <Sparkles className="w-8 h-8 text-white" />
+                </div>
+                <div>
+                  <h3 className="text-2xl font-bold text-gray-900">Chat con IA Keto</h3>
+                  <p className="text-emerald-600 font-semibold">Gratis • Ilimitado</p>
+                </div>
+              </div>
+              
+              <p className="text-gray-700 mb-6 leading-relaxed">
+                Conversa con nuestra IA especializada que aprende de tus preferencias y necesidades.
+                Obtén recetas personalizadas, consejos nutricionales y recomendaciones de productos.
+              </p>
+
+              <ul className="space-y-3 mb-6">
+                <li className="flex items-start gap-2 text-gray-700">
+                  <span className="text-emerald-500 mt-1">✓</span>
+                  <span>Recetas keto personalizadas en segundos</span>
+                </li>
+                <li className="flex items-start gap-2 text-gray-700">
+                  <span className="text-emerald-500 mt-1">✓</span>
+                  <span>Chat por texto o comando de voz</span>
+                </li>
+                <li className="flex items-start gap-2 text-gray-700">
+                  <span className="text-emerald-500 mt-1">✓</span>
+                  <span>Recomendaciones inteligentes de productos</span>
+                </li>
+                <li className="flex items-start gap-2 text-gray-700">
+                  <span className="text-emerald-500 mt-1">✓</span>
+                  <span>Disponible 24/7 sin costo</span>
+                </li>
+              </ul>
+
+              <Link
+                href="/chat-ia"
+                className="block text-center bg-gradient-to-r from-emerald-600 to-teal-600 text-white px-6 py-3 rounded-xl font-semibold hover:from-emerald-700 hover:to-teal-700 transition-all shadow-lg hover:shadow-xl"
+              >
+                Iniciar Chat Gratis →
+              </Link>
+            </motion.div>
+
+            {/* Nutritionist Service */}
+            <motion.div
+              className="bg-gradient-to-br from-teal-50 to-blue-50 rounded-2xl p-8 shadow-lg hover:shadow-xl transition-shadow"
+              initial={{ opacity: 0, x: 30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8 }}
+              viewport={{ once: true }}
+            >
+              <div className="flex items-center gap-4 mb-6">
+                <div className="w-16 h-16 bg-gradient-to-br from-teal-500 to-blue-500 rounded-2xl flex items-center justify-center">
+                  <Users className="w-8 h-8 text-white" />
+                </div>
+                <div>
+                  <h3 className="text-2xl font-bold text-gray-900">Nutricionistas Premium</h3>
+                  <p className="text-teal-600 font-semibold">Profesionales Certificados</p>
+                </div>
+              </div>
+              
+              <p className="text-gray-700 mb-6 leading-relaxed">
+                Accede a consultas personalizadas con nutricionistas certificados especializados en dieta keto.
+                Planes nutricionales diseñados específicamente para ti.
+              </p>
+
+              <ul className="space-y-3 mb-6">
+                <li className="flex items-start gap-2 text-gray-700">
+                  <span className="text-teal-500 mt-1">✓</span>
+                  <span>Consultas individuales con expertos</span>
+                </li>
+                <li className="flex items-start gap-2 text-gray-700">
+                  <span className="text-teal-500 mt-1">✓</span>
+                  <span>Planes nutricionales personalizados</span>
+                </li>
+                <li className="flex items-start gap-2 text-gray-700">
+                  <span className="text-teal-500 mt-1">✓</span>
+                  <span>Seguimiento profesional continuo</span>
+                </li>
+                <li className="flex items-start gap-2 text-gray-700">
+                  <span className="text-teal-500 mt-1">✓</span>
+                  <span>Especialistas en diabetes, deporte, pérdida de peso</span>
+                </li>
+              </ul>
+
+              <Link
+                href="/nutricionistas"
+                className="block text-center bg-gradient-to-r from-teal-600 to-blue-600 text-white px-6 py-3 rounded-xl font-semibold hover:from-teal-700 hover:to-blue-700 transition-all shadow-lg hover:shadow-xl"
+              >
+                Ver Nutricionistas →
+              </Link>
+            </motion.div>
+          </div>
+
+          {/* Value Proposition */}
+          <motion.div
+            className="text-center bg-gradient-to-r from-emerald-600 to-teal-600 text-white rounded-2xl p-8"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+          >
+            <h3 className="text-2xl font-bold mb-4">
+              ¿Por qué elegir Alkadami Keto?
+            </h3>
+            <div className="grid md:grid-cols-3 gap-6 text-emerald-50">
+              <div>
+                <div className="text-3xl mb-2">🚀</div>
+                <h4 className="font-semibold mb-2">Empieza Gratis</h4>
+                <p className="text-sm">Chat con IA sin costo, recetas ilimitadas y consejos personalizados</p>
+              </div>
+              <div>
+                <div className="text-3xl mb-2">👨‍⚕️</div>
+                <h4 className="font-semibold mb-2">Respaldo Profesional</h4>
+                <p className="text-sm">Acceso a nutricionistas certificados cuando lo necesites</p>
+              </div>
+              <div>
+                <div className="text-3xl mb-2">🎯</div>
+                <h4 className="font-semibold mb-2">Resultados Reales</h4>
+                <p className="text-sm">Plan integral que combina tecnología y experiencia humana</p>
+              </div>
+            </div>
+          </motion.div>
+        </div>
       </section>
 
       {/* Problem/Solution Section */}
@@ -537,10 +697,10 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4">
           <div className="grid md:grid-cols-4 gap-8">
             <div>
-              <h4 className="text-2xl font-bold mb-4 text-emerald-400">Sweet & Healthy</h4>
+              <h4 className="text-2xl font-bold mb-4 text-emerald-400">🥑 Alkadami Keto</h4>
               <p className="text-gray-300 mb-6">
-                Transformando vidas a través de postres deliciosos y nutritivos.
-                Tu bienestar es nuestra pasión.
+                Tu asistente inteligente de nutrición keto. Transformando vidas a través de
+                tecnología IA y respaldo profesional.
               </p>
               <div className="flex space-x-4">
                 <a href="#" className="w-10 h-10 bg-emerald-600 rounded-full flex items-center justify-center hover:bg-emerald-700 transition-colors">
@@ -556,12 +716,20 @@ export default function Home() {
             </div>
 
             <div>
-              <h4 className="text-lg font-semibold mb-6 text-emerald-400">Enlaces Rápidos</h4>
+              <h4 className="text-lg font-semibold mb-6 text-emerald-400">Servicios</h4>
               <ul className="space-y-3 text-gray-300">
-                <li><Link href="/productos" className="hover:text-emerald-400 transition-colors">Catálogo Completo</Link></li>
-                <li><Link href="/about" className="hover:text-emerald-400 transition-colors">Nuestra Historia</Link></li>
+                <li><Link href="/chat-ia" className="hover:text-emerald-400 transition-colors">Chat con IA</Link></li>
+                <li><Link href="/nutricionistas" className="hover:text-emerald-400 transition-colors">Nutricionistas</Link></li>
+                <li><Link href="/productos" className="hover:text-emerald-400 transition-colors">Productos Keto</Link></li>
+              </ul>
+            </div>
+
+            <div>
+              <h4 className="text-lg font-semibold mb-6 text-emerald-400">Enlaces</h4>
+              <ul className="space-y-3 text-gray-300">
+                <li><Link href="/about" className="hover:text-emerald-400 transition-colors">Nosotros</Link></li>
                 <li><Link href="/contacto" className="hover:text-emerald-400 transition-colors">Contacto</Link></li>
-                <li><a href="/blog" className="hover:text-emerald-400 transition-colors">Blog de Salud</a></li>
+                <li><a href="/blog" className="hover:text-emerald-400 transition-colors">Blog</a></li>
               </ul>
             </div>
 
@@ -593,29 +761,12 @@ export default function Home() {
                 </li>
               </ul>
             </div>
-
-            <div>
-              <h4 className="text-lg font-semibold mb-6 text-emerald-400">Newsletter</h4>
-              <p className="text-gray-300 mb-4">
-                Recibe recetas exclusivas y ofertas especiales
-              </p>
-              <div className="flex gap-2">
-                <input
-                  type="email"
-                  placeholder="Tu email"
-                  className="flex-1 px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg focus:border-emerald-500 focus:outline-none text-white"
-                />
-                <button className="bg-emerald-600 px-4 py-2 rounded-lg hover:bg-emerald-700 transition-colors">
-                  ✓
-                </button>
-              </div>
-            </div>
           </div>
 
           <div className="border-t border-gray-800 mt-12 pt-8">
             <div className="flex flex-col md:flex-row justify-between items-center gap-4">
               <p className="text-gray-400">
-                &copy; 2025 Sweet & Healthy. Todos los derechos reservados.
+                &copy; 2025 Alkadami Keto. Todos los derechos reservados.
               </p>
               <div className="flex gap-6 text-gray-400">
                 <a href="#" className="hover:text-emerald-400 transition-colors">Política de Privacidad</a>
