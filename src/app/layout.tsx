@@ -3,8 +3,8 @@ import "./globals.css";
 import { CartProvider } from "@/components/CartContext";
 
 export const metadata: Metadata = {
-  title: "Sweet & Healthy - Postres Saludables",
-  description: "Tienda en línea de postres saludables y deliciosos",
+  title: "Alkadami Keto - Tu Asistente Inteligente de Nutrición Keto",
+  description: "Servicio freemium de nutrición keto con IA inteligente. Chat gratis, recetas personalizadas y nutricionistas certificados.",
 };
 
 export default function RootLayout({

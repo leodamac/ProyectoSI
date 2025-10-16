@@ -1,32 +1,59 @@
-# Sweet & Healthy - Tienda de Postres Saludables
+# Alkadami Keto - Servicio Freemium de Nutrición Keto
 
-Una landing page moderna y profesional para la venta de postres saludables, construida con Next.js, React, TypeScript y Tailwind CSS. Diseñada siguiendo el concepto de "ALKADAMI KETO" con enfoque en transmitir confianza, saludabilidad y persuasión.
+Una plataforma moderna de estilo de vida keto con IA inteligente y nutricionistas certificados. Construida con Next.js, React, TypeScript y Tailwind CSS.
 
-## 🍰 Características
+## 🥑 Características Principales
 
-- **Landing Page Moderna**: Diseño profesional con copy persuasivo "Postres que cuidan, sabores que enamoran"
-- **Problema/Solución Framework**: Explicación clara del problema (postres tradicionales) vs solución (postres saludables)
-- **Catálogo de Productos**: Navegación completa de postres saludables con filtros por categoría y ordenamiento por precio
-- **Carrito de Compras**: Funcionalidad completa de carrito con persistencia en localStorage
-- **Integración WhatsApp**: Contacto directo via WhatsApp con CTAs prominentes
-- **Testimonios y Validación Social**: Reseñas de clientes y respaldo nutricional
-- **Diseño Responsivo**: Optimizado para dispositivos móviles, tablets y desktop
-- **Animaciones Smooth**: Framer Motion para transiciones suaves y micro-interacciones
-- **Interfaz Moderna**: Paleta de colores fresh (emerald, amber, white) con tipografía premium
-- **TypeScript**: Tipado fuerte para mayor seguridad y mejor experiencia de desarrollo
-- **Base de Datos**: Configuración lista para Firebase/Firestore con soporte para CRUD
+### Servicios Freemium
+
+- **Chat con IA (Gratis)**: Asistente inteligente de nutrición keto 24/7
+  - Conversación por texto o voz
+  - Recetas keto personalizadas
+  - Recomendaciones de productos inteligentes
+  - Recopilación automática de preferencias y restricciones dietéticas
+  
+- **Nutricionistas Certificados (Premium)**: Acceso a profesionales especializados
+  - Consultas personalizadas
+  - Planes nutricionales diseñados a medida
+  - Seguimiento profesional continuo
+  - Especialistas en diabetes, deporte, pérdida de peso y metabolismo
+
+- **E-commerce Keto**: Productos saludables disponibles
+  - Catálogo de productos keto
+  - Sistema de carrito con persistencia
+  - Integración con WhatsApp para pedidos
+
+## 🤖 Tecnología de IA
+
+### Arquitectura MCP (Model Context Protocol)
+
+La aplicación implementa el protocolo MCP para facilitar la migración futura a servicios de IA reales:
+
+- **MCPChatService**: Servicio de chat modular listo para integración
+- **LocalAIService**: Integración con APIs de IA del navegador (Gemini Nano)
+  - Language Detector API
+  - Summarizer API
+  - Translator API
+
+### Wizard of Oz Approach
+
+Actualmente usa simulación inteligente de IA con lógica predefinida, pero la arquitectura está lista para integración con:
+- OpenAI GPT-4
+- Google Gemini
+- Anthropic Claude
+- Otros servicios de IA
 
 ## 🛠️ Tecnologías Utilizadas
 
-- **Frontend**: React 19 + Next.js 15
+- **Frontend**: React 19 + Next.js 15 (App Router)
 - **Lenguaje**: TypeScript
-- **Estilos**: Tailwind CSS
+- **Estilos**: Tailwind CSS v4
 - **Animaciones**: Framer Motion
 - **Iconos**: Lucide React
-- **Base de Datos**: Firebase (configurado)
-- **Estado**: React Context API para manejo del carrito
-- **Build Tool**: Turbopack (Next.js)
-- **Deployment**: Vercel-ready
+- **Base de Datos**: Firebase/Firestore (configurado)
+- **Estado**: React Context API
+- **IA**: ai SDK, APIs del navegador
+- **Voz**: Web Speech API
 
 ## 🚀 Instalación y Configuración
 
@@ -41,16 +68,17 @@ Una landing page moderna y profesional para la venta de postres saludables, cons
    npm install
    ```
 
-3. **Configurar variables de entorno**
+3. **Configurar variables de entorno** (opcional)
    ```bash
    cp .env.example .env.local
-   # Edita .env.local con tus valores reales
+   # Edita .env.local con tus valores
    ```
 
 4. **Ejecutar en modo desarrollo**
    ```bash
    npm run dev
    ```
+   Abre [http://localhost:3000](http://localhost:3000)
 
 5. **Construir para producción**
    ```bash
@@ -58,100 +86,123 @@ Una landing page moderna y profesional para la venta de postres saludables, cons
    npm start
    ```
 
-## 🌟 Nuevas Características v2.0
-
-### Landing Page Moderna
-- ✅ Hero section con copy persuasivo "Postres que cuidan, sabores que enamoran"
-- ✅ Sección Problema/Solución para educación del cliente
-- ✅ Beneficios destacados con iconos modernos (Sin azúcar, Sin gluten, Apto diabéticos)
-- ✅ Testimonios y validación social
-- ✅ CTAs claras para conversión
-
-### Experiencia de Usuario
-- ✅ Animaciones suaves con Framer Motion
-- ✅ Paleta de colores moderna (emerald, amber, whites)
-- ✅ Diseño mobile-first completamente responsivo
-- ✅ Micro-interacciones y hover effects
-
-### Contacto y Conversión
-- ✅ Integración completa con WhatsApp
-- ✅ Página de contacto profesional con formulario
-- ✅ FAQ section para reducir fricción
-- ✅ Multiple CTAs estratégicamente ubicados
-
 ## 📁 Estructura del Proyecto
 
 ```
 src/
-├── app/                    # App Router de Next.js
-│   ├── about/             # Página "Nosotros"
-│   ├── carrito/           # Página del carrito de compras
-│   ├── contacto/          # Página de contacto con WhatsApp
-│   ├── productos/         # Catálogo de productos
-│   ├── layout.tsx         # Layout principal
-│   └── page.tsx          # Landing page moderna
-├── components/            # Componentes reutilizables
-│   ├── CartContext.tsx   # Context del carrito
-│   └── Navigation.tsx    # Componente de navegación
-├── data/                 # Datos mock de productos
-│   └── products.ts
-├── lib/                  # Configuraciones
-│   └── firebase.ts       # Configuración de Firebase
-└── types/                # Definiciones de tipos TypeScript
-    └── index.ts
+├── app/
+│   ├── chat-ia/           # Página de chat con IA
+│   ├── nutricionistas/    # Página de nutricionistas certificados
+│   ├── productos/         # Catálogo de productos keto
+│   ├── contacto/          # Página de contacto
+│   ├── page.tsx           # Homepage (servicio prioritario)
+│   └── layout.tsx         # Layout principal
+├── components/
+│   ├── AIChat.tsx         # Componente de chat con IA
+│   ├── Navigation.tsx     # Navegación con enlaces destacados
+│   └── CartContext.tsx    # Contexto del carrito
+├── data/
+│   ├── nutritionists.ts   # Datos de nutricionistas
+│   ├── recipes.ts         # Recetas keto
+│   └── products.ts        # Productos
+├── lib/
+│   ├── mcp-services.ts    # Servicios MCP para IA
+│   └── firebase.ts        # Configuración Firebase
+└── types/
+    └── index.ts           # Definiciones TypeScript
 ```
+
+## 🎨 Diseño
+
+### Paleta de Colores Keto
+
+- **Emerald**: #10b981 - Color principal (salud, naturaleza)
+- **Teal**: #14b8a6 - Secundario (frescura, profesionalismo)
+- **Earth Tones**: Tonos tierra para calidez
+- **Gradientes sutiles**: Sin abusar, diseño limpio
+
+### Principios de Diseño
+
+- ✅ Servicio primero, productos segundo
+- ✅ Diseño diferencial y memorable
+- ✅ Animaciones sutiles y fluidas
+- ✅ Mobile-first responsive
+- ✅ Accesibilidad y UX optimizada
 
 ## 🔧 Scripts Disponibles
 
-- `npm run dev` - Inicia el servidor de desarrollo
+- `npm run dev` - Inicia el servidor de desarrollo con Turbopack
 - `npm run build` - Construye la aplicación para producción
 - `npm start` - Inicia el servidor de producción
 - `npm run lint` - Ejecuta ESLint
 
-## 🍯 Productos Destacados
+## 📱 Funcionalidades por Página
 
-La aplicación incluye una variedad de postres saludables:
-- Brownies de chocolate negro (sin gluten)
-- Cheesecakes de frutos rojos
-- Muffins de plátano y avena
-- Cookies de chía y limón (veganas)
-- Tartas de zanahoria
-- Helados veganos de coco y mango
+### Homepage (/)
+- Hero destacando el servicio de IA
+- Sección de servicios inteligentes (IA + Nutricionistas)
+- Productos destacados
+- Testimonios y validación social
+- CTAs claros para conversión
 
-## 🛒 Funcionalidades del Carrito
+### Chat IA (/chat-ia)
+- Interfaz de chat completa
+- Entrada por texto o voz
+- Respuestas inteligentes contextuales
+- Sugerencias de recetas y productos
+- Sidebar informativo
 
-- ✅ Agregar productos al carrito
-- ✅ Modificar cantidades
-- ✅ Eliminar productos individuales
-- ✅ Vaciar carrito completo
-- ✅ Persistencia en localStorage
-- ✅ Cálculo automático de totales
-- ✅ Contador de productos en navegación
+### Nutricionistas (/nutricionistas)
+- Perfiles detallados de profesionales
+- Horarios de disponibilidad
+- Certificaciones y experiencia
+- Reseñas verificadas
+- Sistema de agendamiento
 
-## 🔮 Funcionalidades Futuras
+### Productos (/productos)
+- Catálogo completo de productos keto
+- Filtros y ordenamiento
+- Información nutricional
+- Sistema de carrito
 
-- [ ] Autenticación de usuarios con Firebase Auth
-- [ ] Integración completa con Firestore
-- [ ] Procesamiento de pagos
-- [ ] Sistema de pedidos y tracking
-- [ ] Panel de administración
-- [ ] Notificaciones push
-- [ ] Sistema de reviews y calificaciones
+## 🔮 Migración a Servicios Reales
+
+Ver [`DOCUMENTATION.md`](./DOCUMENTATION.md) para guía completa de migración.
+
+### Resumen de Migración
+
+1. **Fase 1**: Integración de IA real (OpenAI/Gemini)
+2. **Fase 2**: Base de datos real (Firestore)
+3. **Fase 3**: Sistema de pagos (Stripe)
+4. **Fase 4**: Agendamiento de citas (Calendly/Cal.com)
+
+La arquitectura modular permite reemplazar componentes mock sin cambiar la interfaz.
+
+## 📊 Métricas Importantes
+
+- **Engagement**: Mensajes de chat, uso de voz, duración de sesión
+- **Conversión**: Chat → Productos, Chat → Nutricionistas
+- **Satisfacción**: NPS, reseñas, feedback
+
+## 🔐 Seguridad
+
+- Datos de chat almacenados localmente
+- API keys en variables de entorno
+- Cumplimiento GDPR ready
+- Validación de entradas
 
 ## 🌐 Deployment
 
-El proyecto está configurado para desplegarse fácilmente en:
+Optimizado para despliegue en:
 - **Vercel** (recomendado para Next.js)
 - **Netlify**
 - **AWS Amplify**
 
-## 📱 Responsive Design
+## 📚 Documentación
 
-La aplicación está optimizada para:
-- 📱 Móviles (320px+)
-- 📱 Tablets (768px+)
-- 💻 Desktop (1024px+)
-- 🖥️ Large screens (1280px+)
+- [Documentación Técnica Completa](./DOCUMENTATION.md) - Arquitectura, implementación y roadmap
+- [AI SDK Documentation](https://ai-sdk.dev/docs/introduction)
+- [Next.js Documentation](https://nextjs.org/docs)
 
 ## 🤝 Contribución
 
@@ -161,19 +212,20 @@ La aplicación está optimizada para:
 4. Push a la rama (`git push origin feature/AmazingFeature`)
 5. Abre un Pull Request
 
-## 📄 Licencia
-
-Este proyecto está bajo la Licencia MIT. Ver el archivo `LICENSE` para más detalles.
-
 ## 👨‍💻 Autores
 
-* **Leonardo Macias**  FIEC  [leodamac](https://github.com/leodamac)
-* **Carlos Abel Cabanilla Tomala**  FIEC
-* **David Eduardo Solorzano Flores**  FCSH
-* **Dereck Oscar Enriquez Perez**  FIEC
-* **Alexander Joshue Barco Lascano**  FCSH
-* **Valeska Anahi Sanchez Ramirez**  FCSH
-* **Kevin Santiago Mejia Parra**  FIEC
+* **Leonardo Macias** - FIEC - [leodamac](https://github.com/leodamac)
+* **Carlos Abel Cabanilla Tomala** - FIEC
+* **David Eduardo Solorzano Flores** - FCSH
+* **Dereck Oscar Enriquez Perez** - FIEC
+* **Alexander Joshue Barco Lascano** - FCSH
+* **Valeska Anahi Sanchez Ramirez** - FCSH
+* **Kevin Santiago Mejia Parra** - FIEC
+
+## 📄 Licencia
+
+Este proyecto está bajo la Licencia MIT.
+
 ---
 
-¡Disfruta creando postres saludables virtuales! 🍰✨
+¡Bienvenido a Alkadami Keto! 🥑✨
