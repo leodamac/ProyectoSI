@@ -139,7 +139,7 @@ export default function ImprovedAIChat({ onClose, isFloating = false }: Improved
 
   const sendMessage = async (messageText: string) => {
     // Check message limit for free users
-    if (!isPro && messageCount >= 5) {
+    if (!isPro && messageCount >= 20) {
       setShowProModal(true);
       return;
     }
@@ -271,7 +271,7 @@ export default function ImprovedAIChat({ onClose, isFloating = false }: Improved
         initial={{ opacity: 0, y: isFloating ? 20 : 0 }}
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: isFloating ? 20 : 0 }}
-        className={`flex flex-col ${isFloating ? 'h-[600px] w-full max-w-md' : 'h-[calc(100vh-200px)]'} bg-white rounded-2xl shadow-xl border border-gray-200`}
+        className={`flex flex-col ${isFloating ? 'h-[600px] w-full max-w-md' : 'h-[calc(100vh-120px)] min-h-[600px]'} bg-white rounded-2xl shadow-xl border border-gray-200`}
       >
         {/* Clean Header */}
         <div className="bg-white border-b border-gray-200 px-4 py-3 rounded-t-2xl flex items-center justify-between">
@@ -450,14 +450,14 @@ export default function ImprovedAIChat({ onClose, isFloating = false }: Improved
 
         {/* Input Area - Clean & Professional */}
         <div className="p-4 bg-white border-t border-gray-200 rounded-b-2xl">
-          {!isPro && messageCount >= 4 && (
+          {!isPro && messageCount >= 15 && (
             <motion.div
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
               className="mb-3 p-3 bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-lg text-xs text-amber-900 flex items-center justify-between"
             >
               <span>
-                <span className="font-semibold">{5 - messageCount} mensaje{(5 - messageCount) !== 1 ? 's' : ''}</span> restante{(5 - messageCount) !== 1 ? 's' : ''} en modo gratuito
+                <span className="font-semibold">{20 - messageCount} mensaje{(20 - messageCount) !== 1 ? 's' : ''}</span> restante{(20 - messageCount) !== 1 ? 's' : ''} en modo gratuito
               </span>
               <button 
                 onClick={() => setShowProModal(true)} 
@@ -476,7 +476,7 @@ export default function ImprovedAIChat({ onClose, isFloating = false }: Improved
                 onChange={(e) => setInput(e.target.value)}
                 placeholder={quickSuggestions[placeholderIndex].text}
                 className="w-full px-4 py-3 pr-11 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm placeholder:text-gray-400 bg-gray-50 focus:bg-white transition-colors"
-                disabled={isLoading || (!isPro && messageCount >= 5)}
+                disabled={isLoading || (!isPro && messageCount >= 20)}
               />
               <button
                 type="button"
@@ -493,7 +493,7 @@ export default function ImprovedAIChat({ onClose, isFloating = false }: Improved
             </div>
             <button
               type="submit"
-              disabled={!input.trim() || isLoading || (!isPro && messageCount >= 5)}
+              disabled={!input.trim() || isLoading || (!isPro && messageCount >= 20)}
               className="px-5 py-3 bg-emerald-500 text-white rounded-xl hover:bg-emerald-600 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors flex items-center gap-2 text-sm font-semibold shadow-sm"
             >
               <Send className="w-4 h-4" />
