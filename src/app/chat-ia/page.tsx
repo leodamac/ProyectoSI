@@ -56,7 +56,7 @@ export default function ChatIAPage() {
               animate={{ opacity: 1 }}
               transition={{ delay: 0.5 }}
               onClick={() => setShowSidebar(!showSidebar)}
-              className="absolute -right-3 top-4 z-10 w-8 h-8 bg-white border-2 border-gray-200 rounded-full shadow-lg hover:bg-gray-50 transition-all flex items-center justify-center lg:flex hidden"
+              className="absolute -right-3 top-4 z-10 w-8 h-8 bg-white border-2 border-gray-200 rounded-full shadow-lg hover:bg-gray-50 focus:ring-2 focus:ring-emerald-500 focus:outline-none transition-all flex items-center justify-center lg:flex hidden"
               title={showSidebar ? "Ocultar barra lateral" : "Mostrar barra lateral"}
             >
               {showSidebar ? <ChevronRight className="w-4 h-4 text-gray-600" /> : <ChevronLeft className="w-4 h-4 text-gray-600" />}
