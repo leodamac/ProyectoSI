@@ -2,6 +2,7 @@
 
 import Navigation from '@/components/Navigation';
 import ImprovedAIChat from '@/components/ImprovedAIChat';
+import VoiceController from '@/components/VoiceController';
 import { motion, AnimatePresence } from 'framer-motion';
 import { MessageCircle, Mic, Zap, TrendingUp, Users, Calendar, CheckCircle2, Clock, ChevronLeft, ChevronRight } from 'lucide-react';
 import Link from 'next/link';
@@ -74,6 +75,15 @@ export default function ChatIAPage() {
                 transition={{ duration: 0.3 }}
                 className="space-y-4 lg:block hidden"
               >
+            {/* Voice Controller - NEW */}
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3, delay: 0.05 }}
+            >
+              <VoiceController simulatedMode={true} />
+            </motion.div>
+
             {/* Key Features - Clean Widget */}
             <motion.div
               initial={{ opacity: 0, y: 10 }}
