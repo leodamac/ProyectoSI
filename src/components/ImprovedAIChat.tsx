@@ -2,8 +2,11 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Send, Mic, MicOff, X, Crown, Calendar, User, MessageCircle, Zap, Sparkles, Clock } from 'lucide-react';
+import { Send, X, Crown, Calendar, MessageCircle, Zap, Sparkles, Clock } from 'lucide-react';
 import { nutritionists } from '@/data/nutritionists';
+import { useChatContext } from '@/context/ChatContext';
+import { useTextToSpeech } from '@/hooks/useTextToSpeech';
+import VoiceController from './VoiceController';
 
 interface Message {
   id: string;
@@ -35,41 +38,12 @@ const quickSuggestions = [
   { icon: "👨‍⚕️", text: "Consultar con nutricionista", category: "nutricionista" },
 ];
 
-interface ISpeechRecognition extends EventTarget {
-  continuous: boolean;
-  interimResults: boolean;
-  lang: string;
-  onresult: ((event: SpeechRecognitionEvent) => void) | null;
-  onerror: ((event: Event) => void) | null;
-  onend: (() => void) | null;
-  start(): void;
-  stop(): void;
-}
-
-interface SpeechRecognitionEvent extends Event {
-  results: SpeechRecognitionResultList;
-}
-
-interface SpeechRecognitionResultList {
-  length: number;
-  [index: number]: SpeechRecognitionResult;
-}
-
-interface SpeechRecognitionResult {
-  [index: number]: SpeechRecognitionAlternative;
-  isFinal: boolean;
-}
-
-interface SpeechRecognitionAlternative {
-  transcript: string;
-  confidence: number;
-}
-
 export default function ImprovedAIChat({ onClose, isFloating = false }: ImprovedAIChatProps) {
+  const { interimTranscript, setInterimTranscript } = useChatContext();
+  const { speak } = useTextToSpeech();
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [isListening, setIsListening] = useState(false);
   const [messageCount, setMessageCount] = useState(0);
   const [isPro, setIsPro] = useState(false);
   const [showProModal, setShowProModal] = useState(false);
@@ -80,9 +54,9 @@ export default function ImprovedAIChat({ onClose, isFloating = false }: Improved
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const messagesContainerRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const recognitionRef = useRef<ISpeechRecognition | null>(null);
   const [showSuggestions, setShowSuggestions] = useState(true);
   const [userHasScrolled, setUserHasScrolled] = useState(false);
+  const [showVoiceControls, setShowVoiceControls] = useState(false);
 
   useEffect(() => {
     // Rotate placeholder text every 3 seconds
@@ -93,37 +67,12 @@ export default function ImprovedAIChat({ onClose, isFloating = false }: Improved
     return () => clearInterval(interval);
   }, []);
 
+  // Update input field when interim transcript changes
   useEffect(() => {
-    // Initialize Speech Recognition
-    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
-      const SpeechRecognitionConstructor = (window as typeof window & { 
-        webkitSpeechRecognition: new () => ISpeechRecognition;
-      }).webkitSpeechRecognition || (window as typeof window & { 
-        SpeechRecognition: new () => ISpeechRecognition;
-      }).SpeechRecognition;
-      
-      if (SpeechRecognitionConstructor) {
-        recognitionRef.current = new SpeechRecognitionConstructor();
-        recognitionRef.current.continuous = false;
-        recognitionRef.current.interimResults = false;
-        recognitionRef.current.lang = 'es-ES';
-
-        recognitionRef.current.onresult = (event: SpeechRecognitionEvent) => {
-          const transcript = event.results[0][0].transcript;
-          setInput(transcript);
-          setIsListening(false);
-        };
-
-        recognitionRef.current.onerror = () => {
-          setIsListening(false);
-        };
-
-        recognitionRef.current.onend = () => {
-          setIsListening(false);
-        };
-      }
+    if (interimTranscript) {
+      setInput(interimTranscript);
     }
-  }, []);
+  }, [interimTranscript]);
 
   useEffect(() => {
     // Auto-scroll only if user hasn't manually scrolled up
@@ -169,21 +118,6 @@ export default function ImprovedAIChat({ onClose, isFloating = false }: Improved
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  };
-
-  const toggleVoiceInput = () => {
-    if (!recognitionRef.current) {
-      alert('Lo sentimos, tu navegador no soporta reconocimiento de voz. Por favor usa Chrome o Edge.');
-      return;
-    }
-
-    if (isListening) {
-      recognitionRef.current.stop();
-      setIsListening(false);
-    } else {
-      recognitionRef.current.start();
-      setIsListening(true);
-    }
   };
 
   const sendMessage = async (messageText: string) => {
@@ -256,12 +190,17 @@ export default function ImprovedAIChat({ onClose, isFloating = false }: Improved
                   }
                   return newMessages;
                 });
-              } catch (e) {
+              } catch {
                 // Ignore parse errors
               }
             }
           }
         }
+      }
+
+      // Speak the assistant's response
+      if (assistantContent) {
+        speak(assistantContent);
       }
     } catch (error) {
       console.error('Error sending message:', error);
@@ -272,9 +211,17 @@ export default function ImprovedAIChat({ onClose, isFloating = false }: Improved
         timestamp: new Date(),
       };
       setMessages(prev => [...prev, errorMessage]);
+      speak('Lo siento, ocurrió un error. Por favor intenta de nuevo.');
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleTranscriptComplete = (transcript: string) => {
+    setInput(transcript);
+    setInterimTranscript('');
+    // Auto-send after a short delay
+    setTimeout(() => sendMessage(transcript), 100);
   };
 
   const handleSuggestionClick = (suggestion: string) => {
@@ -531,6 +478,16 @@ export default function ImprovedAIChat({ onClose, isFloating = false }: Improved
               </button>
             </motion.div>
           )}
+
+          {/* Voice Controller */}
+          {showVoiceControls && (
+            <div className="mb-3">
+              <VoiceController
+                onTranscriptComplete={handleTranscriptComplete}
+                disabled={isLoading || (!isPro && messageCount >= FREE_MESSAGE_LIMIT)}
+              />
+            </div>
+          )}
           
           <form onSubmit={handleFormSubmit} className="flex gap-2 items-end">
             <div className="flex-1 relative">
@@ -540,23 +497,19 @@ export default function ImprovedAIChat({ onClose, isFloating = false }: Improved
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={handleKeyDown}
                 placeholder={quickSuggestions[placeholderIndex].text}
-                className="w-full px-3 py-2.5 pr-10 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm placeholder:text-gray-400 bg-white transition-colors resize-none overflow-y-auto min-h-[42px] max-h-[120px]"
+                className="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm placeholder:text-gray-400 bg-white transition-colors resize-none overflow-y-auto min-h-[42px] max-h-[120px]"
                 disabled={isLoading || (!isPro && messageCount >= FREE_MESSAGE_LIMIT)}
                 rows={1}
               />
-              <button
-                type="button"
-                onClick={toggleVoiceInput}
-                className={`absolute right-2 bottom-2 p-1.5 rounded-lg transition-all ${
-                  isListening
-                    ? 'bg-red-500 text-white animate-pulse'
-                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                }`}
-                title={isListening ? 'Detener' : 'Usar voz'}
-              >
-                {isListening ? <MicOff className="w-4 h-4" /> : <Mic className="w-4 h-4" />}
-              </button>
             </div>
+            <button
+              type="button"
+              onClick={() => setShowVoiceControls(!showVoiceControls)}
+              className="px-4 py-2.5 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors flex items-center gap-2 text-sm font-semibold shadow-sm h-[42px]"
+              title="Controles de voz"
+            >
+              🎤
+            </button>
             <button
               type="submit"
               disabled={!input.trim() || isLoading || (!isPro && messageCount >= FREE_MESSAGE_LIMIT)}
