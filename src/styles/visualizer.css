@@ -1,0 +1,44 @@
+/* Voice Visualizer Styles */
+
+.voice-controller {
+  max-width: 100%;
+}
+
+.voice-controller canvas {
+  width: 100%;
+  height: auto;
+  max-width: 100%;
+}
+
+/* Responsive canvas sizing */
+@media (max-width: 640px) {
+  .voice-controller canvas {
+    height: 80px;
+  }
+}
+
+@media (min-width: 641px) and (max-width: 1024px) {
+  .voice-controller canvas {
+    height: 100px;
+  }
+}
+
+@media (min-width: 1025px) {
+  .voice-controller canvas {
+    height: 120px;
+  }
+}
+
+/* Pulse animation for listening indicator */
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.animate-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}

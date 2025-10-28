@@ -1,6 +1,8 @@
 'use client';
 
 import Navigation from '@/components/Navigation';
+import ImprovedAIChat from '@/components/ImprovedAIChat';
+import VoiceController from '@/components/VoiceController';
 import { ChatShell } from '@/components/chat/ChatShell';
 import { ChatProvider } from '@/context/ChatContext';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -77,6 +79,15 @@ export default function ChatIAPage() {
                 transition={{ duration: 0.3 }}
                 className="space-y-4 lg:block hidden"
               >
+            {/* Voice Controller - NEW */}
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3, delay: 0.05 }}
+            >
+              <VoiceController simulatedMode={true} />
+            </motion.div>
+
             {/* Key Features - Clean Widget */}
             <motion.div
               initial={{ opacity: 0, y: 10 }}
