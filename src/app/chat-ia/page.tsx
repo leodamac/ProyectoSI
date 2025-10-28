@@ -3,6 +3,8 @@
 import Navigation from '@/components/Navigation';
 import ImprovedAIChat from '@/components/ImprovedAIChat';
 import VoiceController from '@/components/VoiceController';
+import { ChatShell } from '@/components/chat/ChatShell';
+import { ChatProvider } from '@/context/ChatContext';
 import { motion, AnimatePresence } from 'framer-motion';
 import { MessageCircle, Mic, Zap, TrendingUp, Users, Calendar, CheckCircle2, Clock, ChevronLeft, ChevronRight } from 'lucide-react';
 import Link from 'next/link';
@@ -49,7 +51,9 @@ export default function ChatIAPage() {
               transition={{ duration: 0.3 }}
               className="w-full"
             >
-              <ImprovedAIChat />
+              <ChatProvider>
+                <ChatShell />
+              </ChatProvider>
             </motion.div>
             
             {/* Toggle Sidebar Button */}
