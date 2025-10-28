@@ -21,6 +21,10 @@ interface ImprovedAIChatProps {
 const FREE_MESSAGE_LIMIT = 20;
 const WARNING_THRESHOLD = 15;
 
+// Scroll and textarea constants
+const SCROLL_THRESHOLD = 50; // pixels from bottom to consider "at bottom"
+const MAX_TEXTAREA_HEIGHT = 120; // pixels - matches CSS max-h-[120px]
+
 // Suggested prompts that appear as clickable chips
 const quickSuggestions = [
   { icon: "🍳", text: "Receta de desayuno keto rápida", category: "recetas" },
@@ -135,7 +139,7 @@ export default function ImprovedAIChat({ onClose, isFloating = false }: Improved
 
     const handleScroll = () => {
       const { scrollTop, scrollHeight, clientHeight } = container;
-      const isAtBottom = scrollHeight - scrollTop - clientHeight < 50;
+      const isAtBottom = scrollHeight - scrollTop - clientHeight < SCROLL_THRESHOLD;
       setUserHasScrolled(!isAtBottom);
     };
 
@@ -149,7 +153,7 @@ export default function ImprovedAIChat({ onClose, isFloating = false }: Improved
     if (!textarea) return;
     
     textarea.style.height = 'auto';
-    textarea.style.height = Math.min(textarea.scrollHeight, 120) + 'px';
+    textarea.style.height = Math.min(textarea.scrollHeight, MAX_TEXTAREA_HEIGHT) + 'px';
   }, [input]);
 
   const scrollToBottom = () => {
