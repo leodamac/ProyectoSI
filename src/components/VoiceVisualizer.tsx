@@ -29,17 +29,17 @@ export default function VoiceVisualizer({
     canvas.width = width;
     canvas.height = height;
 
-    let dataArray: Uint8Array<ArrayBuffer>;
+    let dataArray: Uint8Array;
     let bufferLength: number;
 
     if (analyser) {
       // Real audio mode
       bufferLength = analyser.frequencyBinCount;
-      dataArray = new Uint8Array(bufferLength) as Uint8Array<ArrayBuffer>;
+      dataArray = new Uint8Array(bufferLength);
     } else {
       // Simulated mode
       bufferLength = 32;
-      dataArray = new Uint8Array(bufferLength) as Uint8Array<ArrayBuffer>;
+      dataArray = new Uint8Array(bufferLength);
     }
 
     const barWidth = (width / bufferLength) * 2.5;
@@ -65,7 +65,8 @@ export default function VoiceVisualizer({
 
       if (analyser) {
         // Real audio visualization
-        analyser.getByteFrequencyData(dataArray);
+        // TypeScript workaround for lib.dom strict types
+        (analyser.getByteFrequencyData as (arr: Uint8Array) => void)(dataArray);
       } else {
         // Simulated visualization
         simulatedPhase += 0.05;

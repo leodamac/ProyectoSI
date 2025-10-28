@@ -12,8 +12,8 @@ interface VoiceControllerProps {
 export default function VoiceController({ simulatedMode = true }: VoiceControllerProps) {
   const [isListening, setIsListening] = useState(false);
   // Future: Will be used to store real audio analyser node
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [analyser, setAnalyser] = useState<AnalyserNode | null>(null);
+  // Using underscore prefix for unused state until real audio implementation
+  const [_analyser, _setAnalyser] = useState<AnalyserNode | null>(null);
 
   const toggleListening = () => {
     setIsListening(!isListening);
@@ -59,7 +59,7 @@ export default function VoiceController({ simulatedMode = true }: VoiceControlle
         {/* Voice Visualizer */}
         <div className="flex justify-center">
           <VoiceVisualizer
-            analyser={simulatedMode ? null : analyser}
+            analyser={simulatedMode ? null : _analyser}
             isActive={isListening}
             width={300}
             height={100}
