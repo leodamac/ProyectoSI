@@ -60,6 +60,12 @@ export function useSpeechToText(
   const [isSupported, setIsSupported] = useState(false);
   const recognitionRef = useRef<ISpeechRecognition | null>(null);
   const simulatedTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const onResultRef = useRef(onResult);
+
+  // Keep the callback ref up to date
+  useEffect(() => {
+    onResultRef.current = onResult;
+  }, [onResult]);
 
   useEffect(() => {
     // Check if Web Speech API is available
@@ -94,13 +100,13 @@ export function useSpeechToText(
 
           if (interim) {
             setInterimTranscript(interim);
-            onResult?.(interim, false);
+            onResultRef.current?.(interim, false);
           }
 
           if (final) {
             setTranscript((prev) => prev + final);
             setInterimTranscript('');
-            onResult?.(final.trim(), true);
+            onResultRef.current?.(final.trim(), true);
           }
         };
 
@@ -127,7 +133,7 @@ export function useSpeechToText(
         clearTimeout(simulatedTimeoutRef.current);
       }
     };
-  }, [onResult]);
+  }, []);
 
   const startRecognition = useCallback(async () => {
     if (recognitionRef.current && isSupported) {
@@ -151,18 +157,18 @@ export function useSpeechToText(
         const randomPhrase =
           SIMULATED_PHRASES[Math.floor(Math.random() * SIMULATED_PHRASES.length)];
         setInterimTranscript(randomPhrase);
-        onResult?.(randomPhrase, false);
+        onResultRef.current?.(randomPhrase, false);
 
         // Simulate final transcript
         simulatedTimeoutRef.current = setTimeout(() => {
           setTranscript(randomPhrase);
           setInterimTranscript('');
           setListening(false);
-          onResult?.(randomPhrase, true);
+          onResultRef.current?.(randomPhrase, true);
         }, 1000);
       }, 1500);
     }
-  }, [isSupported, onResult]);
+  }, [isSupported]);
 
   const stopRecognition = useCallback(() => {
     if (recognitionRef.current && isSupported) {

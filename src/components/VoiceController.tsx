@@ -10,13 +10,11 @@ import VoiceVisualizer from './VoiceVisualizer';
 
 interface VoiceControllerProps {
   onTranscriptComplete?: (transcript: string) => void;
-  onSpeakText?: (text: string) => void;
   disabled?: boolean;
 }
 
 export default function VoiceController({
   onTranscriptComplete,
-  onSpeakText,
   disabled = false,
 }: VoiceControllerProps) {
   const {
@@ -95,14 +93,6 @@ export default function VoiceController({
       await startRecognition();
     }
   }, [listening, stopRecognition, cleanupAudioAnalyser, setupAudioAnalyser, startRecognition]);
-
-  // Handle text-to-speech
-  useEffect(() => {
-    if (onSpeakText) {
-      // This is just for demonstration - in real app, this would be triggered by bot responses
-      // The speak function is exposed via the hook and can be called when needed
-    }
-  }, [onSpeakText]);
 
   // Cleanup on unmount
   useEffect(() => {
