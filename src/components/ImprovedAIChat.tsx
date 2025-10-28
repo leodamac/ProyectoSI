@@ -152,8 +152,19 @@ export default function ImprovedAIChat({ onClose, isFloating = false }: Improved
     const textarea = textareaRef.current;
     if (!textarea) return;
     
+    // Reset height to recalculate
     textarea.style.height = 'auto';
-    textarea.style.height = Math.min(textarea.scrollHeight, MAX_TEXTAREA_HEIGHT) + 'px';
+    
+    // Set new height based on scroll height, capped at max
+    const newHeight = Math.min(textarea.scrollHeight, MAX_TEXTAREA_HEIGHT);
+    textarea.style.height = newHeight + 'px';
+    
+    // Enable scroll only when content exceeds max height
+    if (textarea.scrollHeight > MAX_TEXTAREA_HEIGHT) {
+      textarea.style.overflowY = 'auto';
+    } else {
+      textarea.style.overflowY = 'hidden';
+    }
   }, [input]);
 
   const scrollToBottom = () => {
@@ -320,7 +331,7 @@ export default function ImprovedAIChat({ onClose, isFloating = false }: Improved
         className={`flex flex-col ${
           isFloating 
             ? 'h-[600px] w-full max-w-md' 
-            : 'h-[calc(100vh-140px)] w-full max-w-4xl mx-auto'
+            : 'h-[calc(100vh-180px)] w-full max-w-4xl mx-auto'
         } bg-white rounded-2xl shadow-xl border border-gray-200`}
       >
         {/* Clean Header */}
@@ -367,15 +378,15 @@ export default function ImprovedAIChat({ onClose, isFloating = false }: Improved
         {/* Messages - Clean Design */}
         <div 
           ref={messagesContainerRef}
-          className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50"
+          className="flex-1 overflow-y-auto p-6 space-y-4 bg-gray-50 min-h-0"
         >
           {messages.length === 0 && (
-            <div className="text-center py-6">
-              <div className="inline-flex items-center justify-center w-16 h-16 bg-emerald-500 rounded-full mb-4">
-                <MessageCircle className="w-8 h-8 text-white" />
+            <div className="text-center py-4">
+              <div className="inline-flex items-center justify-center w-12 h-12 bg-emerald-500 rounded-full mb-3">
+                <MessageCircle className="w-6 h-6 text-white" />
               </div>
-              <h3 className="text-lg font-bold text-gray-900 mb-2">Hola! Soy tu asistente keto 🥑</h3>
-              <p className="text-sm text-gray-600 mb-6 max-w-sm mx-auto">
+              <h3 className="text-base font-bold text-gray-900 mb-1">Hola! Soy tu asistente keto 🥑</h3>
+              <p className="text-xs text-gray-600 mb-4 max-w-sm mx-auto">
                 Puedo ayudarte con recetas, planes nutricionales y conectarte con especialistas
               </p>
             </div>
@@ -386,9 +397,9 @@ export default function ImprovedAIChat({ onClose, isFloating = false }: Improved
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              className="space-y-2"
+              className="space-y-2 max-w-2xl mx-auto"
             >
-              <p className="text-xs font-medium text-gray-500 text-center mb-3">Prueba preguntando:</p>
+              <p className="text-xs font-medium text-gray-500 text-center mb-2">Prueba preguntando:</p>
               <div className="grid grid-cols-2 gap-2">
                 {quickSuggestions.map((suggestion, idx) => (
                   <motion.button
@@ -397,10 +408,10 @@ export default function ImprovedAIChat({ onClose, isFloating = false }: Improved
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ delay: idx * 0.05 }}
                     onClick={() => handleSuggestionClick(suggestion.text)}
-                    className="flex items-center gap-2 p-3 bg-white border border-gray-200 rounded-xl hover:border-emerald-400 hover:shadow-md transition-all text-left group"
+                    className="flex items-center gap-2 p-2.5 bg-white border border-gray-200 rounded-lg hover:border-emerald-400 hover:shadow-sm transition-all text-left group"
                   >
-                    <span className="text-2xl">{suggestion.icon}</span>
-                    <span className="text-xs font-medium text-gray-700 group-hover:text-emerald-600 transition-colors">{suggestion.text}</span>
+                    <span className="text-xl">{suggestion.icon}</span>
+                    <span className="text-xs font-medium text-gray-700 group-hover:text-emerald-600 transition-colors line-clamp-2">{suggestion.text}</span>
                   </motion.button>
                 ))}
               </div>
@@ -502,12 +513,12 @@ export default function ImprovedAIChat({ onClose, isFloating = false }: Improved
         </div>
 
         {/* Input Area - Clean & Professional */}
-        <div className="p-4 bg-white border-t border-gray-200 rounded-b-2xl">
+        <div className="p-3 bg-white border-t border-gray-200 rounded-b-2xl flex-shrink-0">
           {!isPro && messageCount >= WARNING_THRESHOLD && (
             <motion.div
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
-              className="mb-3 p-3 bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-lg text-xs text-amber-900 flex items-center justify-between"
+              className="mb-2 p-2 bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-lg text-xs text-amber-900 flex items-center justify-between"
             >
               <span>
                 <span className="font-semibold">{FREE_MESSAGE_LIMIT - messageCount} mensaje{(FREE_MESSAGE_LIMIT - messageCount) !== 1 ? 's' : ''}</span> restante{(FREE_MESSAGE_LIMIT - messageCount) !== 1 ? 's' : ''} en modo gratuito
@@ -529,17 +540,17 @@ export default function ImprovedAIChat({ onClose, isFloating = false }: Improved
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={handleKeyDown}
                 placeholder={quickSuggestions[placeholderIndex].text}
-                className="w-full px-4 py-3 pr-11 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm placeholder:text-gray-400 bg-gray-50 focus:bg-white transition-colors resize-none overflow-hidden min-h-[48px] max-h-[120px]"
+                className="w-full px-3 py-2.5 pr-10 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm placeholder:text-gray-400 bg-white transition-colors resize-none overflow-y-auto min-h-[42px] max-h-[120px]"
                 disabled={isLoading || (!isPro && messageCount >= FREE_MESSAGE_LIMIT)}
                 rows={1}
               />
               <button
                 type="button"
                 onClick={toggleVoiceInput}
-                className={`absolute right-2.5 bottom-3 p-2 rounded-lg transition-all ${
+                className={`absolute right-2 bottom-2 p-1.5 rounded-lg transition-all ${
                   isListening
                     ? 'bg-red-500 text-white animate-pulse'
-                    : 'bg-white text-gray-600 hover:bg-gray-100 border border-gray-200'
+                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                 }`}
                 title={isListening ? 'Detener' : 'Usar voz'}
               >
@@ -549,7 +560,7 @@ export default function ImprovedAIChat({ onClose, isFloating = false }: Improved
             <button
               type="submit"
               disabled={!input.trim() || isLoading || (!isPro && messageCount >= FREE_MESSAGE_LIMIT)}
-              className="px-5 py-3 bg-emerald-500 text-white rounded-xl hover:bg-emerald-600 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors flex items-center gap-2 text-sm font-semibold shadow-sm h-[48px]"
+              className="px-4 py-2.5 bg-emerald-500 text-white rounded-lg hover:bg-emerald-600 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors flex items-center gap-2 text-sm font-semibold shadow-sm h-[42px]"
             >
               <Send className="w-4 h-4" />
             </button>
