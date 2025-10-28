@@ -38,14 +38,15 @@ export default function ChatIAPage() {
     <div className="min-h-screen bg-gray-50">
       <Navigation />
       
-      <div className="max-w-7xl mx-auto px-4 py-4">
+      <div className="max-w-7xl mx-auto px-4 py-4 sm:py-6">
         <div className={`grid gap-4 transition-all duration-300 ${showSidebar ? 'lg:grid-cols-[1fr_320px]' : 'lg:grid-cols-1'}`}>
-          {/* Chat Interface - Takes more space */}
-          <div className="relative">
+          {/* Chat Interface - Takes more space, centered when sidebar is hidden */}
+          <div className={`relative ${!showSidebar ? 'flex justify-center' : ''}`}>
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.3 }}
+              className="w-full"
             >
               <ImprovedAIChat />
             </motion.div>
