@@ -74,8 +74,11 @@ export default function ImprovedAIChat({ onClose, isFloating = false }: Improved
   const [selectedNutritionist, setSelectedNutritionist] = useState<string | null>(null);
   const [placeholderIndex, setPlaceholderIndex] = useState(0);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const messagesContainerRef = useRef<HTMLDivElement>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
   const recognitionRef = useRef<ISpeechRecognition | null>(null);
   const [showSuggestions, setShowSuggestions] = useState(true);
+  const [userHasScrolled, setUserHasScrolled] = useState(false);
 
   useEffect(() => {
     // Rotate placeholder text every 3 seconds
@@ -119,8 +122,35 @@ export default function ImprovedAIChat({ onClose, isFloating = false }: Improved
   }, []);
 
   useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
+    // Auto-scroll only if user hasn't manually scrolled up
+    if (!userHasScrolled) {
+      scrollToBottom();
+    }
+  }, [messages, userHasScrolled]);
+
+  // Handle scroll to detect when user scrolls up
+  useEffect(() => {
+    const container = messagesContainerRef.current;
+    if (!container) return;
+
+    const handleScroll = () => {
+      const { scrollTop, scrollHeight, clientHeight } = container;
+      const isAtBottom = scrollHeight - scrollTop - clientHeight < 50;
+      setUserHasScrolled(!isAtBottom);
+    };
+
+    container.addEventListener('scroll', handleScroll);
+    return () => container.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  // Auto-resize textarea
+  useEffect(() => {
+    const textarea = textareaRef.current;
+    if (!textarea) return;
+    
+    textarea.style.height = 'auto';
+    textarea.style.height = Math.min(textarea.scrollHeight, 120) + 'px';
+  }, [input]);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -166,6 +196,7 @@ export default function ImprovedAIChat({ onClose, isFloating = false }: Improved
     setInput('');
     setIsLoading(true);
     setMessageCount(prev => prev + 1);
+    setUserHasScrolled(false); // Reset scroll flag when sending new message
 
     try {
       const response = await fetch('/api/chat', {
@@ -242,6 +273,13 @@ export default function ImprovedAIChat({ onClose, isFloating = false }: Improved
     sendMessage(input);
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      sendMessage(input);
+    }
+  };
+
   const openScheduleModal = (nutritionistId: string) => {
     if (!isPro) {
       setShowProModal(true);
@@ -275,7 +313,11 @@ export default function ImprovedAIChat({ onClose, isFloating = false }: Improved
         initial={{ opacity: 0, y: isFloating ? 20 : 0 }}
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: isFloating ? 20 : 0 }}
-        className={`flex flex-col ${isFloating ? 'h-[600px] w-full max-w-md' : 'h-[calc(100vh-120px)] min-h-[500px] max-h-[900px]'} bg-white rounded-2xl shadow-xl border border-gray-200`}
+        className={`flex flex-col ${
+          isFloating 
+            ? 'h-[600px] w-full max-w-md' 
+            : 'h-[calc(100vh-140px)] w-full max-w-4xl mx-auto'
+        } bg-white rounded-2xl shadow-xl border border-gray-200`}
       >
         {/* Clean Header */}
         <div className="bg-white border-b border-gray-200 px-4 py-3 rounded-t-2xl flex items-center justify-between">
@@ -319,7 +361,10 @@ export default function ImprovedAIChat({ onClose, isFloating = false }: Improved
         </div>
 
         {/* Messages - Clean Design */}
-        <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50">
+        <div 
+          ref={messagesContainerRef}
+          className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50"
+        >
           {messages.length === 0 && (
             <div className="text-center py-6">
               <div className="inline-flex items-center justify-center w-16 h-16 bg-emerald-500 rounded-full mb-4">
@@ -472,20 +517,22 @@ export default function ImprovedAIChat({ onClose, isFloating = false }: Improved
             </motion.div>
           )}
           
-          <form onSubmit={handleFormSubmit} className="flex gap-2">
+          <form onSubmit={handleFormSubmit} className="flex gap-2 items-end">
             <div className="flex-1 relative">
-              <input
-                type="text"
+              <textarea
+                ref={textareaRef}
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
+                onKeyDown={handleKeyDown}
                 placeholder={quickSuggestions[placeholderIndex].text}
-                className="w-full px-4 py-3 pr-11 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm placeholder:text-gray-400 bg-gray-50 focus:bg-white transition-colors"
+                className="w-full px-4 py-3 pr-11 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm placeholder:text-gray-400 bg-gray-50 focus:bg-white transition-colors resize-none overflow-hidden min-h-[48px] max-h-[120px]"
                 disabled={isLoading || (!isPro && messageCount >= FREE_MESSAGE_LIMIT)}
+                rows={1}
               />
               <button
                 type="button"
                 onClick={toggleVoiceInput}
-                className={`absolute right-2.5 top-1/2 -translate-y-1/2 p-2 rounded-lg transition-all ${
+                className={`absolute right-2.5 bottom-3 p-2 rounded-lg transition-all ${
                   isListening
                     ? 'bg-red-500 text-white animate-pulse'
                     : 'bg-white text-gray-600 hover:bg-gray-100 border border-gray-200'
@@ -498,7 +545,7 @@ export default function ImprovedAIChat({ onClose, isFloating = false }: Improved
             <button
               type="submit"
               disabled={!input.trim() || isLoading || (!isPro && messageCount >= FREE_MESSAGE_LIMIT)}
-              className="px-5 py-3 bg-emerald-500 text-white rounded-xl hover:bg-emerald-600 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors flex items-center gap-2 text-sm font-semibold shadow-sm"
+              className="px-5 py-3 bg-emerald-500 text-white rounded-xl hover:bg-emerald-600 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors flex items-center gap-2 text-sm font-semibold shadow-sm h-[48px]"
             >
               <Send className="w-4 h-4" />
             </button>
