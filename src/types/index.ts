@@ -169,3 +169,56 @@ export interface ShoppingList {
   items: ShoppingListItem[];
   createdFrom?: string; // 'meal-plan' or 'manual'
 }
+
+// Forum Types
+export interface ForumUser {
+  id: string;
+  username: string;
+  avatar: string;
+  joinDate: Date;
+  postCount: number;
+  karma: number;
+}
+
+export interface ForumCommunity {
+  id: string;
+  name: string;
+  description: string;
+  icon: string;
+  color: string;
+  memberCount: number;
+  postCount: number;
+  category: string;
+  rules?: string[];
+  moderators?: string[];
+}
+
+export interface ForumPost {
+  id: string;
+  communityId: string;
+  userId: string;
+  username: string;
+  userAvatar: string;
+  title: string;
+  content: string;
+  timestamp: Date;
+  upvotes: number;
+  downvotes: number;
+  commentCount: number;
+  tags?: string[];
+  aiSummary?: string;
+}
+
+export interface ForumComment {
+  id: string;
+  postId: string;
+  userId: string;
+  username: string;
+  userAvatar: string;
+  content: string;
+  timestamp: Date;
+  upvotes: number;
+  downvotes: number;
+  parentId?: string; // for nested comments
+  replies?: ForumComment[];
+}

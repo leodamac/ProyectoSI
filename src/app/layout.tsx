@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { CartProvider } from "@/components/CartContext";
+import { ForumProvider } from "@/context/ForumContext";
 
 export const metadata: Metadata = {
   title: "Alkadami Keto - Tu Asistente Inteligente de Nutrición Keto",
@@ -16,7 +17,9 @@ export default function RootLayout({
     <html lang="es">
       <body className="antialiased">
         <CartProvider>
-          {children}
+          <ForumProvider>
+            {children}
+          </ForumProvider>
         </CartProvider>
       </body>
     </html>

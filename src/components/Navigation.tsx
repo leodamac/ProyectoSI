@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useCart } from './CartContext';
-import { Sparkles, Users, LayoutGrid } from 'lucide-react';
+import { Sparkles, Users, LayoutGrid, MessageSquare } from 'lucide-react';
 
 export default function Navigation() {
   const { itemCount } = useCart();
@@ -24,6 +24,13 @@ export default function Navigation() {
             >
               <Sparkles className="w-4 h-4" />
               Chat IA
+            </Link>
+            <Link 
+              href="/foro" 
+              className="flex items-center gap-2 text-purple-700 hover:text-purple-800 font-semibold bg-purple-50 px-4 py-2 rounded-lg transition-colors"
+            >
+              <MessageSquare className="w-4 h-4" />
+              Foro
             </Link>
             <Link 
               href="/nutricionistas" 
