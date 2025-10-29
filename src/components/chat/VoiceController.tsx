@@ -13,11 +13,8 @@ export function VoiceController({ onTranscript }: VoiceControllerProps) {
   const [status, setStatus] = useState<'idle' | 'listening' | 'processing'>('idle');
   const [showFallback, setShowFallback] = useState(false);
 
-  const { isListening, isSupported, start, stop } = useSpeechToText({
-    lang: 'es-ES',
-    continuous: false,
-    interimResults: false,
-    onResult: (text, isFinal) => {
+  const { listening, isSupported, startRecognition, stopRecognition } = useSpeechToText(
+    (text, isFinal) => {
       if (isFinal) {
         setStatus('processing');
         if (onTranscript) {
@@ -29,26 +26,16 @@ export function VoiceController({ onTranscript }: VoiceControllerProps) {
           setStatus('idle');
         }, 500);
       }
-    },
-    onError: (error) => {
-      console.error('Speech recognition error:', error);
-      setStatus('idle');
-      setShowFallback(true);
-      
-      // Hide fallback message after 3 seconds
-      setTimeout(() => {
-        setShowFallback(false);
-      }, 3000);
-    },
-  });
+    }
+  );
 
   useEffect(() => {
-    if (isListening) {
+    if (listening) {
       setStatus('listening');
     } else if (status === 'listening') {
       setStatus('idle');
     }
-  }, [isListening, status]);
+  }, [listening, status]);
 
   const toggleListening = () => {
     if (!isSupported) {
@@ -57,11 +44,11 @@ export function VoiceController({ onTranscript }: VoiceControllerProps) {
       return;
     }
 
-    if (isListening) {
-      stop();
+    if (listening) {
+      stopRecognition();
       setStatus('idle');
     } else {
-      start();
+      startRecognition();
     }
   };
 
