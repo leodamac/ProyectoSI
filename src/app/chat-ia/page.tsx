@@ -2,6 +2,8 @@
 
 import Navigation from '@/components/Navigation';
 import ImprovedAIChat from '@/components/ImprovedAIChat';
+import VoiceController from '@/components/VoiceController';
+import { ChatShell } from '@/components/chat/ChatShell';
 import { ChatProvider } from '@/context/ChatContext';
 import { motion, AnimatePresence } from 'framer-motion';
 import { MessageCircle, Mic, Zap, TrendingUp, Users, Calendar, CheckCircle2, Clock, ChevronLeft, ChevronRight } from 'lucide-react';
@@ -65,6 +67,36 @@ export default function ChatIAPage() {
                 {showSidebar ? <ChevronRight className="w-4 h-4 text-gray-600" /> : <ChevronLeft className="w-4 h-4 text-gray-600" />}
               </motion.button>
             </div>
+    <div className="min-h-screen bg-gray-50">
+      <Navigation />
+      
+      <div className="max-w-7xl mx-auto px-4 py-4 sm:py-6">
+        <div className={`grid gap-4 transition-all duration-300 ${showSidebar ? 'lg:grid-cols-[1fr_320px]' : 'lg:grid-cols-1'}`}>
+          {/* Chat Interface - Takes more space, centered when sidebar is hidden */}
+          <div className={`relative ${!showSidebar ? 'flex justify-center' : ''}`}>
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3 }}
+              className="w-full"
+            >
+              <ChatProvider>
+                <ChatShell />
+              </ChatProvider>
+            </motion.div>
+            
+            {/* Toggle Sidebar Button */}
+            <motion.button
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.5 }}
+              onClick={() => setShowSidebar(!showSidebar)}
+              className="absolute -right-3 top-4 z-10 w-8 h-8 bg-white border-2 border-gray-200 rounded-full shadow-lg hover:bg-gray-50 focus:ring-2 focus:ring-emerald-500 focus:outline-none transition-all flex items-center justify-center lg:flex hidden"
+              title={showSidebar ? "Ocultar barra lateral" : "Mostrar barra lateral"}
+            >
+              {showSidebar ? <ChevronRight className="w-4 h-4 text-gray-600" /> : <ChevronLeft className="w-4 h-4 text-gray-600" />}
+            </motion.button>
+          </div>
 
           {/* Streamlined Sidebar - Professional & Clean - Collapsible */}
           <AnimatePresence>
@@ -76,6 +108,15 @@ export default function ChatIAPage() {
                 transition={{ duration: 0.3 }}
                 className="space-y-4 lg:block hidden"
               >
+            {/* Voice Controller - NEW */}
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3, delay: 0.05 }}
+            >
+              <VoiceController simulatedMode={true} />
+            </motion.div>
+
             {/* Key Features - Clean Widget */}
             <motion.div
               initial={{ opacity: 0, y: 10 }}
