@@ -2,11 +2,9 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Send, X, Crown, Calendar, MessageCircle, Zap, Sparkles, Clock } from 'lucide-react';
+import { Send, X, Crown, Calendar, MessageCircle, Zap, Sparkles, Clock, HelpCircle } from 'lucide-react';
 import { nutritionists } from '@/data/nutritionists';
-import { useChatContext } from '@/context/ChatContext';
 import { useTextToSpeech } from '@/hooks/useTextToSpeech';
-import VoiceController from './VoiceController';
 
 interface Message {
   id: string;
@@ -18,6 +16,7 @@ interface Message {
 interface ImprovedAIChatProps {
   onClose?: () => void;
   isFloating?: boolean;
+  onHelpClick?: () => void;
 }
 
 // Message limits
@@ -38,8 +37,7 @@ const quickSuggestions = [
   { icon: "👨‍⚕️", text: "Consultar con nutricionista", category: "nutricionista" },
 ];
 
-export default function ImprovedAIChat({ onClose, isFloating = false }: ImprovedAIChatProps) {
-  const { interimTranscript, setInterimTranscript } = useChatContext();
+export default function ImprovedAIChat({ onClose, isFloating = false, onHelpClick }: ImprovedAIChatProps) {
   const { speak } = useTextToSpeech();
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
@@ -56,7 +54,6 @@ export default function ImprovedAIChat({ onClose, isFloating = false }: Improved
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [showSuggestions, setShowSuggestions] = useState(true);
   const [userHasScrolled, setUserHasScrolled] = useState(false);
-  const [showVoiceControls, setShowVoiceControls] = useState(false);
 
   useEffect(() => {
     // Rotate placeholder text every 3 seconds
@@ -66,13 +63,6 @@ export default function ImprovedAIChat({ onClose, isFloating = false }: Improved
 
     return () => clearInterval(interval);
   }, []);
-
-  // Update input field when interim transcript changes
-  useEffect(() => {
-    if (interimTranscript) {
-      setInput(interimTranscript);
-    }
-  }, [interimTranscript]);
 
   useEffect(() => {
     // Auto-scroll only if user hasn't manually scrolled up
@@ -218,13 +208,6 @@ export default function ImprovedAIChat({ onClose, isFloating = false }: Improved
     }
   };
 
-  const handleTranscriptComplete = (transcript: string) => {
-    setInput(transcript);
-    setInterimTranscript('');
-    // Auto-send after a short delay
-    setTimeout(() => sendMessage(transcript), 100);
-  };
-
   const handleSuggestionClick = (suggestion: string) => {
     setInput(suggestion);
     // Auto-send after a short delay to show the text being set
@@ -297,6 +280,15 @@ export default function ImprovedAIChat({ onClose, isFloating = false }: Improved
             </div>
           </div>
           <div className="flex items-center gap-2">
+            {onHelpClick && (
+              <button
+                onClick={onHelpClick}
+                className="p-1.5 hover:bg-gray-100 rounded-full transition-colors"
+                title="Ayuda y consejos"
+              >
+                <HelpCircle className="w-4 h-4 text-gray-600" />
+              </button>
+            )}
             {!isPro && (
               <button
                 onClick={() => setShowProModal(true)}
@@ -480,16 +472,6 @@ export default function ImprovedAIChat({ onClose, isFloating = false }: Improved
             </motion.div>
           )}
 
-          {/* Voice Controller */}
-          {showVoiceControls && (
-            <div className="mb-3">
-              <VoiceController
-                onTranscriptComplete={handleTranscriptComplete}
-                disabled={isLoading || (!isPro && messageCount >= FREE_MESSAGE_LIMIT)}
-              />
-            </div>
-          )}
-          
           <form onSubmit={handleFormSubmit} className="flex gap-2 items-end">
             <div className="flex-1 relative">
               <textarea
@@ -498,19 +480,11 @@ export default function ImprovedAIChat({ onClose, isFloating = false }: Improved
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={handleKeyDown}
                 placeholder={quickSuggestions[placeholderIndex].text}
-                className="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm placeholder:text-gray-400 bg-white transition-colors resize-none overflow-y-auto min-h-[42px] max-h-[120px]"
+                className="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm placeholder:text-gray-400 bg-gray-50 focus:bg-white transition-colors resize-none overflow-y-auto min-h-[42px] max-h-[120px]"
                 disabled={isLoading || (!isPro && messageCount >= FREE_MESSAGE_LIMIT)}
                 rows={1}
               />
             </div>
-            <button
-              type="button"
-              onClick={() => setShowVoiceControls(!showVoiceControls)}
-              className="px-4 py-2.5 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors flex items-center gap-2 text-sm font-semibold shadow-sm h-[42px]"
-              title="Controles de voz"
-            >
-              🎤
-            </button>
             <button
               type="submit"
               disabled={!input.trim() || isLoading || (!isPro && messageCount >= FREE_MESSAGE_LIMIT)}

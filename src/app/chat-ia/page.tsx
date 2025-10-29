@@ -4,12 +4,12 @@ import Navigation from '@/components/Navigation';
 import ImprovedAIChat from '@/components/ImprovedAIChat';
 import { ChatProvider } from '@/context/ChatContext';
 import { motion, AnimatePresence } from 'framer-motion';
-import { MessageCircle, Mic, Zap, TrendingUp, Users, Calendar, CheckCircle2, Clock, ChevronLeft, ChevronRight } from 'lucide-react';
+import { MessageCircle, Zap, TrendingUp, Users, Calendar, CheckCircle2, Clock, ChevronLeft, ChevronRight } from 'lucide-react';
 import Link from 'next/link';
 import { useState } from 'react';
 
 export default function ChatIAPage() {
-  const [showSidebar, setShowSidebar] = useState(true);
+  const [showSidebar, setShowSidebar] = useState(false);
   const [currentTipIndex, setCurrentTipIndex] = useState(0);
 
   const tips = [
@@ -50,7 +50,7 @@ export default function ChatIAPage() {
                 transition={{ duration: 0.3 }}
                 className="w-full"
               >
-                <ImprovedAIChat />
+                <ImprovedAIChat onHelpClick={() => setShowSidebar(!showSidebar)} />
               </motion.div>
               
               {/* Toggle Sidebar Button */}
@@ -94,18 +94,6 @@ export default function ChatIAPage() {
                     <h4 className="font-semibold text-gray-900 text-sm">Chat Inteligente</h4>
                     <p className="text-xs text-gray-600">
                       Conversaciones naturales con IA especializada
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex items-start gap-3">
-                  <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <Mic className="w-4 h-4 text-blue-600" />
-                  </div>
-                  <div>
-                    <h4 className="font-semibold text-gray-900 text-sm">Comando de Voz</h4>
-                    <p className="text-xs text-gray-600">
-                      Interactúa con tu voz, sin escribir
                     </p>
                   </div>
                 </div>
