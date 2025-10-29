@@ -190,8 +190,9 @@ export default function ImprovedAIChat({ onClose, isFloating = false }: Improved
                   }
                   return newMessages;
                 });
-              } catch {
-                // Ignore parse errors
+              } catch (error) {
+                // Ignore parse errors, but log for debugging
+                console.debug('Parse error:', error);
               }
             }
           }

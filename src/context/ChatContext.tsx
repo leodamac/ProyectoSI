@@ -1,15 +1,6 @@
 'use client';
 
 import { createContext, useContext, useState, ReactNode, useCallback } from 'react';
-
-interface ChatContextType {
-  interimTranscript: string;
-  setInterimTranscript: (transcript: string) => void;
-  analyserNode: AnalyserNode | null;
-  setAnalyserNode: (node: AnalyserNode | null) => void;
-  audioContext: AudioContext | null;
-  setAudioContext: (context: AudioContext | null) => void;
-import React, { createContext, useContext, useState, useCallback, ReactNode } from 'react';
 import { simulateStreamingResponse } from '@/utils/simulateResponses';
 
 export interface Message {
@@ -24,57 +15,22 @@ interface ChatContextType {
   isLoading: boolean;
   sendMessage: (content: string) => Promise<void>;
   clearMessages: () => void;
+  interimTranscript: string;
+  setInterimTranscript: (transcript: string) => void;
+  analyserNode: AnalyserNode | null;
+  setAnalyserNode: (node: AnalyserNode | null) => void;
+  audioContext: AudioContext | null;
+  setAudioContext: (context: AudioContext | null) => void;
 }
 
 const ChatContext = createContext<ChatContextType | undefined>(undefined);
 
 export function ChatProvider({ children }: { children: ReactNode }) {
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
   const [interimTranscript, setInterimTranscript] = useState('');
   const [analyserNode, setAnalyserNode] = useState<AnalyserNode | null>(null);
   const [audioContext, setAudioContext] = useState<AudioContext | null>(null);
-
-  const handleSetAnalyserNode = useCallback((node: AnalyserNode | null) => {
-    setAnalyserNode(node);
-  }, []);
-
-  const handleSetAudioContext = useCallback((context: AudioContext | null) => {
-    setAudioContext(context);
-  }, []);
-
-  const value: ChatContextType = {
-    interimTranscript,
-    setInterimTranscript,
-    analyserNode,
-    setAnalyserNode: handleSetAnalyserNode,
-    audioContext,
-    setAudioContext: handleSetAudioContext,
-  };
-
-  return <ChatContext.Provider value={value}>{children}</ChatContext.Provider>;
-}
-
-export function useChatContext() {
-  const context = useContext(ChatContext);
-  if (!context) {
-    throw new Error('useChatContext must be used within a ChatProvider');
-  }
-  return context;
-}
-export function useChatContext() {
-  const context = useContext(ChatContext);
-  if (!context) {
-    throw new Error('useChatContext must be used within ChatProvider');
-  }
-  return context;
-}
-
-interface ChatProviderProps {
-  children: ReactNode;
-}
-
-export function ChatProvider({ children }: ChatProviderProps) {
-  const [messages, setMessages] = useState<Message[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
 
   const sendMessage = useCallback(async (content: string) => {
     if (!content.trim()) return;
@@ -140,16 +96,34 @@ export function ChatProvider({ children }: ChatProviderProps) {
     setMessages([]);
   }, []);
 
-  return (
-    <ChatContext.Provider
-      value={{
-        messages,
-        isLoading,
-        sendMessage,
-        clearMessages,
-      }}
-    >
-      {children}
-    </ChatContext.Provider>
-  );
+  const handleSetAnalyserNode = useCallback((node: AnalyserNode | null) => {
+    setAnalyserNode(node);
+  }, []);
+
+  const handleSetAudioContext = useCallback((context: AudioContext | null) => {
+    setAudioContext(context);
+  }, []);
+
+  const value: ChatContextType = {
+    messages,
+    isLoading,
+    sendMessage,
+    clearMessages,
+    interimTranscript,
+    setInterimTranscript,
+    analyserNode,
+    setAnalyserNode: handleSetAnalyserNode,
+    audioContext,
+    setAudioContext: handleSetAudioContext,
+  };
+
+  return <ChatContext.Provider value={value}>{children}</ChatContext.Provider>;
+}
+
+export function useChatContext() {
+  const context = useContext(ChatContext);
+  if (!context) {
+    throw new Error('useChatContext must be used within a ChatProvider');
+  }
+  return context;
 }
