@@ -212,13 +212,14 @@ export function PersonalizedProvider({ children }: { children: ReactNode }) {
     const plan = mealPlans.find(p => p.id === mealPlanId);
     if (!plan) return;
 
-    // This is a simplified version - in production, you'd aggregate ingredients from recipes
+    // Simplified version - generates sample shopping list
+    // TODO: In production, aggregate actual ingredients from recipes in the meal plan
     const items: ShoppingListItem[] = [
-      { id: '1', name: 'Huevo', category: 'meats', quantity: '6', unit: 'und', checked: false, emoji: '🥚' },
+      { id: '1', name: 'Huevo', category: 'dairy', quantity: '6', unit: 'und', checked: false, emoji: '🥚' },
       { id: '2', name: 'Carne', category: 'meats', quantity: '225', unit: 'g', checked: false, emoji: '🥩' },
       { id: '3', name: 'Kiwi', category: 'fruits', quantity: '4', unit: 'und', checked: false, emoji: '🥝' },
       { id: '4', name: 'Naranja', category: 'fruits', quantity: '3', unit: 'und', checked: false, emoji: '🍊' },
-      { id: '5', name: 'Platano', category: 'fruits', quantity: '7', unit: 'und', checked: false, emoji: '🍌' },
+      { id: '5', name: 'Plátano', category: 'fruits', quantity: '7', unit: 'und', checked: false, emoji: '🍌' },
     ];
 
     createShoppingList({
