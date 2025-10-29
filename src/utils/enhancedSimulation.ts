@@ -20,7 +20,7 @@ export interface EnhancedResponse {
 }
 
 /**
- * Simulates AI-powered review summary
+ * Simulates AI-powered review summary with keyword extraction
  */
 function summarizeReviews(nutritionistId: string): string {
   const reviews = nutritionistReviews.filter(r => r.nutritionistId === nutritionistId);
@@ -30,7 +30,47 @@ function summarizeReviews(nutritionistId: string): string {
   const avgRating = reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length;
   const positiveCount = reviews.filter(r => r.rating >= 4).length;
   
-  return `\n\n📊 **Resumen de ${reviews.length} reseñas** (IA):\n• Calificación promedio: ${avgRating.toFixed(1)}/5.0\n• ${positiveCount} reseñas muy positivas\n• Los pacientes destacan: profesionalismo, resultados efectivos, y seguimiento personalizado`;
+  // Extract keywords from reviews
+  const stopwords = [
+    'el', 'la', 'los', 'las', 'un', 'una', 'unos', 'unas', 'de', 'del', 'y', 'a', 'en', 'que', 'con', 'por', 'para', 
+    'es', 'muy', 'lo', 'su', 'al', 'le', 'se', 'me', 'mi', 'tu', 'sus', 'ha', 'pero', 'como', 'más', 'ya', 'no', 
+    'sí', 'fue', 'gran', 'todo', 'también', 'porque', 'sobre', 'sin', 'hace', 'bien', 'son', 'si', 'nos', 'da'
+  ];
+  
+  const positiveKeywords = [
+    'profesional', 'profesionalismo', 'amable', 'resultados', 'efectivos', 'personalizado', 'seguimiento', 
+    'atención', 'dedicación', 'experiencia', 'conocimiento', 'ayuda', 'recomiendo', 'excelente', 'confianza', 
+    'mejor', 'apoyo', 'trato', 'paciente', 'explica', 'detallado', 'motiva', 'responsable', 'cambió', 'energía'
+  ];
+  
+  const wordCounts: Record<string, number> = {};
+  
+  for (const review of reviews) {
+    const words = review.comment
+      .toLowerCase()
+      .replace(/[.,;:¡!¿?\(\)\[\]"]/g, '')
+      .split(/\s+/)
+      .filter(w => w && !stopwords.includes(w));
+    
+    for (const word of words) {
+      if (positiveKeywords.includes(word)) {
+        wordCounts[word] = (wordCounts[word] || 0) + 1;
+      }
+    }
+  }
+  
+  // Get top 3 keywords
+  const sortedKeywords = Object.entries(wordCounts)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 3)
+    .map(([word]) => word);
+  
+  let highlights = '';
+  if (sortedKeywords.length > 0) {
+    highlights = `\n• Los pacientes destacan: ${sortedKeywords.join(', ')}`;
+  }
+  
+  return `\n\n📊 **Resumen de ${reviews.length} reseñas** (IA):\n• Calificación promedio: ${avgRating.toFixed(1)}/5.0\n• ${positiveCount} reseñas muy positivas${highlights}`;
 }
 
 /**
@@ -104,7 +144,7 @@ export function categorizeWithTriggers(
     const isSnackRequest = /(snack|botana|merienda|tentempié)/i.test(lower);
     const isChocolateRequest = /(chocolate|cacao|dulce)/i.test(lower);
     
-    let recommendedProducts = [...sampleProducts];
+    let recommendedProducts;
     
     if (isChocolateRequest) {
       recommendedProducts = sampleProducts.filter(p => 
@@ -211,12 +251,16 @@ export function categorizeWithTriggers(
 
 /**
  * Streaming simulation with enhanced responses
+ * @param userMessage - The user's message to process
+ * @param conversationHistory - Array of previous messages for context
+ * @param userLocation - Optional user location for location-based features
+ * @param wordDelayMs - Delay in milliseconds between each word (default: 30ms)
  */
 export async function* simulateEnhancedStreamingResponse(
   userMessage: string,
   conversationHistory: Array<{ role: string; content: string }> = [],
   userLocation?: { latitude: number; longitude: number },
-  wordDelay: number = 30
+  wordDelayMs: number = 30
 ): AsyncGenerator<{ text: string; trigger?: SimulationTrigger; shouldRequestLocation?: boolean }, void, unknown> {
   const response = categorizeWithTriggers(userMessage, conversationHistory, userLocation);
   const words = response.text.split(' ');
@@ -226,7 +270,7 @@ export async function* simulateEnhancedStreamingResponse(
   
   for (const word of words) {
     yield { text: word + ' ', trigger: undefined };
-    await new Promise((resolve) => setTimeout(resolve, wordDelay));
+    await new Promise((resolve) => setTimeout(resolve, wordDelayMs));
   }
   
   // Send trigger data at the end if any

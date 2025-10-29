@@ -33,26 +33,34 @@ interface ForumPostCard {
   commentCount: number;
 }
 
-interface ContextualCardsProps {
-  type: 'product' | 'nutritionist' | 'forum';
-  data: unknown;
-  onAction?: (action: string, data: unknown) => void;
-}
+type ContextualCardsProps =
+  | {
+      type: 'product';
+      data: ProductCard[];
+      onAction?: (action: 'add-to-cart', data: ProductCard) => void;
+    }
+  | {
+      type: 'nutritionist';
+      data: Nutritionist;
+      onAction?: (action: 'schedule', data: Nutritionist) => void;
+    }
+  | {
+      type: 'forum';
+      data: ForumPostCard[];
+      onAction?: (action: 'view-post', data: ForumPostCard) => void;
+    };
 
-export default function ContextualCards({ type, data, onAction }: ContextualCardsProps) {
-  if (type === 'product') {
-    const products = data as ProductCard[];
-    return <ProductCards products={products} onAddToCart={(product) => onAction?.('add-to-cart', product)} />;
+export default function ContextualCards(props: ContextualCardsProps) {
+  if (props.type === 'product') {
+    return <ProductCards products={props.data} onAddToCart={(product) => props.onAction?.('add-to-cart', product)} />;
   }
 
-  if (type === 'nutritionist') {
-    const nutritionist = data as Nutritionist;
-    return <NutritionistCard nutritionist={nutritionist} onSchedule={() => onAction?.('schedule', nutritionist)} />;
+  if (props.type === 'nutritionist') {
+    return <NutritionistCard nutritionist={props.data} onSchedule={() => props.onAction?.('schedule', props.data)} />;
   }
 
-  if (type === 'forum') {
-    const posts = data as ForumPostCard[];
-    return <ForumCards posts={posts} onView={(post) => onAction?.('view-post', post)} />;
+  if (props.type === 'forum') {
+    return <ForumCards posts={props.data} onView={(post) => props.onAction?.('view-post', post)} />;
   }
 
   return null;

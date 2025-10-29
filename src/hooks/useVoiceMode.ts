@@ -41,7 +41,14 @@ export function useVoiceMode(initialMode: InteractionMode = 'text-text'): UseVoi
     maxVisibleMessages: 3,
   });
 
-  const audioManagerRef = useRef<AudioManager>(new AudioManager());
+  const audioManagerRef = useRef<AudioManager | null>(null);
+
+  // Initialize AudioManager once on mount
+  useEffect(() => {
+    if (!audioManagerRef.current) {
+      audioManagerRef.current = new AudioManager();
+    }
+  }, []);
 
   // Update config when mode changes
   useEffect(() => {
@@ -115,6 +122,8 @@ export function useVoiceMode(initialMode: InteractionMode = 'text-text'): UseVoi
 
   const playResponse = useCallback(
     async (text: string, audioSource?: string) => {
+      if (!audioManagerRef.current) return;
+      
       const audioConfig: AudioConfig = audioSource
         ? {
             type: 'file',
@@ -140,6 +149,7 @@ export function useVoiceMode(initialMode: InteractionMode = 'text-text'): UseVoi
   );
 
   const stopAudio = useCallback(() => {
+    if (!audioManagerRef.current) return;
     audioManagerRef.current.stop();
     setIsAudioPlaying(false);
   }, []);
@@ -151,7 +161,7 @@ export function useVoiceMode(initialMode: InteractionMode = 'text-text'): UseVoi
     updateConfig,
     shouldPlayAudio,
     shouldShowMessage,
-    audioManager: audioManagerRef.current,
+    audioManager: audioManagerRef.current!,
     playResponse,
     stopAudio,
     isAudioPlaying,

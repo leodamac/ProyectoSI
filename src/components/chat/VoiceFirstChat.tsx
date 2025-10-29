@@ -175,17 +175,75 @@ export default function VoiceFirstChat() {
   const handleLocationAccept = () => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
-        (position) => {
+        async (position) => {
           setUserLocation({
             latitude: position.coords.latitude,
             longitude: position.coords.longitude,
           });
           setPendingLocationRequest(false);
-          // Resend last message with location
+          
+          // Update the last assistant message with location-based response
           if (messages.length > 0) {
             const lastUserMessage = [...messages].reverse().find(m => m.role === 'user');
             if (lastUserMessage) {
-              sendMessage(lastUserMessage.content);
+              setIsLoading(true);
+              
+              try {
+                const conversationHistory = messages.map(m => ({ role: m.role, content: m.content }));
+                const assistantId = `assistant-location-${Date.now()}`;
+                const assistantMessage: Message = {
+                  id: assistantId,
+                  role: 'assistant',
+                  content: '',
+                  timestamp: new Date(),
+                };
+
+                setMessages(prev => [...prev, assistantMessage]);
+
+                let fullText = '';
+                let trigger: SimulationTrigger | undefined;
+
+                for await (const chunk of simulateEnhancedStreamingResponse(
+                  lastUserMessage.content,
+                  conversationHistory,
+                  { latitude: position.coords.latitude, longitude: position.coords.longitude }
+                )) {
+                  if (chunk.text) {
+                    fullText += chunk.text;
+                    setMessages(prev => {
+                      const updated = [...prev];
+                      const lastMsg = updated[updated.length - 1];
+                      if (lastMsg && lastMsg.id === assistantId) {
+                        lastMsg.content = fullText;
+                      }
+                      return updated;
+                    });
+                  }
+
+                  if (chunk.trigger) {
+                    trigger = chunk.trigger;
+                  }
+                }
+
+                // Update with trigger data
+                setMessages(prev => {
+                  const updated = [...prev];
+                  const lastMsg = updated[updated.length - 1];
+                  if (lastMsg && lastMsg.id === assistantId) {
+                    lastMsg.trigger = trigger;
+                  }
+                  return updated;
+                });
+
+                // Play audio if in voice mode
+                if (shouldPlayAudio(true) && fullText) {
+                  await playResponse(fullText);
+                }
+              } catch (error) {
+                console.error('Error processing location:', error);
+              } finally {
+                setIsLoading(false);
+              }
             }
           }
         },
@@ -491,6 +549,7 @@ export default function VoiceFirstChat() {
                   }
                 }}
                 placeholder="Escribe tu mensaje..."
+                aria-label="Escribe tu mensaje"
                 className="flex-1 px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm placeholder:text-gray-400 bg-gray-50 focus:bg-white transition-colors resize-none overflow-y-auto min-h-[48px] max-h-[120px]"
                 disabled={isLoading}
                 rows={1}

@@ -214,13 +214,25 @@ export class AudioManager {
   }
 
   onEnd(callback: () => void): void {
-    this.ttsProvider.onEnd(callback);
-    this.audioProvider.onEnd(callback);
+    // Set callback only on current provider when it's active
+    if (this.currentProvider) {
+      this.currentProvider.onEnd(callback);
+    } else {
+      // Set on both if no current provider (will be set when play is called)
+      this.ttsProvider.onEnd(callback);
+      this.audioProvider.onEnd(callback);
+    }
   }
 
   onStart(callback: () => void): void {
-    this.ttsProvider.onStart(callback);
-    this.audioProvider.onStart(callback);
+    // Set callback only on current provider when it's active
+    if (this.currentProvider) {
+      this.currentProvider.onStart(callback);
+    } else {
+      // Set on both if no current provider (will be set when play is called)
+      this.ttsProvider.onStart(callback);
+      this.audioProvider.onStart(callback);
+    }
   }
 }
 
