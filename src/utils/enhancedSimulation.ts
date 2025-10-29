@@ -132,8 +132,7 @@ export function categorizeWithTriggers(
   // Forum post citations
   if (/(foro|comunidad|post|discusión|opiniones|experiencias)/i.test(lower)) {
     const relevantPosts = forumPosts.filter(p => {
-      const postLower = p.title.toLowerCase() + ' ' + p.content.toLowerCase();
-      
+      // Filter based on content match
       if (/(receta|cocinar)/i.test(lower)) return p.communityId === 'healthy-foodies';
       if (/(ejercicio|gym|fitness)/i.test(lower)) return p.communityId === 'fitness-tribe';
       if (/(motivación|ánimo)/i.test(lower)) return p.communityId === 'healthy-mind';
@@ -225,9 +224,7 @@ export async function* simulateEnhancedStreamingResponse(
   // Initial delay before starting
   await new Promise((resolve) => setTimeout(resolve, 500));
   
-  let accumulatedText = '';
   for (const word of words) {
-    accumulatedText += word + ' ';
     yield { text: word + ' ', trigger: undefined };
     await new Promise((resolve) => setTimeout(resolve, wordDelay));
   }

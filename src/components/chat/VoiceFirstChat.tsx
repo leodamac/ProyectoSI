@@ -7,7 +7,7 @@
 
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Send, Mic, MicOff, Volume2, VolumeX, Eye, EyeOff, Settings, Sparkles, ChevronDown } from 'lucide-react';
+import { Send, Mic, MicOff, Volume2, VolumeX, Eye, EyeOff, Settings, Sparkles } from 'lucide-react';
 import { useVoiceMode, InteractionMode } from '@/hooks/useVoiceMode';
 import { useSpeechToText } from '@/hooks/useSpeechToText';
 import ContextualCards, { LocationRequestCard } from './ContextualCards';
@@ -25,7 +25,7 @@ interface EnhancedChatProps {
   onClose?: () => void;
 }
 
-export default function VoiceFirstChat({ onClose }: EnhancedChatProps) {
+export default function VoiceFirstChat() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -43,7 +43,6 @@ export default function VoiceFirstChat({ onClose }: EnhancedChatProps) {
     setMode,
     config,
     shouldPlayAudio,
-    shouldShowMessage,
     playResponse,
     stopAudio,
     isAudioPlaying,
@@ -336,7 +335,7 @@ export default function VoiceFirstChat({ onClose }: EnhancedChatProps) {
 
         {/* Messages */}
         <AnimatePresence>
-          {visibleMessages.map((message, index) => {
+          {visibleMessages.map((message) => {
             const isUser = message.role === 'user';
             
             return (

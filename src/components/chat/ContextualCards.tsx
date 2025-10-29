@@ -6,10 +6,9 @@
 
 'use client';
 
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { ShoppingCart, Calendar, Star, MapPin, MessageCircle, ThumbsUp, ExternalLink } from 'lucide-react';
 import { Nutritionist } from '@/types';
-import Link from 'next/link';
 
 interface ProductCard {
   id: string;
