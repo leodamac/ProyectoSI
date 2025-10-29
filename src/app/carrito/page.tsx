@@ -48,7 +48,6 @@ export default function CarritoPage() {
                           src={item.product.image}
                           alt={item.product.name}
                           className="object-cover w-full h-full"
-                          style={{ objectFit: "cover" }}
                         />
                       ) : (
                         item.product.image
