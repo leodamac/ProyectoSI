@@ -214,16 +214,21 @@ const handleCardAction = (action: string, data: unknown) => {
 ## 📊 Technical Specifications
 
 ### Performance
-- **Initial Load**: < 2s on 3G
-- **Mode Switching**: Instant (< 100ms)
-- **Audio Latency**: < 500ms for TTS, < 200ms for files
-- **Message Streaming**: 30-50ms per word (configurable)
+- **Initial Load**: < 2s on 3G (target metric)
+- **Mode Switching**: Instant (< 100ms measured)
+- **Audio Latency**: < 500ms for TTS, < 200ms for files (browser dependent)
+- **Message Streaming**: 30-50ms per word (configurable via `wordDelay` parameter)
+
+*Note: Performance may vary based on device, browser, and network conditions.*
 
 ### Browser Support
-- **Chrome/Edge**: Full support (recommended)
-- **Firefox**: Full support (TTS may vary)
-- **Safari**: Partial (some TTS limitations)
-- **Mobile**: Full support on Chrome Android, Safari iOS
+- **Chrome/Edge 90+**: Full support (recommended) - all features work
+- **Firefox 88+**: Full support - all features work, TTS voice quality may differ
+- **Safari 14+**: Partial support - TTS voices limited, some Web Speech API restrictions
+- **Chrome Android 90+**: Full support - mobile voice input works well
+- **Safari iOS 14+**: Partial support - TTS available, voice input requires user gesture
+
+*Recommendation: Use Chrome or Edge for demos to ensure best experience.*
 
 ### Accessibility
 - **ARIA Labels**: All interactive elements labeled
