@@ -266,6 +266,132 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Personalized Features Section - NEW */}
+      <section className="py-20 bg-gradient-to-br from-purple-50 via-white to-blue-50">
+        <div className="max-w-7xl mx-auto px-4">
+          <motion.div
+            className="text-center mb-16"
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+          >
+            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
+              Herramientas <span className="text-purple-600">Personalizadas</span> para tu Éxito
+            </h2>
+            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+              Organiza tu alimentación con nuestras herramientas inteligentes y aumenta tu fidelización
+            </p>
+          </motion.div>
+
+          <div className="grid md:grid-cols-3 gap-8">
+            {/* Weekly Meal Plan */}
+            <motion.div
+              className="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all border-2 border-green-200"
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.1 }}
+              viewport={{ once: true }}
+            >
+              <div className="text-5xl mb-4 text-center">📅</div>
+              <h3 className="text-2xl font-bold text-gray-900 mb-3 text-center">Tu plan semanal</h3>
+              <p className="text-gray-600 mb-4 text-center">
+                Diseñados para perder grasa o ganar músculo
+              </p>
+              <ul className="space-y-2 mb-6">
+                <li className="flex items-start gap-2 text-sm text-gray-700">
+                  <span className="text-green-500 mt-0.5">✓</span>
+                  <span>Planificación de comidas por día</span>
+                </li>
+                <li className="flex items-start gap-2 text-sm text-gray-700">
+                  <span className="text-green-500 mt-0.5">✓</span>
+                  <span>Seguimiento de calorías y macros</span>
+                </li>
+                <li className="flex items-start gap-2 text-sm text-gray-700">
+                  <span className="text-green-500 mt-0.5">✓</span>
+                  <span>Personalizado según tus objetivos</span>
+                </li>
+              </ul>
+            </motion.div>
+
+            {/* Smart Recipes */}
+            <motion.div
+              className="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all border-2 border-teal-200"
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              viewport={{ once: true }}
+            >
+              <div className="text-5xl mb-4 text-center">🥗</div>
+              <h3 className="text-2xl font-bold text-gray-900 mb-3 text-center">Recetas Inteligentes</h3>
+              <p className="text-gray-600 mb-4 text-center">
+                Miles de recetas para cumplir tus macros
+              </p>
+              <ul className="space-y-2 mb-6">
+                <li className="flex items-start gap-2 text-sm text-gray-700">
+                  <span className="text-teal-500 mt-0.5">✓</span>
+                  <span>Filtrado por macronutrientes</span>
+                </li>
+                <li className="flex items-start gap-2 text-sm text-gray-700">
+                  <span className="text-teal-500 mt-0.5">✓</span>
+                  <span>Información nutricional completa</span>
+                </li>
+                <li className="flex items-start gap-2 text-sm text-gray-700">
+                  <span className="text-teal-500 mt-0.5">✓</span>
+                  <span>Agregar directamente a tu plan</span>
+                </li>
+              </ul>
+            </motion.div>
+
+            {/* Shopping Lists */}
+            <motion.div
+              className="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all border-2 border-blue-200"
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.3 }}
+              viewport={{ once: true }}
+            >
+              <div className="text-5xl mb-4 text-center">🛒</div>
+              <h3 className="text-2xl font-bold text-gray-900 mb-3 text-center">Listas de compras</h3>
+              <p className="text-gray-600 mb-4 text-center">
+                Tu plan convertido en una lista para el súper
+              </p>
+              <ul className="space-y-2 mb-6">
+                <li className="flex items-start gap-2 text-sm text-gray-700">
+                  <span className="text-blue-500 mt-0.5">✓</span>
+                  <span>Generación automática desde plan</span>
+                </li>
+                <li className="flex items-start gap-2 text-sm text-gray-700">
+                  <span className="text-blue-500 mt-0.5">✓</span>
+                  <span>Organización por categorías</span>
+                </li>
+                <li className="flex items-start gap-2 text-sm text-gray-700">
+                  <span className="text-blue-500 mt-0.5">✓</span>
+                  <span>Marca artículos comprados</span>
+                </li>
+              </ul>
+            </motion.div>
+          </div>
+
+          {/* CTA for Personalized Section */}
+          <motion.div
+            className="text-center mt-12"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.4 }}
+            viewport={{ once: true }}
+          >
+            <Link
+              href="/personalizados"
+              className="inline-flex items-center gap-2 bg-gradient-to-r from-purple-600 to-blue-600 text-white px-8 py-4 rounded-xl text-lg font-semibold hover:from-purple-700 hover:to-blue-700 transition-all shadow-lg hover:shadow-xl"
+            >
+              <Sparkles className="w-5 h-5" />
+              Explorar Herramientas Personalizadas →
+            </Link>
+          </motion.div>
+        </div>
+      </section>
+
       {/* Problem/Solution Section */}
       <section className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4">

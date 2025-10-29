@@ -242,6 +242,28 @@ export default function ChatIAPage() {
                 </motion.div>
               </AnimatePresence>
             </motion.div>
+
+            {/* Personalized Sections CTA */}
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3, delay: 0.6 }}
+              className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl border border-purple-200 p-5 shadow-sm"
+            >
+              <div className="flex items-center gap-2 mb-3">
+                <TrendingUp className="w-5 h-5 text-purple-600" />
+                <h3 className="text-base font-bold text-gray-900">Herramientas Personalizadas</h3>
+              </div>
+              <p className="text-xs text-gray-700 mb-4">
+                Planifica tus comidas semanales, descubre recetas inteligentes y genera listas de compras
+              </p>
+              <Link
+                href="/personalizados"
+                className="block w-full text-center px-4 py-2.5 bg-purple-600 text-white rounded-xl hover:bg-purple-700 transition-colors text-sm font-semibold shadow-sm"
+              >
+                Ver herramientas
+              </Link>
+            </motion.div>
               </motion.div>
             )}
           </AnimatePresence>

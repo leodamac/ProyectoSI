@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useCart } from './CartContext';
-import { Sparkles, Users } from 'lucide-react';
+import { Sparkles, Users, LayoutGrid } from 'lucide-react';
 
 export default function Navigation() {
   const { itemCount } = useCart();
@@ -31,6 +31,13 @@ export default function Navigation() {
             >
               <Users className="w-4 h-4" />
               Nutricionistas
+            </Link>
+            <Link 
+              href="/personalizados" 
+              className="flex items-center gap-2 text-blue-700 hover:text-blue-800 font-semibold bg-blue-50 px-4 py-2 rounded-lg transition-colors"
+            >
+              <LayoutGrid className="w-4 h-4" />
+              Personalizados
             </Link>
             <Link href="/productos" className="text-gray-700 hover:text-emerald-600 font-medium transition-colors">
               Productos

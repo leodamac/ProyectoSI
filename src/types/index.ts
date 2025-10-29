@@ -126,3 +126,46 @@ export interface KetoRecipe {
   tags: string[];
   relatedProducts?: string[];
 }
+
+// Meal Plan Types
+export interface MealPlanEntry {
+  id: string;
+  date: Date;
+  mealType: 'breakfast' | 'lunch' | 'dinner' | 'snack';
+  recipeId: string;
+  calories: number;
+  protein: number;
+  carbs: number;
+  fat: number;
+}
+
+export interface WeeklyMealPlan {
+  id: string;
+  userId?: string;
+  startDate: Date;
+  endDate: Date;
+  goal: 'lose-fat' | 'gain-muscle' | 'maintain';
+  dailyCalorieTarget: number;
+  meals: MealPlanEntry[];
+}
+
+// Shopping List Types
+export interface ShoppingListItem {
+  id: string;
+  name: string;
+  category: 'meats' | 'vegetables' | 'fruits' | 'dairy' | 'pantry' | 'other';
+  quantity: string;
+  unit: string;
+  checked: boolean;
+  emoji?: string;
+}
+
+export interface ShoppingList {
+  id: string;
+  userId?: string;
+  name: string;
+  startDate: Date;
+  endDate: Date;
+  items: ShoppingListItem[];
+  createdFrom?: string; // 'meal-plan' or 'manual'
+}
