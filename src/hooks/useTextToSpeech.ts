@@ -31,7 +31,7 @@ export function useTextToSpeech(): UseTextToSpeechResult {
         clearTimeout(simulatedTimeoutRef.current);
       }
     };
-  }, [isSupported]);
+  }, []);
 
   const speak = useCallback(
     (text: string) => {
