@@ -42,8 +42,16 @@ export default function CarritoPage() {
               {items.map((item) => (
                 <div key={item.product.id} className="bg-white rounded-lg shadow-md p-6">
                   <div className="flex items-center gap-4">
-                    <div className="w-20 h-20 bg-gradient-to-br from-green-100 to-pink-100 rounded-lg flex items-center justify-center text-3xl">
-                      {item.product.image}
+                    <div className="w-20 h-20 bg-gradient-to-br from-green-100 to-pink-100 rounded-lg flex items-center justify-center text-3xl overflow-hidden">
+                      {typeof item.product.image === "string" && item.product.image.startsWith("/images/") ? (
+                        <img
+                          src={item.product.image}
+                          alt={item.product.name}
+                          className="object-cover w-full h-full"
+                        />
+                      ) : (
+                        item.product.image
+                      )}
                     </div>
                     
                     <div className="flex-1">
