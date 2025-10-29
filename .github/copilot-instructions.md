@@ -166,7 +166,7 @@ src/
 - Full technical documentation: `DOCUMENTATION.md`
 - Project README: `README.md`
 - [Next.js Docs](https://nextjs.org/docs)
-- [AI SDK Docs](https://ai-sdk.dev/docs)
+- [Vercel AI SDK Docs](https://sdk.vercel.ai/docs)
 - [Tailwind CSS v4](https://tailwindcss.com/docs)
 
 ## Notes
