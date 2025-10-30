@@ -8,7 +8,7 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Send, Mic, MicOff, Volume2, VolumeX, Eye, EyeOff, Sparkles } from 'lucide-react';
-import { useVoiceMode, InteractionMode } from '@/hooks/useVoiceMode';
+import { useVoiceMode } from '@/hooks/useVoiceMode';
 import { useSpeechToText } from '@/hooks/useSpeechToText';
 import ContextualCards, { LocationRequestCard } from './ContextualCards';
 import { simulateEnhancedStreamingResponse, SimulationTrigger } from '@/utils/enhancedSimulation';
