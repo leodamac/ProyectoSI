@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { sampleProducts } from '@/data/products';
 import { nutritionists } from '@/data/nutritionists';
 import { chatService } from '@/lib/mcp-services';
+import { useOnlineStatus } from '@/hooks/useOnlineStatus';
 
 export interface AIMessage {
   id: string;
@@ -44,6 +45,7 @@ export function AIAssistantProvider({ children }: { children: ReactNode }) {
   
   const { addToCart } = useCart();
   const router = useRouter();
+  const isOnline = useOnlineStatus();
 
   const openAssistant = useCallback(() => {
     setIsOpen(true);
@@ -121,6 +123,24 @@ export function AIAssistantProvider({ children }: { children: ReactNode }) {
     setIsLoading(true);
 
     try {
+      // Check if offline and provide appropriate response
+      if (!isOnline) {
+        const offlineResponse: AIMessage = {
+          id: `assistant-${Date.now()}`,
+          role: 'assistant',
+          content: '📡 Estás sin conexión a internet. Puedo ayudarte con información básica que ya está disponible:\n\n' +
+            '• Explorar productos del catálogo\n' +
+            '• Ver información de nutricionistas\n' +
+            '• Navegar por las secciones de la aplicación\n' +
+            '• Consultar recetas guardadas\n\n' +
+            'Para funciones avanzadas como pagos o sincronización de datos, necesitarás conexión a internet.',
+          timestamp: new Date(),
+        };
+        setMessages(prev => [...prev, offlineResponse]);
+        setIsLoading(false);
+        return;
+      }
+
       // Simulate AI response with action detection
       const response = await processMessageWithActions(content, messages);
       
@@ -142,7 +162,7 @@ export function AIAssistantProvider({ children }: { children: ReactNode }) {
     } finally {
       setIsLoading(false);
     }
-  }, [messages, executeAction]);
+  }, [messages, executeAction, isOnline]);
 
   const clearMessages = useCallback(() => {
     setMessages([]);
