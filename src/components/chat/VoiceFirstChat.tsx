@@ -7,12 +7,14 @@
 
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Send, Mic, MicOff, Volume2, VolumeX, Eye, EyeOff, Settings, Sparkles } from 'lucide-react';
-import { useVoiceMode, InteractionMode } from '@/hooks/useVoiceMode';
+import { Send, Mic, MicOff, Volume2, VolumeX, Eye, EyeOff, Sparkles } from 'lucide-react';
+import { useVoiceMode } from '@/hooks/useVoiceMode';
 import { useSpeechToText } from '@/hooks/useSpeechToText';
 import ContextualCards, { LocationRequestCard } from './ContextualCards';
 import { simulateEnhancedStreamingResponse, SimulationTrigger } from '@/utils/enhancedSimulation';
 import { Nutritionist } from '@/types';
+import InteractionModeModal from './InteractionModeModal';
+import ModeIndicator from './ModeIndicator';
 
 interface ProductCard {
   id: string;
@@ -49,7 +51,7 @@ export default function VoiceFirstChat() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [showSettings, setShowSettings] = useState(false);
+  const [showModeModal, setShowModeModal] = useState(false);
   const [showHistoryFull, setShowHistoryFull] = useState(false);
   const [pendingLocationRequest, setPendingLocationRequest] = useState(false);
   const [userLocation, setUserLocation] = useState<{ latitude: number; longitude: number } | undefined>();
@@ -293,7 +295,15 @@ export default function VoiceFirstChat() {
 
   return (
     <div className="flex flex-col h-full max-h-[calc(100vh-180px)] bg-white rounded-2xl shadow-xl border border-gray-200">
-      {/* Header with Mode Controls */}
+      {/* Interaction Mode Modal */}
+      <InteractionModeModal
+        isOpen={showModeModal}
+        currentMode={mode}
+        onClose={() => setShowModeModal(false)}
+        onModeChange={setMode}
+      />
+
+      {/* Header with Mode Indicator */}
       <div className="bg-gradient-to-r from-emerald-500 to-teal-500 px-4 py-3 rounded-t-2xl flex items-center justify-between">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 bg-white/20 backdrop-blur rounded-full flex items-center justify-center">
@@ -308,62 +318,9 @@ export default function VoiceFirstChat() {
           </div>
         </div>
 
-        <div className="flex items-center gap-2">
-          {/* Mode Indicator */}
-          <div className="hidden sm:flex items-center gap-2 px-3 py-1 bg-white/20 backdrop-blur rounded-lg text-xs text-white font-medium">
-            <Mic className="w-3 h-3" />
-            <span>
-              {mode === 'voice-voice' && 'Voz-Voz'}
-              {mode === 'voice-text' && 'Voz-Texto'}
-              {mode === 'text-voice' && 'Texto-Voz'}
-              {mode === 'text-text' && 'Texto-Texto'}
-            </span>
-          </div>
-
-          {/* Settings Button */}
-          <button
-            onClick={() => setShowSettings(!showSettings)}
-            className="p-2 hover:bg-white/20 rounded-lg transition-colors"
-            title="Configuración"
-          >
-            <Settings className="w-4 h-4 text-white" />
-          </button>
-        </div>
+        {/* Mode Indicator - Always Visible */}
+        <ModeIndicator mode={mode} onClick={() => setShowModeModal(true)} />
       </div>
-
-      {/* Settings Panel */}
-      <AnimatePresence>
-        {showSettings && (
-          <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: 'auto', opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            className="bg-gray-50 border-b border-gray-200 overflow-hidden"
-          >
-            <div className="p-4 space-y-3">
-              <h4 className="text-sm font-semibold text-gray-900">Modo de Interacción</h4>
-              <div className="grid grid-cols-2 gap-2">
-                {(['voice-voice', 'voice-text', 'text-voice', 'text-text'] as InteractionMode[]).map((m) => (
-                  <button
-                    key={m}
-                    onClick={() => setMode(m)}
-                    className={`px-3 py-2 rounded-lg text-xs font-medium transition-colors ${
-                      mode === m
-                        ? 'bg-emerald-500 text-white'
-                        : 'bg-white border border-gray-200 text-gray-700 hover:bg-gray-50'
-                    }`}
-                  >
-                    {m === 'voice-voice' && '🎙️ Voz-Voz'}
-                    {m === 'voice-text' && '🎙️ Voz-Texto'}
-                    {m === 'text-voice' && '⌨️ Texto-Voz'}
-                    {m === 'text-text' && '⌨️ Texto-Texto'}
-                  </button>
-                ))}
-              </div>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
 
       {/* Messages Container */}
       <div
