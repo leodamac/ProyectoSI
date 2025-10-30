@@ -90,17 +90,21 @@ function extractUserContext(conversationHistory: Array<{ role: string; content: 
 } {
   const allUserMessages = conversationHistory.filter(m => m.role === 'user').map(m => m.content.toLowerCase()).join(' ');
   
+  // Only count sports if actively doing exercise, not if they say they DON'T exercise
+  const mentionsSports = /(crossfit|hago.*deporte|soy.*atleta|voy.*gym|entreno|hago.*fitness|hago.*ejercicio)/i.test(allUserMessages) && 
+                         !/(no.*ejercicio|poco ejercicio|sin ejercicio)/i.test(allUserMessages);
+  
   return {
-    hasSharedGoals: /(objetivo|meta|quiero|busco|necesito)/i.test(allUserMessages),
-    hasSharedRestrictions: /(vegetariano|vegano|alergia|intolerancia|no como|no me gusta)/i.test(allUserMessages),
+    hasSharedGoals: /(kg|kilo|peso.*mes|mes.*peso|plazo|semana|días)/i.test(allUserMessages),
+    hasSharedRestrictions: /(vegetariano|vegetariana|vegano|vegana|alergia|intolerancia|no como|no me gusta)/i.test(allUserMessages),
     hasAskedAboutRecipes: /(receta|cocinar|preparar)/i.test(allUserMessages),
     hasAskedAboutProducts: /(producto|comprar|tienda)/i.test(allUserMessages),
     hasAskedAboutNutritionists: /(nutricionista|doctor|profesional|consulta)/i.test(allUserMessages),
-    mentionedVegetarian: /(vegetariano|vegano)/i.test(allUserMessages),
+    mentionedVegetarian: /(vegetariano|vegetariana|vegano|vegana)/i.test(allUserMessages),
     mentionedAllergies: /(alergia|alérgico|intolerancia)/i.test(allUserMessages),
     mentionedWeightLoss: /(bajar|peso|adelgazar|perder)/i.test(allUserMessages),
     mentionedDiabetes: /(diabetes|diabético|glucosa|azúcar en sangre)/i.test(allUserMessages),
-    mentionedSports: /(deporte|ejercicio|atleta|gym|entrenar|fitness)/i.test(allUserMessages),
+    mentionedSports: mentionsSports,
   };
 }
 
@@ -117,25 +121,57 @@ export function categorizeWithTriggers(
   
   // Detect greetings - More personalized based on context
   if (/(hola|buenos días|buenas tardes|buenas noches|hey|hi|saludos)/i.test(lower) && conversationHistory.length === 0) {
+    // Check if user mentions they have experience in the greeting
+    if (/(llevo.*mes|llevo.*año|tengo experiencia)/i.test(lower)) {
+      return {
+        text: '¡Hola! 👋 Excelente que ya tengas experiencia en keto. Soy **Keto Friend**, tu amigo personal en el estilo de vida cetogénico.\n\n💪 Como ya conoces los fundamentos, puedo ayudarte a optimizar tu keto:\n\n🎯 Variedad en recetas para no aburrirte\n🏋️ Nutrición deportiva y rendimiento\n📊 Ajuste fino de macros\n👨‍⚕️ Acceso a nutricionistas especializados\n💬 Consejos avanzados de la comunidad\n🛒 Productos especializados\n\n¿En qué área te gustaría mejorar hoy? 😊',
+      };
+    }
+    
     return {
       text: '¡Hola! 👋 Soy **Keto Friend**, tu amigo personal en el estilo de vida cetogénico. Estoy aquí para hacer tu viaje keto más fácil y delicioso.\n\n💚 **Puedo ayudarte con:**\n\n🍳 Recetas personalizadas según tus gustos\n🛒 Recomendaciones de productos keto\n👨‍⚕️ Conectarte con nutricionistas expertos\n💬 Compartir lo que dice la comunidad\n📍 Encontrar especialistas cerca de ti\n🎯 Crear planes de comidas personalizados\n💪 Consejos para combinar keto con ejercicio\n\n¿Cuéntame, eres nuevo en keto o ya llevas tiempo en este estilo de vida? 😊',
     };
   }
   
-  // Follow-up to greeting - Natural conversation starter
-  if (conversationHistory.length === 2 && /(nuevo|empezando|principiante|acabo de empezar|primera vez)/i.test(lower)) {
+  // Follow-up to greeting - Natural conversation starter (beginner)
+  if (/(nuevo|nueva|empezando|principiante|acabo de empezar|primera vez|nunca|no sé)/i.test(lower) && 
+      conversationHistory.length >= 1 && conversationHistory.length <= 4 &&
+      !/(llevo|meses|años)/i.test(lower)) {
     return {
       text: '¡Genial que estés comenzando! 🌟 La dieta keto puede parecer intimidante al principio, pero no te preocupes, estoy aquí para guiarte paso a paso.\n\n**Los 3 pilares del éxito en keto:**\n\n1️⃣ **Entender tus macros**: Mantener carbohidratos bajo 20-30g netos al día\n2️⃣ **Planificación**: Tener recetas y productos keto a mano\n3️⃣ **Apoyo profesional**: Un nutricionista te ayuda a personalizar todo\n\n💡 **Mi consejo:** Empecemos con lo básico. ¿Qué comida del día te preocupa más? ¿Desayuno, almuerzo o cena? O si prefieres, puedo mostrarte productos keto para empezar tu despensa. 🥑',
     };
   }
   
-  // If user says they're experienced
-  if (conversationHistory.length === 2 && /(tiempo|meses|años|experiencia|llevo|ya sé|conozco)/i.test(lower)) {
+  // If user says they're experienced (but not if asking about weight loss timeframe)
+  if (/(llevo.*mes|llevo.*año|tengo experiencia|ya sé|ya conozco)/i.test(lower) && 
+      conversationHistory.length >= 1 && conversationHistory.length <= 4 &&
+      !/(bajar|peso|perder|adelgazar)/i.test(lower)) {
     return {
       text: '¡Excelente! Me encanta trabajar con alguien que ya conoce los fundamentos. 💪\n\nYa que tienes experiencia, puedo ayudarte a llevar tu keto al siguiente nivel:\n\n🎯 **Optimización avanzada:**\n• Variedad en recetas para no aburrirte\n• Productos especializados (snacks, postres keto gourmet)\n• Ajuste de macros para objetivos específicos\n• Consultas con nutricionistas para afinar detalles\n\n¿Hay algo específico que quieras mejorar en tu estilo de vida keto actual? Por ejemplo:\n- Más variedad en comidas\n- Optimizar para deporte/rendimiento\n- Recetas más rápidas para tu rutina\n- Control más preciso de resultados',
     };
   }
 
+  // Thank you / positive feedback - Higher priority, placed earlier
+  if (/(gracias|thank|excelente|genial|perfecto|me ayudó|me ayudaste|útil)/i.test(lower) && conversationHistory.length > 4) {
+    return {
+      text: '¡Me alegra mucho poder ayudarte! 💚 Ese es mi propósito como tu Keto Friend.\n\nRecuerda que estoy aquí siempre que me necesites. Puedo ayudarte con:\n\n• Más recetas cuando necesites variedad\n• Resolver dudas sobre síntomas o ajustes\n• Recomendarte productos para facilitarte la vida\n• Conectarte con nutricionistas cuando quieras apoyo profesional\n• ¡Y mucho más!\n\n💡 **Consejo final:** La clave del éxito en keto es la consistencia, no la perfección. Un día "fuera de plan" no arruina tu progreso. ¡Sigue adelante!\n\n¿Hay algo más en lo que pueda ayudarte hoy? 😊',
+    };
+  }
+  
+  // Shopping cart / purchase intent
+  if (/(carrito|comprar|agregar|añadir|quiero.*producto|me interesa.*producto)/i.test(lower) && context.hasAskedAboutProducts) {
+    return {
+      text: '¡Genial! Para agregar productos al carrito y completar tu compra:\n\n1️⃣ Haz clic en el botón "Agregar al carrito" de cualquier producto que te mostré\n2️⃣ Revisa tu carrito en el ícono 🛒 arriba\n3️⃣ Puedes contactarnos por WhatsApp para procesar tu pedido\n\n💡 **Tip:** Si es tu primera compra, te recomiendo el "Kit de Inicio Keto" que incluye:\n• Snacks variados\n• Edulcorantes\n• Productos básicos\n• ¡Y un descuento del 15%!\n\n¿Necesitas ayuda para decidir qué comprar o tienes preguntas sobre envíos? 📦',
+    };
+  }
+  
+  // Scheduling / appointment
+  if (/(agendar|cita|consulta|reservar|horario|disponibilidad|cómo agendo)/i.test(lower) && context.hasAskedAboutNutritionists) {
+    return {
+      text: '¡Perfecto! Agendar una cita es súper fácil. 📅\n\n**PASOS PARA AGENDAR:**\n\n1️⃣ Selecciona tu nutricionista preferido\n   (Si no estás seguro, puedo recomendarte uno según tus objetivos)\n\n2️⃣ Revisa horarios disponibles en su tarjeta\n   (Generalmente de 8am a 6pm, Lun-Sab)\n\n3️⃣ Click en "Agendar Cita"\n   Te contactaremos por WhatsApp para confirmar\n\n**PRECIOS:**\n• Primera consulta: $40-60 USD (incluye plan personalizado)\n• Seguimientos: $35-45 USD\n• Paquetes: Descuentos en 3+ sesiones\n\n**QUÉ INCLUYE LA CONSULTA:**\n✅ Evaluación completa de tu caso\n✅ Plan nutricional personalizado\n✅ Cálculo exacto de macros\n✅ Lista de compras\n✅ Recetas adaptadas\n✅ Seguimiento por WhatsApp (1 semana)\n\n💡 **Mi recomendación:** La primera consulta es una inversión que vale la pena. El nutricionista ajusta todo específicamente para TI, no solo consejos generales.\n\n¿Quieres que te muestre los nutricionistas disponibles según tu objetivo? 🎯',
+    };
+  }
+  
   // Location-based nutritionist recommendation
   if (/(cerca|cercano|ubicación|location|cerca de mí|nearby)/i.test(lower) && /(nutricionista|doctor|especialista)/i.test(lower)) {
     if (!userLocation) {
@@ -158,15 +194,16 @@ export function categorizeWithTriggers(
     }
   }
 
-  // Nutritionist recommendation with AI review summary
-  if (/(nutricionista|doctor|especialista|profesional|consulta)/i.test(lower)) {
+  // Nutritionist recommendation with AI review summary - Moved before products to prioritize context
+  if (/(nutricionista|doctor|especialista|profesional|consulta|ayuda profesional)/i.test(lower)) {
     let recommendedNutritionist;
     
-    if (/(diabetes|glucosa|azúcar)/i.test(lower)) {
-      recommendedNutritionist = nutritionists.find(n => n.id === 'n4');
-    } else if (/(deporte|ejercicio|atleta|gym|rendimiento)/i.test(lower)) {
+    // Check sports FIRST (most specific context)
+    if (/(deporte|ejercicio|atleta|gym|rendimiento|crossfit|fitness|entrenar)/i.test(lower) || context.mentionedSports) {
       recommendedNutritionist = nutritionists.find(n => n.id === 'n2');
-    } else if (/(peso|adelgazar|bajar|perder|obesidad)/i.test(lower)) {
+    } else if (/(diabetes|glucosa|azúcar)/i.test(lower) || context.mentionedDiabetes) {
+      recommendedNutritionist = nutritionists.find(n => n.id === 'n4');
+    } else if (/(peso|adelgazar|bajar|perder|obesidad)/i.test(lower) || context.mentionedWeightLoss) {
       recommendedNutritionist = nutritionists.find(n => n.id === 'n3');
     } else {
       recommendedNutritionist = nutritionists.find(n => n.id === 'n1');
@@ -185,15 +222,17 @@ export function categorizeWithTriggers(
     }
   }
 
+
   // Product recommendations - Enhanced with shopping assistance
-  if (/(producto|comprar|tienda|recomienda.*producto|necesito comprar|snack|chocolate)/i.test(lower)) {
+  if (/(producto|comprar|tienda|recomienda.*producto|necesito comprar|qué.*necesito|snack|chocolate)/i.test(lower)) {
     const isSnackRequest = /(snack|botana|merienda|tentempié)/i.test(lower);
     const isChocolateRequest = /(chocolate|cacao|dulce|postre)/i.test(lower);
-    const isStarterKit = /(empezar|principiante|despensa|inicio|todo|completo)/i.test(lower);
+    const isStarterKit = /(empezar|principiante|despensa|inicio|todo|completo|necesito.*para|qué.*necesito)/i.test(lower);
     const isBudget = /(barato|económico|precio|ahorro)/i.test(lower);
+    const isVegetarian = context.mentionedVegetarian;
     
     // Starter kit for beginners
-    if (isStarterKit && conversationHistory.length <= 4) {
+    if (isStarterKit || (conversationHistory.length <= 10 && /(qué.*necesito|necesito comprar)/i.test(lower))) {
       return {
         text: '¡Excelente pregunta! Para empezar en keto, estos son los productos esenciales que debes tener en tu despensa: 🛒\n\n**Kit Inicial Keto (Básico)**\n\n**Grasas Saludables:**\n🥑 Aceite de coco ($12.99)\n🥑 Aceite de oliva extra virgen ($15.99)\n🧈 Mantequilla grass-fed ($8.99)\n🥜 Mantequilla de almendra ($11.99)\n\n**Proteínas:**\n🥓 Tocino sin azúcar ($7.99)\n🧀 Quesos variados ($18.99 pack)\n🥚 Huevos orgánicos ($5.99)\n\n**Snacks:**\n🍫 Chocolate negro 85% ($4.99)\n🌰 Mix de nueces ($9.99)\n🧀 Chicharrones ($3.99)\n\n**Endulzantes y Condimentos:**\n🍯 Stevia líquida ($8.99)\n🧂 Sal del Himalaya ($6.99)\n🌿 Especias variadas ($12.99)\n\n💰 **Total aproximado:** $130-150 USD\n⏰ **Duración:** 2-3 semanas\n\n💡 **Tip de ahorro:** Empieza con los básicos (aceites, huevos, queso, verduras) y ve agregando poco a poco.\n\n¿Quieres que te muestre productos específicos de nuestra tienda? Tengo ofertas especiales en packs de inicio. 😊',
         trigger: {
@@ -210,6 +249,17 @@ export function categorizeWithTriggers(
         trigger: {
           type: 'product',
           data: sampleProducts.filter((_, i) => i % 2 === 0).slice(0, 4),
+        },
+      };
+    }
+    
+    // Vegetarian products
+    if (isVegetarian) {
+      return {
+        text: '¡Perfecto! Tengo excelentes productos keto vegetarianos para ti: 🌱\n\n**Proteínas Vegetales:**\n🌰 Mantequilla de almendra orgánica ($11.99)\n   • 8g proteína por porción\n   • Grasas saludables\n   • Sin azúcar añadida\n\n🥜 Mix de nueces premium ($9.99)\n   • Almendras, nueces, macadamias\n   • Alto en omega-3\n   • Perfecto para snacking\n\n**Grasas Saludables:**\n🥥 Aceite de coco virgen ($12.99)\n   • MCT naturales\n   • Ideal para cocinar\n   • Aumenta cetonas\n\n🫒 Aceite de oliva extra virgen ($15.99)\n   • Antioxidantes\n   • Anti-inflamatorio\n   • Uso en frío y caliente\n\n**Snacks Vegetarianos:**\n🍫 Chocolate negro 85% cacao ($4.99)\n   • Solo 3g carbos netos\n   • Rico en antioxidantes\n   • Satisface antojos\n\n🧀 Queso de almendras ($8.99)\n   • Alternativa vegetal\n   • Cremoso y delicioso\n   • Versátil en recetas\n\n💰 **Total sugerido:** $63.94\n⏰ **Duración:** 2-3 semanas\n\n💡 **Tip vegetariano:** Combina estos productos con vegetales bajos en carbos (espinacas, brócoli, aguacate) y proteínas vegetales como tofu o tempeh.\n\n✨ **Importante para vegetarianos keto:**\n• Asegura suficiente proteína (1.6-2g por kg)\n• Suplementa con B12 si eres vegano\n• Varía las fuentes de grasas\n• Incluye omega-3 (nueces, semillas de chía)\n\n¿Quieres que te muestre recetas vegetarianas keto para usar estos productos? 🥗',
+        trigger: {
+          type: 'product',
+          data: sampleProducts.slice(0, 5),
         },
       };
     }
@@ -319,22 +369,24 @@ export function categorizeWithTriggers(
   }
 
   // Recipe requests - Enhanced with context awareness
-  if (/(receta|cocinar|preparar|desayuno|almuerzo|cena|comida)/i.test(lower)) {
+  if (/(receta|cocinar|preparar|desayuno|almuerzo|cena|comida)/i.test(lower) || 
+      (/(pasos|cómo|preparación|instrucciones|detalle|dame.*pasos|dame.*primera)/i.test(lower) && context.hasAskedAboutRecipes)) {
+    
+    // Detailed recipe follow-up if user asks for steps
+    if (/(pasos|cómo.*prepar|instrucciones|detalle|dame.*pasos|dame.*de la primera|dame los pasos)/i.test(lower)) {
+      return {
+        text: '¡Claro! Te doy los pasos completos de la primera receta:\n\n**🍳 Huevos Revueltos Gourmet con Aguacate**\n\n**Ingredientes:**\n• 3 huevos orgánicos\n• 1/2 aguacate maduro\n• 2 cucharadas de queso crema\n• 2 tiras de tocino crujiente\n• 1 puñado de espinacas baby\n• Sal y pimienta al gusto\n• 1 cucharada de mantequilla\n\n**Preparación (10 minutos):**\n\n1️⃣ **Prepara el tocino**: Cocina el tocino hasta que esté crujiente (5 min), luego córtalo en trocitos\n\n2️⃣ **Bate los huevos**: En un bowl, bate los 3 huevos con sal y pimienta hasta que estén bien mezclados\n\n3️⃣ **Cocina las espinacas**: En la misma sartén del tocino, saltea las espinacas 1 minuto hasta que se ablanden. Reserva.\n\n4️⃣ **Revuelve los huevos**: Calienta la mantequilla a fuego medio, agrega los huevos y revuelve suavemente con espátula\n\n5️⃣ **Termina el platillo**: Cuando los huevos estén casi listos (cremosos), añade el queso crema, tocino y espinacas. Mezcla 30 segundos más.\n\n6️⃣ **Sirve**: Coloca en un plato y acompaña con aguacate en rodajas al lado\n\n💡 **Tips del chef:**\n• No sobre cocines los huevos (deben quedar cremosos, no secos)\n• El aguacate aporta grasas saludables y cremosidad\n• Puedes agregar queso rallado encima\n• Sirve caliente para mejor sabor\n\n📊 **Macros totales:** 5g carbos netos | 30g proteína | 35g grasas | 450 kcal\n\n✨ Esta es una de las recetas favoritas de la comunidad. ¡Perfecta para empezar el día con energía!\n\n¿Quieres que te recomiende productos keto para complementar esta receta o ver más opciones de desayuno? 🥑',
+      };
+    }
+    
     const mealType = 
       /(desayuno|breakfast)/i.test(lower) ? 'desayuno' :
       /(almuerzo|lunch|comida)/i.test(lower) ? 'almuerzo' :
       /(cena|dinner)/i.test(lower) ? 'cena' : 'cualquier momento';
     
     const isVegetarian = context.mentionedVegetarian;
-    const isForSports = context.mentionedSports || /(rápido|energía|pre-entreno|post-entreno)/i.test(lower);
-    const isEasy = /(fácil|rápido|simple|sencillo)/i.test(lower);
-    
-    // Detailed recipe follow-up if user asks for steps
-    if (/(pasos|cómo|preparación|instrucciones|detalle)/i.test(lower) && context.hasAskedAboutRecipes) {
-      return {
-        text: '¡Claro! Te doy los pasos completos:\n\n**🍳 Huevos Revueltos con Aguacate (5 minutos)**\n\n**Ingredientes:**\n• 3 huevos orgánicos\n• 1/2 aguacate maduro\n• 2 cucharadas de queso crema\n• Sal y pimienta\n• 1 cucharada de mantequilla\n\n**Preparación:**\n1. Bate los huevos con sal y pimienta\n2. Calienta la mantequilla en sartén a fuego medio\n3. Agrega los huevos, revuelve suavemente\n4. Cuando estén casi listos, añade el queso crema\n5. Sirve con aguacate en rodajas al lado\n\n💡 **Tips del chef:**\n• No sobre cocines los huevos (deben quedar cremosos)\n• El aguacate aporta grasas saludables\n• Puedes agregar tocino o espinacas\n\n📊 **Macros totales:** 5g carbos | 25g proteína | 30g grasas | 380 kcal\n\n¿Quieres que te recomiende productos keto para complementar esta receta? 🥑',
-      };
-    }
+    const isForSports = context.mentionedSports || /(pre-entreno|post-entreno|antes del gym|después del gym|qué.*comer.*gym|qué.*comer.*ejercicio)/i.test(lower);
+    const isEasy = /(fácil|rápido|simple|sencillo)/i.test(lower) && !isForSports;
 
     // Vegetarian recipes
     if (isVegetarian) {
@@ -381,21 +433,21 @@ export function categorizeWithTriggers(
 
   // Weight loss - Multi-turn natural conversation with context
   if (/(bajar|peso|adelgazar|perder|delgad|obesidad)/i.test(lower)) {
-    // First interaction - gather information
-    if (!context.hasSharedGoals || conversationHistory.length < 3) {
+    // Second interaction - provide detailed plan (detect when user shares specific details)
+    if (context.hasSharedGoals && context.hasSharedRestrictions && conversationHistory.length >= 2) {
       return {
-        text: '¡Perfecto! Me encanta que quieras mejorar tu salud. La dieta keto es increíblemente efectiva para pérdida de peso saludable. 💪\n\n**Antes de crear tu plan personalizado, cuéntame un poco sobre ti:**\n\n1️⃣ ¿Cuánto peso te gustaría perder?\n2️⃣ ¿En qué plazo? (sin prisa, lo importante es ser saludable)\n3️⃣ ¿Tienes alguna restricción alimenticia? (vegetariano, alergias, etc.)\n4️⃣ ¿Haces ejercicio actualmente?\n\nNo te preocupes si no tienes todas las respuestas ahora, podemos ir paso a paso. ¿Por dónde te gustaría empezar? 😊',
-      };
-    }
-    
-    // Second interaction - provide detailed plan
-    if (context.hasSharedGoals && conversationHistory.length >= 3 && conversationHistory.length < 6) {
-      return {
-        text: '¡Excelente! Con esta información puedo ayudarte mucho mejor. Aquí está tu plan inicial: 📋\n\n**🎯 Plan Keto Personalizado para Pérdida de Peso**\n\n**Fase 1: Adaptación (Semanas 1-2)**\n• Objetivo: Entrar en cetosis\n• Carbos: <20g netos/día\n• Enfócate en alimentos naturales\n• Bebe 2-3L de agua diaria\n• Electrolitos: sal, magnesio, potasio\n\n**Fase 2: Optimización (Semanas 3-8)**\n• Objetivo: Pérdida de peso sostenida\n• Carbos: 20-30g netos/día\n• Ayuno intermitente 16:8 (opcional)\n• Incorpora ejercicio ligero\n• Mide progreso (no solo balanza)\n\n**Fase 3: Mantenimiento (Mes 3+)**\n• Objetivo: Mantener resultados\n• Carbos: 30-50g netos/día (personalizado)\n• Estilo de vida, no dieta temporal\n• Flexibilidad controlada\n\n📊 **Macros sugeridos:**\n• Proteína: 1.6-2g por kg de peso ideal\n• Grasas: 70-75% de calorías totales\n• Carbos: <20g netos en fase inicial\n\n💡 **Expectativas realistas:**\n• Semana 1-2: 2-4 kg (mayormente agua)\n• Después: 0.5-1 kg por semana\n• Mesetas son normales (no te desanimes)\n\n**¿Qué te gustaría hacer ahora?**\n\na) Ver recetas específicas para bajar de peso\nb) Conocer productos keto que te faciliten el proceso\nc) Hablar con un nutricionista para un plan más personalizado\n\n¡Tú decides! 💚',
+        text: '¡Excelente! Con esta información puedo ayudarte mucho mejor. Aquí está tu plan inicial personalizado: 📋\n\n**🎯 Plan Keto Personalizado para Pérdida de Peso**\n\n**Fase 1: Adaptación (Semanas 1-2)**\n• Objetivo: Entrar en cetosis\n• Carbos: <20g netos/día\n• Enfócate en alimentos naturales\n• Bebe 2-3L de agua diaria\n• Electrolitos: sal, magnesio, potasio\n\n**Fase 2: Optimización (Semanas 3-8)**\n• Objetivo: Pérdida de peso sostenida\n• Carbos: 20-30g netos/día\n• Ayuno intermitente 16:8 (opcional)\n• Incorpora ejercicio ligero\n• Mide progreso (no solo balanza)\n\n**Fase 3: Mantenimiento (Mes 3+)**\n• Objetivo: Mantener resultados\n• Carbos: 30-50g netos/día (personalizado)\n• Estilo de vida, no dieta temporal\n• Flexibilidad controlada\n\n📊 **Macros sugeridos:**\n• Proteína: 1.6-2g por kg de peso ideal\n• Grasas: 70-75% de calorías totales\n• Carbos: <20g netos en fase inicial\n\n💡 **Expectativas realistas:**\n• Semana 1-2: 2-4 kg (mayormente agua)\n• Después: 0.5-1 kg por semana\n• Mesetas son normales (no te desanimes)\n\n**¿Qué te gustaría hacer ahora?**\n\na) Ver recetas específicas para bajar de peso\nb) Conocer productos keto que te faciliten el proceso\nc) Hablar con un nutricionista para un plan más personalizado\n\n¡Tú decides! 💚',
         trigger: {
           type: 'nutritionist',
           data: nutritionists.find(n => n.id === 'n3'),
         },
+      };
+    }
+    
+    // First interaction - gather information
+    if (!context.hasSharedGoals || conversationHistory.length < 3) {
+      return {
+        text: '¡Perfecto! Me encanta que quieras mejorar tu salud. La dieta keto es increíblemente efectiva para pérdida de peso saludable. 💪\n\n**Antes de crear tu plan personalizado, cuéntame un poco sobre ti:**\n\n1️⃣ ¿Cuánto peso te gustaría perder?\n2️⃣ ¿En qué plazo? (sin prisa, lo importante es ser saludable)\n3️⃣ ¿Tienes alguna restricción alimenticia? (vegetariano, alergias, etc.)\n4️⃣ ¿Haces ejercicio actualmente?\n\nNo te preocupes si no tienes todas las respuestas ahora, podemos ir paso a paso. ¿Por dónde te gustaría empezar? 😊',
       };
     }
     
@@ -437,27 +489,6 @@ export function categorizeWithTriggers(
     
     return {
       text: generalTips[Math.floor(Math.random() * generalTips.length)],
-    };
-  }
-
-  // Thank you / positive feedback
-  if (/(gracias|thank|excelente|genial|perfecto|me ayudó|útil)/i.test(lower) && conversationHistory.length > 2) {
-    return {
-      text: '¡Me alegra mucho poder ayudarte! 💚 Ese es mi propósito.\n\nRecuerda que estoy aquí siempre que me necesites. Puedo ayudarte con:\n\n• Más recetas cuando necesites variedad\n• Resolver dudas sobre síntomas o ajustes\n• Recomendarte productos para facilitarte la vida\n• Conectarte con nutricionistas cuando quieras apoyo profesional\n• ¡Y mucho más!\n\n¿Hay algo más en lo que pueda ayudarte hoy? 😊',
-    };
-  }
-  
-  // Shopping cart / purchase intent
-  if (/(carrito|comprar|agregar|añadir|quiero|me interesa)/i.test(lower) && context.hasAskedAboutProducts) {
-    return {
-      text: '¡Genial! Para agregar productos al carrito y completar tu compra:\n\n1️⃣ Haz clic en el botón "Agregar al carrito" de cualquier producto que te mostré\n2️⃣ Revisa tu carrito en el ícono 🛒 arriba\n3️⃣ Puedes contactarnos por WhatsApp para procesar tu pedido\n\n💡 **Tip:** Si es tu primera compra, te recomiendo el "Kit de Inicio Keto" que incluye:\n• Snacks variados\n• Edulcorantes\n• Productos básicos\n• ¡Y un descuento del 15%!\n\n¿Necesitas ayuda para decidir qué comprar o tienes preguntas sobre envíos? 📦',
-    };
-  }
-  
-  // Scheduling / appointment
-  if (/(agendar|cita|consulta|reservar|horario|disponibilidad)/i.test(lower) && context.hasAskedAboutNutritionists) {
-    return {
-      text: '¡Perfecto! Agendar una cita es súper fácil. 📅\n\n**PASOS PARA AGENDAR:**\n\n1️⃣ Selecciona tu nutricionista preferido\n   (Si no estás seguro, puedo recomendarte uno según tus objetivos)\n\n2️⃣ Revisa horarios disponibles en su tarjeta\n   (Generalmente de 8am a 6pm, Lun-Sab)\n\n3️⃣ Click en "Agendar Cita"\n   Te contactaremos por WhatsApp para confirmar\n\n**PRECIOS:**\n• Primera consulta: $40-60 USD (incluye plan personalizado)\n• Seguimientos: $35-45 USD\n• Paquetes: Descuentos en 3+ sesiones\n\n**QUÉ INCLUYE LA CONSULTA:**\n✅ Evaluación completa de tu caso\n✅ Plan nutricional personalizado\n✅ Cálculo exacto de macros\n✅ Lista de compras\n✅ Recetas adaptadas\n✅ Seguimiento por WhatsApp (1 semana)\n\n💡 **Mi recomendación:** La primera consulta es una inversión que vale la pena. El nutricionista ajusta todo específicamente para TI, no solo consejos generales.\n\n¿Quieres que te muestre los nutricionistas disponibles según tu objetivo? 🎯',
     };
   }
 
