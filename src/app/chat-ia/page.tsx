@@ -1,7 +1,7 @@
 'use client';
 
 import Navigation from '@/components/Navigation';
-import ImprovedAIChat from '@/components/ImprovedAIChat';
+import VoiceFirstChat from '@/components/chat/VoiceFirstChat';
 import { ChatProvider } from '@/context/ChatContext';
 import { motion, AnimatePresence } from 'framer-motion';
 import { MessageCircle, Zap, TrendingUp, Users, Calendar, CheckCircle2, Clock, ChevronLeft, ChevronRight } from 'lucide-react';
@@ -9,7 +9,7 @@ import Link from 'next/link';
 import { useState } from 'react';
 
 export default function ChatIAPage() {
-  const [showSidebar, setShowSidebar] = useState(false);
+  const [showSidebar, setShowSidebar] = useState(true);
   const [currentTipIndex, setCurrentTipIndex] = useState(0);
 
   const tips = [
@@ -43,14 +43,14 @@ export default function ChatIAPage() {
         <div className="max-w-7xl mx-auto px-4 py-4 sm:py-6">
           <div className={`grid gap-4 transition-all duration-300 ${showSidebar ? 'lg:grid-cols-[1fr_320px]' : 'lg:grid-cols-1'}`}>
             {/* Chat Interface - Takes more space, centered when sidebar is hidden */}
-            <div className={`relative ${!showSidebar ? 'flex justify-center' : ''}`}>
+            <div className={`relative ${!showSidebar ? 'mx-auto max-w-4xl w-full' : ''}`}>
               <motion.div
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.3 }}
                 className="w-full"
               >
-                <ImprovedAIChat onHelpClick={() => setShowSidebar(!showSidebar)} />
+                <VoiceFirstChat />
               </motion.div>
               
               {/* Toggle Sidebar Button */}
