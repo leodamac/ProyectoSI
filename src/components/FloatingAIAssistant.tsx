@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { MessageCircle, X, Minus, Send, Sparkles, ShoppingCart, Calendar, BookOpen, Utensils, ChefHat, Info } from 'lucide-react';
 import { useAIAssistant } from '@/context/AIAssistantContext';
+import { usePathname } from 'next/navigation';
 
 const MAX_TEXTAREA_HEIGHT = 100; // Maximum height for auto-resizing textarea in pixels
 
@@ -19,6 +20,11 @@ export default function FloatingAIAssistant() {
     sendMessage,
     executeAction,
   } = useAIAssistant();
+
+  const pathname = usePathname();
+  
+  // Hide floating assistant on chat page to avoid duplication
+  const shouldHide = pathname === '/chat-ia';
 
   const [input, setInput] = useState('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -62,6 +68,11 @@ export default function FloatingAIAssistant() {
     { icon: BookOpen, label: 'Ver Foro', action: () => sendMessage('Llévame al foro') },
     { icon: ChefHat, label: 'Recetas', action: () => sendMessage('Dame recetas keto') },
   ];
+
+  // Don't render on chat page
+  if (shouldHide) {
+    return null;
+  }
 
   if (!isOpen) {
     return (
