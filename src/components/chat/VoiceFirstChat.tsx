@@ -12,6 +12,30 @@ import { useVoiceMode, InteractionMode } from '@/hooks/useVoiceMode';
 import { useSpeechToText } from '@/hooks/useSpeechToText';
 import ContextualCards, { LocationRequestCard } from './ContextualCards';
 import { simulateEnhancedStreamingResponse, SimulationTrigger } from '@/utils/enhancedSimulation';
+import { Nutritionist } from '@/types';
+
+interface ProductCard {
+  id: string;
+  name: string;
+  description: string;
+  price: number;
+  nutritionInfo: {
+    calories: number;
+    carbs: number;
+    protein: number;
+    fat: number;
+  };
+  category: string;
+}
+
+interface ForumPostCard {
+  id: string;
+  title: string;
+  username: string;
+  aiSummary?: string;
+  upvotes: number;
+  commentCount: number;
+}
 
 interface Message {
   id: string;
@@ -19,10 +43,6 @@ interface Message {
   content: string;
   timestamp: Date;
   trigger?: SimulationTrigger;
-}
-
-interface EnhancedChatProps {
-  onClose?: () => void;
 }
 
 export default function VoiceFirstChat() {
@@ -420,15 +440,45 @@ export default function VoiceFirstChat() {
                 </div>
 
                 {/* Contextual Cards */}
-                {message.trigger && (
-                  <div className="ml-2">
-                    <ContextualCards
-                      type={message.trigger.type}
-                      data={message.trigger.data}
-                      onAction={handleCardAction}
-                    />
-                  </div>
-                )}
+                <>
+                  {message.trigger && message.trigger.data && (() => {
+                    const { type, data } = message.trigger;
+                    if (type === 'product') {
+                      return (
+                        <div className="ml-2">
+                          <ContextualCards
+                            type="product"
+                            data={data as ProductCard[]}
+                            onAction={handleCardAction}
+                          />
+                        </div>
+                      );
+                    }
+                    if (type === 'nutritionist') {
+                      return (
+                        <div className="ml-2">
+                          <ContextualCards
+                            type="nutritionist"
+                            data={data as Nutritionist}
+                            onAction={handleCardAction}
+                          />
+                        </div>
+                      );
+                    }
+                    if (type === 'forum') {
+                      return (
+                        <div className="ml-2">
+                          <ContextualCards
+                            type="forum"
+                            data={data as ForumPostCard[]}
+                            onAction={handleCardAction}
+                          />
+                        </div>
+                      );
+                    }
+                    return null;
+                  })()}
+                </>
               </motion.div>
             );
           })}

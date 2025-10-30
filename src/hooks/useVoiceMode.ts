@@ -84,13 +84,15 @@ export function useVoiceMode(initialMode: InteractionMode = 'text-text'): UseVoi
 
   // Set up audio callbacks
   useEffect(() => {
-    audioManagerRef.current.onStart(() => {
-      setIsAudioPlaying(true);
-    });
+    if (audioManagerRef.current) {
+      audioManagerRef.current.onStart(() => {
+        setIsAudioPlaying(true);
+      });
 
-    audioManagerRef.current.onEnd(() => {
-      setIsAudioPlaying(false);
-    });
+      audioManagerRef.current.onEnd(() => {
+        setIsAudioPlaying(false);
+      });
+    }
   }, []);
 
   const updateConfig = useCallback((updates: Partial<VoiceModeConfig>) => {
