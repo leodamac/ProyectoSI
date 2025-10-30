@@ -7,10 +7,19 @@ import { useState, useEffect } from 'react';
  * Returns true when online, false when offline
  */
 export function useOnlineStatus(): boolean {
-  const [isOnline, setIsOnline] = useState(true);
+  // Initialize with actual navigator state or default to true
+  const [isOnline, setIsOnline] = useState(() => {
+    if (typeof navigator !== 'undefined') {
+      return navigator.onLine;
+    }
+    return true; // Default to online for SSR
+  });
 
   useEffect(() => {
-    // Check initial status
+    // Check if we're in a browser environment
+    if (typeof navigator === 'undefined') return;
+
+    // Update state with actual navigator status
     setIsOnline(navigator.onLine);
 
     // Event handlers

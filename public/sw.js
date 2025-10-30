@@ -19,10 +19,15 @@ self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
       console.log('Opened cache');
-      return cache.addAll(STATIC_CACHE).catch((err) => {
-        console.error('Failed to cache some resources:', err);
-        // Don't fail installation if some resources fail to cache
-      });
+      // Try to cache all resources, but don't fail installation if some fail
+      return Promise.allSettled(
+        STATIC_CACHE.map(url => 
+          cache.add(url).catch(err => {
+            console.warn(`Failed to cache ${url}:`, err);
+            return null;
+          })
+        )
+      );
     })
   );
   self.skipWaiting();
@@ -76,14 +81,20 @@ self.addEventListener('fetch', (event) => {
         // Clone the response
         const responseToCache = response.clone();
 
-        // Cache the new response
+        // Cache the new response asynchronously (don't await)
         caches.open(CACHE_NAME).then((cache) => {
           cache.put(event.request, responseToCache);
+        }).catch((err) => {
+          // Log cache write errors in development
+          if (self.location.hostname === 'localhost') {
+            console.warn('Failed to cache resource:', event.request.url, err);
+          }
         });
 
         return response;
-      }).catch(() => {
+      }).catch((err) => {
         // If both cache and network fail, show offline page
+        console.warn('Fetch failed, returning offline page:', err);
         return caches.match(OFFLINE_URL);
       });
     })
