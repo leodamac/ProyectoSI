@@ -295,7 +295,7 @@ export default function VoiceFirstChat() {
   const hiddenCount = messages.length - visibleMessages.length;
 
   return (
-    <div className="flex flex-col h-full max-h-[calc(100vh-180px)] bg-white rounded-2xl shadow-xl border border-gray-200">
+    <div className="flex flex-col h-full max-h-[calc(100vh-120px)] bg-white rounded-2xl shadow-xl border border-gray-200">
       {/* Interaction Mode Modal */}
       <InteractionModeModal
         isOpen={showModeModal}
