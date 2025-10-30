@@ -5,9 +5,12 @@ import { ChefHat, Clock, Flame, Plus } from 'lucide-react';
 import { ketoRecipes } from '@/data/recipes';
 import { useState } from 'react';
 import { usePersonalized } from '@/context/PersonalizedContext';
+import type { MealPlanEntry } from '@/types';
 
 export default function SmartRecipes() {
   const [selectedRecipe, setSelectedRecipe] = useState<string | null>(null);
+  const [selectedDayIndex, setSelectedDayIndex] = useState<number>(0);
+  const [selectedMealType, setSelectedMealType] = useState<MealPlanEntry['mealType']>('lunch');
   const { currentMealPlan, addMealToWeek } = usePersonalized();
 
   const recipe = selectedRecipe ? ketoRecipes.find(r => r.id === selectedRecipe) : ketoRecipes[0];
@@ -15,11 +18,14 @@ export default function SmartRecipes() {
   const handleAddToMealPlan = () => {
     if (!recipe || !currentMealPlan) return;
     
-    // Add to today as lunch by default
-    const today = new Date();
+    // Calculate the date based on selected day index
+    const startDate = new Date(currentMealPlan.startDate);
+    const targetDate = new Date(startDate);
+    targetDate.setDate(startDate.getDate() + selectedDayIndex);
+    
     addMealToWeek(currentMealPlan.id, {
-      date: today,
-      mealType: 'lunch',
+      date: targetDate,
+      mealType: selectedMealType,
       recipeId: recipe.id,
       calories: recipe.nutritionInfo.calories,
       protein: recipe.nutritionInfo.protein,
@@ -27,6 +33,17 @@ export default function SmartRecipes() {
       fat: recipe.nutritionInfo.fat,
     });
   };
+
+  const daysOfWeek = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
+  
+  const mealTypes: { value: MealPlanEntry['mealType']; label: string; emoji: string }[] = [
+    { value: 'breakfast', label: 'Desayuno', emoji: '🍳' },
+    { value: 'lunch', label: 'Almuerzo', emoji: '🥗' },
+    { value: 'dinner', label: 'Cena', emoji: '🍽️' },
+    { value: 'snack', label: 'Snack', emoji: '🥜' },
+  ];
+
+  const selectedMealLabel = mealTypes.find(m => m.value === selectedMealType)?.label || 'Almuerzo';
 
   return (
     <div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
@@ -83,15 +100,63 @@ export default function SmartRecipes() {
                 </div>
               </div>
 
-              {/* Add to Meal Plan Button */}
+              {/* Day and Meal Type Selection */}
               {currentMealPlan && (
-                <button
-                  onClick={handleAddToMealPlan}
-                  className="w-full bg-yellow-400 hover:bg-yellow-500 text-gray-900 font-bold py-3 rounded-xl transition-colors flex items-center justify-center gap-2"
-                >
-                  <Plus className="w-5 h-5" />
-                  Agregar a Almuerzo
-                </button>
+                <div className="space-y-3">
+                  {/* Day Selection */}
+                  <div>
+                    <label className="text-xs font-semibold text-gray-700 mb-2 block">
+                      Seleccionar Día
+                    </label>
+                    <div className="grid grid-cols-7 gap-1">
+                      {daysOfWeek.map((day, index) => (
+                        <button
+                          key={day}
+                          onClick={() => setSelectedDayIndex(index)}
+                          className={`px-2 py-2 rounded-lg text-xs font-medium transition-all ${
+                            selectedDayIndex === index
+                              ? 'bg-emerald-500 text-white shadow-md'
+                              : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                          }`}
+                        >
+                          {day}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Meal Type Selection */}
+                  <div>
+                    <label className="text-xs font-semibold text-gray-700 mb-2 block">
+                      Tipo de Comida
+                    </label>
+                    <div className="grid grid-cols-2 gap-2">
+                      {mealTypes.map((meal) => (
+                        <button
+                          key={meal.value}
+                          onClick={() => setSelectedMealType(meal.value)}
+                          className={`px-3 py-2 rounded-lg text-sm font-medium transition-all flex items-center justify-center gap-1 ${
+                            selectedMealType === meal.value
+                              ? 'bg-teal-500 text-white shadow-md'
+                              : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                          }`}
+                        >
+                          <span>{meal.emoji}</span>
+                          <span>{meal.label}</span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Add to Meal Plan Button */}
+                  <button
+                    onClick={handleAddToMealPlan}
+                    className="w-full bg-yellow-400 hover:bg-yellow-500 text-gray-900 font-bold py-3 rounded-xl transition-colors flex items-center justify-center gap-2"
+                  >
+                    <Plus className="w-5 h-5" />
+                    Agregar a {selectedMealLabel} - {daysOfWeek[selectedDayIndex]}
+                  </button>
+                </div>
               )}
             </div>
 
