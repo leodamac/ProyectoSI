@@ -5,6 +5,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { MessageCircle, X, Minus, Send, Sparkles, ShoppingCart, Calendar, BookOpen, Utensils, ChefHat, Info } from 'lucide-react';
 import { useAIAssistant } from '@/context/AIAssistantContext';
 
+const MAX_TEXTAREA_HEIGHT = 100; // Maximum height for auto-resizing textarea in pixels
+
 export default function FloatingAIAssistant() {
   const {
     messages,
@@ -34,7 +36,7 @@ export default function FloatingAIAssistant() {
     if (!textarea) return;
     
     textarea.style.height = 'auto';
-    const newHeight = Math.min(textarea.scrollHeight, 100);
+    const newHeight = Math.min(textarea.scrollHeight, MAX_TEXTAREA_HEIGHT);
     textarea.style.height = newHeight + 'px';
   }, [input]);
 
@@ -179,13 +181,22 @@ export default function FloatingAIAssistant() {
                             Agregar al carrito
                           </button>
                         )}
-                        {(message.action.type === 'create_meal' || message.action.type === 'navigate') && (
+                        {message.action.type === 'create_meal' && (
                           <button
                             onClick={() => executeAction(message.action!)}
                             className="text-xs bg-white/90 hover:bg-white text-gray-800 px-3 py-1.5 rounded-full transition-colors flex items-center gap-1"
                           >
                             <Utensils className="w-3 h-3" />
-                            Ver más
+                            Ver recetas
+                          </button>
+                        )}
+                        {message.action.type === 'navigate' && (
+                          <button
+                            onClick={() => executeAction(message.action!)}
+                            className="text-xs bg-white/90 hover:bg-white text-gray-800 px-3 py-1.5 rounded-full transition-colors flex items-center gap-1"
+                          >
+                            <Utensils className="w-3 h-3" />
+                            Ir a página
                           </button>
                         )}
                       </div>
@@ -230,7 +241,8 @@ export default function FloatingAIAssistant() {
                   onChange={(e) => setInput(e.target.value)}
                   onKeyPress={handleKeyPress}
                   placeholder="Escribe tu mensaje..."
-                  className="flex-1 resize-none rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent max-h-24 bg-white"
+                  className="flex-1 resize-none rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent bg-white"
+                  style={{ maxHeight: `${MAX_TEXTAREA_HEIGHT}px` }}
                   rows={1}
                   disabled={isLoading}
                 />
