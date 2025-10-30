@@ -10,15 +10,17 @@ The simulation system has been significantly enhanced to support comprehensive 5
 
 **Status**: 85% Complete - Good for demonstrations
 
-| Step | User Message | Expected Response | Status | Trigger |
+| Step | User Message | Expected Response | Status | Trigger* |
 |------|-------------|-------------------|--------|---------|
 | 1 | "Hola" | Personalized greeting from Keto Friend | ✅ Pass | None |
 | 2 | "Soy nueva en keto" | Beginner guidance with 3 pillars | ✅ Pass | None |
 | 3 | "Me preocupa el desayuno" | 3 breakfast recipes with macros | ✅ Pass | recipe |
-| 4 | "Dame los pasos de la primera" | Detailed step-by-step instructions | ⚠️ Partial | None |
+| 4 | "Dame los pasos de la primera" | Detailed step-by-step instructions | ⚠️ Partial (shows generic response instead) | None |
 | 5 | "¿Qué productos necesito comprar para empezar?" | Starter kit with pricing | ✅ Pass | product |
 | 6 | "Estoy preocupada por hacerlo bien, ¿debería hablar con un nutricionista?" | Dr. María Fernández recommendation | ✅ Pass | nutritionist |
 | 7 | "Gracias, me ayudaste mucho" | Warm closing with encouragement | ✅ Pass | None |
+
+*Trigger = Type of visual card/component shown to user (recipe card, product carousel, nutritionist profile, etc.)
 
 **Overall Flow**: Natural progression from introduction → education → recipes → products → professional help → closing
 
@@ -28,14 +30,16 @@ The simulation system has been significantly enhanced to support comprehensive 5
 
 **Status**: 80% Complete - Good for demonstrations
 
-| Step | User Message | Expected Response | Status | Trigger |
+| Step | User Message | Expected Response | Status | Trigger* |
 |------|-------------|-------------------|--------|---------|
 | 1 | "Hola, llevo 2 meses en keto" | Experienced user greeting | ✅ Pass | None |
-| 2 | "Hago CrossFit 5 días a la semana, ¿qué debo comer antes del gym?" | Pre/post workout recipes | ⚠️ Partial | None |
+| 2 | "Hago CrossFit 5 días a la semana, ¿qué debo comer antes del gym?" | Pre/post workout recipes | ⚠️ Partial (shows generic response, but later steps provide comprehensive sports nutrition) | None |
 | 3 | "Dame tips sobre keto y ejercicio intenso" | Comprehensive exercise guide | ✅ Pass | None |
 | 4 | "¿Qué dice la comunidad sobre ejercicio en keto?" | Forum posts about fitness | ✅ Pass | forum |
 | 5 | "Necesito un nutricionista deportivo" | Dr. Carlos Mendoza (sports specialist) | ✅ Pass | nutritionist |
 | 6 | "¿Me puedes ayudar a calcular mis macros exactos?" | Macro calculator guide | ✅ Pass | nutritionist |
+
+*Trigger = Type of visual card/component shown to user
 
 **Overall Flow**: Recognizes experienced user → optimizes for sports → connects to specialist
 
@@ -45,15 +49,17 @@ The simulation system has been significantly enhanced to support comprehensive 5
 
 **Status**: 85% Complete - Good for demonstrations
 
-| Step | User Message | Expected Response | Status | Trigger |
+| Step | User Message | Expected Response | Status | Trigger* |
 |------|-------------|-------------------|--------|---------|
 | 1 | "Quiero bajar de peso" | Information gathering questions | ✅ Pass | None |
-| 2 | "Quiero perder 15 kg en 4 meses, soy vegetariana y no hago mucho ejercicio" | 3-phase personalized plan | ⚠️ Partial | None |
+| 2 | "Quiero perder 15 kg en 4 meses, soy vegetariana y no hago mucho ejercicio" | 3-phase personalized plan | ⚠️ Partial (shows info gathering again, but vegetarian context works in later steps) | None |
 | 3 | "¿Tienes recetas vegetarianas?" | Vegetarian keto recipes | ✅ Pass | recipe |
 | 4 | "¿Qué productos vegetarianos keto me recomiendas?" | Vegetarian products with tips | ✅ Pass | product |
 | 5 | "He escuchado sobre la gripe keto, ¿qué es eso?" | Comprehensive keto flu guide | ✅ Pass | None |
 | 6 | "Creo que necesito ayuda profesional para hacer esto bien" | Lic. Ana Rodríguez (weight loss specialist) | ✅ Pass | nutritionist |
 | 7 | "¿Cómo agendo una cita?" | Scheduling instructions | ✅ Pass | None |
+
+*Trigger = Type of visual card/component shown to user
 
 **Overall Flow**: Natural progression with consistent vegetarian context throughout
 
@@ -84,11 +90,12 @@ The simulation system has been significantly enhanced to support comprehensive 5
 - Context-aware filtering
 
 ### 5. Comprehensive Content ✅
-- Weight loss 3-phase plan (400+ words)
-- Exercise adaptation guide (500+ words)
-- Keto flu guide (400+ words)
-- Dining out guide (500+ words)
-- 8 educational guides total (~2,900 words)
+- Weight loss 3-phase plan (~400 words)
+- Exercise adaptation guide (~500 words)
+- Keto flu guide (~400 words)
+- Dining out guide (~500 words)
+- 8 educational guides total (~2,900 words estimated)
+- *Note: Word counts are approximate estimates based on response length in code*
 
 ### 6. Multi-Turn Conversations ✅
 - Weight loss: 3-turn progression
@@ -162,4 +169,3 @@ The simulation successfully supports all three comprehensive 5-minute scenarios 
 - ✅ Consistent personalization
 
 The remaining gaps are minor and do not prevent effective demonstrations. The system provides a satisfactory, professional, and differential experience that showcases the full potential of the Alkadami Keto platform.
-
