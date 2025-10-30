@@ -5,6 +5,7 @@ import { useCart } from '@/components/CartContext';
 import { useRouter } from 'next/navigation';
 import { sampleProducts } from '@/data/products';
 import { nutritionists } from '@/data/nutritionists';
+import { chatService } from '@/lib/mcp-services';
 
 export interface AIMessage {
   id: string;
@@ -302,12 +303,44 @@ async function processMessageWithActions(message: string, history: AIMessage[]):
       '📋 Ver ingredientes de productos\n' +
       '💬 Revisar temas del foro\n' +
       '📅 Agendar citas con nutricionistas\n' +
-      '🍽️ Armar comidas y planes semanales\n\n' +
+      '🍽️ Armar comidas y planes semanales\n' +
+      '🔍 Buscar recetas keto\n\n' +
       '¿En qué puedo ayudarte hoy?';
+  }
+  // Recipe suggestions
+  else if (lowerMessage.includes('receta') || lowerMessage.includes('cocinar') || lowerMessage.includes('preparar')) {
+    const recipes = chatService.getRecipeSuggestions(3);
+    response = '¡Excelente! Tengo estas recetas keto para ti:\n\n';
+    recipes.forEach((recipe, idx) => {
+      response += `${idx + 1}. **${recipe.name}**\n`;
+      response += `   • ${recipe.description}\n`;
+      response += `   • Tiempo: ${recipe.prepTime + recipe.cookTime} min\n`;
+      response += `   • Carbohidratos netos: ${recipe.nutritionInfo.netCarbs}g\n\n`;
+    });
+    response += '¿Te gustaría ver alguna en detalle o que te lleve a la sección de recetas personalizadas?';
+    action = { type: 'create_meal' };
+  }
+  // Product list
+  else if (lowerMessage.includes('productos') || lowerMessage.includes('tienda') || lowerMessage.includes('qué venden')) {
+    const products = chatService.getProductRecommendations().slice(0, 4);
+    response = 'Tenemos estos productos keto disponibles:\n\n';
+    products.forEach((product, idx) => {
+      response += `${idx + 1}. ${product.name} - $${product.price.toFixed(2)}\n`;
+      response += `   ${product.description.substring(0, 60)}...\n`;
+      response += `   ${product.isVegan ? '✅ Vegano' : ''} ${product.isGlutenFree ? '✅ Sin Gluten' : ''}\n\n`;
+    });
+    response += '¿Te gustaría ver todos los productos o agregar alguno al carrito?';
+    action = { type: 'navigate', data: '/productos' };
   }
   // Default response
   else {
-    response = 'Entiendo. ¿Podrías ser más específico? Puedo ayudarte con productos, recetas, el foro, agendar citas con nutricionistas, o navegar por la plataforma. ¿Qué te gustaría hacer?';
+    response = 'Entiendo. ¿Podrías ser más específico? Puedo ayudarte con:\n\n' +
+      '• Productos y agregar al carrito\n' +
+      '• Recetas keto personalizadas\n' +
+      '• Revisar el foro de la comunidad\n' +
+      '• Agendar citas con nutricionistas\n' +
+      '• Crear planes de comidas semanales\n\n' +
+      '¿Qué te gustaría hacer?';
   }
 
   return {
