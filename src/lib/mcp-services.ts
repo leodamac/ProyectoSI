@@ -6,13 +6,22 @@
  * Future: Replace with actual AI services while maintaining same interface
  */
 
-import { ChatMessage, UserProfile } from '@/types';
-import { generateKetoRecipe } from '@/data/recipes';
+import { ChatMessage, UserProfile, KetoRecipe } from '@/types';
+import { generateKetoRecipe, ketoRecipes } from '@/data/recipes';
+import { sampleProducts } from '@/data/products';
+import { nutritionists } from '@/data/nutritionists';
 
 export interface MCPServiceConfig {
   provider: 'mock' | 'openai' | 'gemini' | 'local';
   apiKey?: string;
   model?: string;
+}
+
+export interface AgentAction {
+  type: 'add_to_cart' | 'view_product' | 'view_forum' | 'schedule_appointment' | 
+        'create_recipe' | 'view_weekly_plan' | 'navigate' | 'show_ingredients';
+  data?: unknown;
+  description?: string;
 }
 
 export class MCPChatService {
@@ -25,10 +34,10 @@ export class MCPChatService {
   }
 
   /**
-   * Send a message and get AI response
+   * Send a message and get AI response with potential actions
    * Currently uses mock responses, but interface is ready for real AI
    */
-  async sendMessage(content: string): Promise<ChatMessage> {
+  async sendMessage(content: string): Promise<ChatMessage & { actions?: AgentAction[] }> {
     const userMessage: ChatMessage = {
       id: `msg-${Date.now()}-user`,
       role: 'user',
@@ -156,6 +165,72 @@ export class MCPChatService {
     if (message.includes('cena')) return 'Cena';
     if (message.includes('snack') || message.includes('merienda')) return 'Snack';
     return 'Desayuno';
+  }
+
+  /**
+   * Get recipe suggestions based on user preferences
+   */
+  getRecipeSuggestions(count: number = 3): KetoRecipe[] {
+    const restrictions = this.userProfile.dietaryRestrictions || [];
+    let filteredRecipes = ketoRecipes;
+
+    // Filter by dietary restrictions
+    if (restrictions.includes('vegano')) {
+      // For now, filter out recipes with animal products
+      // In a real app, recipes would have vegan flags
+      filteredRecipes = ketoRecipes.filter(r => 
+        !r.name.toLowerCase().includes('pollo') &&
+        !r.name.toLowerCase().includes('tocino') &&
+        !r.name.toLowerCase().includes('huevo')
+      );
+    }
+
+    return filteredRecipes.slice(0, count);
+  }
+
+  /**
+   * Get product recommendations based on user profile
+   */
+  getProductRecommendations(category?: string): typeof sampleProducts {
+    let products = sampleProducts;
+
+    if (category) {
+      products = products.filter(p => p.category.toLowerCase().includes(category.toLowerCase()));
+    }
+
+    // Filter by dietary restrictions
+    const restrictions = this.userProfile.dietaryRestrictions || [];
+    if (restrictions.includes('vegano')) {
+      products = products.filter(p => p.isVegan);
+    }
+
+    return products.slice(0, 6);
+  }
+
+  /**
+   * Get nutritionist recommendations based on user goals
+   */
+  getNutritionistRecommendations(): typeof nutritionists {
+    const goals = this.userProfile.goals || [];
+    
+    let recommendations = [...nutritionists];
+
+    // Prioritize based on goals
+    if (goals.includes('pérdida de peso')) {
+      recommendations = recommendations.sort((a, b) => {
+        const aMatch = a.specialty.toLowerCase().includes('peso');
+        const bMatch = b.specialty.toLowerCase().includes('peso');
+        return bMatch ? 1 : aMatch ? -1 : 0;
+      });
+    } else if (goals.includes('control glucémico')) {
+      recommendations = recommendations.sort((a, b) => {
+        const aMatch = a.specialty.toLowerCase().includes('diabetes') || a.specialty.toLowerCase().includes('metabólica');
+        const bMatch = b.specialty.toLowerCase().includes('diabetes') || b.specialty.toLowerCase().includes('metabólica');
+        return bMatch ? 1 : aMatch ? -1 : 0;
+      });
+    }
+
+    return recommendations.slice(0, 3);
   }
 
   getUserProfile(): Partial<UserProfile> {
