@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { MessageCircle, X, Minus, Send, Sparkles, ShoppingCart, Calendar, BookOpen, Utensils } from 'lucide-react';
+import { MessageCircle, X, Minus, Send, Sparkles, ShoppingCart, Calendar, BookOpen, Utensils, ChefHat, Info } from 'lucide-react';
 import { useAIAssistant } from '@/context/AIAssistantContext';
 
 export default function FloatingAIAssistant() {
@@ -28,6 +28,16 @@ export default function FloatingAIAssistant() {
     }
   }, [messages]);
 
+  // Auto-resize textarea
+  useEffect(() => {
+    const textarea = textareaRef.current;
+    if (!textarea) return;
+    
+    textarea.style.height = 'auto';
+    const newHeight = Math.min(textarea.scrollHeight, 100);
+    textarea.style.height = newHeight + 'px';
+  }, [input]);
+
   const handleSend = async () => {
     if (!input.trim() || isLoading) return;
     
@@ -45,10 +55,10 @@ export default function FloatingAIAssistant() {
 
   // Quick action buttons
   const quickActions = [
-    { icon: ShoppingCart, label: 'Ver Productos', action: () => sendMessage('Quiero ver los productos') },
+    { icon: ShoppingCart, label: 'Ver Productos', action: () => sendMessage('Muéstrame los productos disponibles') },
     { icon: Calendar, label: 'Agendar Cita', action: () => sendMessage('Quiero agendar una cita con un nutricionista') },
     { icon: BookOpen, label: 'Ver Foro', action: () => sendMessage('Llévame al foro') },
-    { icon: Utensils, label: 'Crear Plan', action: () => sendMessage('Quiero crear un plan semanal') },
+    { icon: ChefHat, label: 'Recetas', action: () => sendMessage('Dame recetas keto') },
   ];
 
   if (!isOpen) {
@@ -113,8 +123,8 @@ export default function FloatingAIAssistant() {
               {messages.length === 0 && (
                 <div className="text-center text-gray-500 py-8">
                   <Sparkles className="w-12 h-12 mx-auto mb-4 text-emerald-400" />
-                  <p className="text-sm">¡Hola! Soy tu asistente Keto.</p>
-                  <p className="text-xs mt-2">Pregúntame sobre productos, recetas,<br />citas o cualquier cosa keto.</p>
+                  <p className="text-sm font-medium">¡Hola! Soy tu asistente Keto.</p>
+                  <p className="text-xs mt-2 text-gray-400">Pregúntame sobre productos, recetas,<br />citas o cualquier cosa keto.</p>
                   
                   {/* Quick Actions */}
                   <div className="grid grid-cols-2 gap-2 mt-6">
@@ -122,12 +132,21 @@ export default function FloatingAIAssistant() {
                       <button
                         key={idx}
                         onClick={action.action}
-                        className="flex flex-col items-center gap-1 p-3 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors text-xs"
+                        className="flex flex-col items-center gap-1 p-3 bg-gray-50 hover:bg-emerald-50 hover:border-emerald-200 border border-gray-200 rounded-lg transition-colors text-xs"
                       >
                         <action.icon className="w-5 h-5 text-emerald-600" />
                         <span className="text-gray-700">{action.label}</span>
                       </button>
                     ))}
+                  </div>
+
+                  <div className="mt-6 p-3 bg-blue-50 rounded-lg text-left">
+                    <div className="flex items-start gap-2">
+                      <Info className="w-4 h-4 text-blue-600 mt-0.5 flex-shrink-0" />
+                      <p className="text-xs text-blue-800">
+                        Puedo ayudarte a agregar productos al carrito, buscar recetas, agendar citas y navegar por toda la plataforma.
+                      </p>
+                    </div>
                   </div>
                 </div>
               )}
@@ -149,13 +168,27 @@ export default function FloatingAIAssistant() {
                     <p className="text-sm whitespace-pre-wrap">{message.content}</p>
                     
                     {/* Action button if present */}
-                    {message.action && !message.action.executed && message.action.type === 'add_to_cart' && (
-                      <button
-                        onClick={() => executeAction(message.action!)}
-                        className="mt-2 text-xs bg-white/20 hover:bg-white/30 px-3 py-1 rounded-full transition-colors"
-                      >
-                        ✓ Agregar al carrito
-                      </button>
+                    {message.action && !message.action.executed && (
+                      <div className="mt-2 flex flex-wrap gap-2">
+                        {message.action.type === 'add_to_cart' && (
+                          <button
+                            onClick={() => executeAction(message.action!)}
+                            className="text-xs bg-white/90 hover:bg-white text-gray-800 px-3 py-1.5 rounded-full transition-colors flex items-center gap-1"
+                          >
+                            <ShoppingCart className="w-3 h-3" />
+                            Agregar al carrito
+                          </button>
+                        )}
+                        {(message.action.type === 'create_meal' || message.action.type === 'navigate') && (
+                          <button
+                            onClick={() => executeAction(message.action!)}
+                            className="text-xs bg-white/90 hover:bg-white text-gray-800 px-3 py-1.5 rounded-full transition-colors flex items-center gap-1"
+                          >
+                            <Utensils className="w-3 h-3" />
+                            Ver más
+                          </button>
+                        )}
+                      </div>
                     )}
                   </div>
                 </motion.div>
@@ -163,7 +196,7 @@ export default function FloatingAIAssistant() {
 
               {isLoading && (
                 <div className="flex justify-start">
-                  <div className="bg-gray-100 rounded-2xl px-4 py-2">
+                  <div className="bg-gray-100 rounded-2xl px-4 py-3">
                     <div className="flex gap-1">
                       <motion.div
                         className="w-2 h-2 bg-gray-400 rounded-full"
@@ -189,22 +222,22 @@ export default function FloatingAIAssistant() {
             </div>
 
             {/* Input Area */}
-            <div className="border-t border-gray-200 p-4">
-              <div className="flex gap-2">
+            <div className="border-t border-gray-200 p-4 bg-gray-50 rounded-b-2xl">
+              <div className="flex gap-2 items-end">
                 <textarea
                   ref={textareaRef}
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
                   onKeyPress={handleKeyPress}
                   placeholder="Escribe tu mensaje..."
-                  className="flex-1 resize-none rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 max-h-20"
+                  className="flex-1 resize-none rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent max-h-24 bg-white"
                   rows={1}
                   disabled={isLoading}
                 />
                 <button
                   onClick={handleSend}
                   disabled={!input.trim() || isLoading}
-                  className="bg-gradient-to-r from-emerald-500 to-teal-500 text-white rounded-lg px-4 py-2 hover:from-emerald-600 hover:to-teal-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="bg-gradient-to-r from-emerald-500 to-teal-500 text-white rounded-lg px-4 py-2 hover:from-emerald-600 hover:to-teal-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
                   aria-label="Enviar mensaje"
                 >
                   <Send className="w-4 h-4" />
