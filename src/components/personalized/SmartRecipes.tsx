@@ -5,13 +5,12 @@ import { ChefHat, Clock, Flame, Plus } from 'lucide-react';
 import { ketoRecipes } from '@/data/recipes';
 import { useState } from 'react';
 import { usePersonalized } from '@/context/PersonalizedContext';
-
-type MealType = 'breakfast' | 'lunch' | 'dinner' | 'snack';
+import type { MealPlanEntry } from '@/types';
 
 export default function SmartRecipes() {
   const [selectedRecipe, setSelectedRecipe] = useState<string | null>(null);
   const [selectedDayIndex, setSelectedDayIndex] = useState<number>(0);
-  const [selectedMealType, setSelectedMealType] = useState<MealType>('lunch');
+  const [selectedMealType, setSelectedMealType] = useState<MealPlanEntry['mealType']>('lunch');
   const { currentMealPlan, addMealToWeek } = usePersonalized();
 
   const recipe = selectedRecipe ? ketoRecipes.find(r => r.id === selectedRecipe) : ketoRecipes[0];
@@ -37,7 +36,7 @@ export default function SmartRecipes() {
 
   const daysOfWeek = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
   
-  const mealTypes: { value: MealType; label: string; emoji: string }[] = [
+  const mealTypes: { value: MealPlanEntry['mealType']; label: string; emoji: string }[] = [
     { value: 'breakfast', label: 'Desayuno', emoji: '🍳' },
     { value: 'lunch', label: 'Almuerzo', emoji: '🥗' },
     { value: 'dinner', label: 'Cena', emoji: '🍽️' },
