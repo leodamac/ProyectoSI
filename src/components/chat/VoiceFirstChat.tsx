@@ -7,7 +7,7 @@
 
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Send, Mic, MicOff, Volume2, VolumeX, Eye, EyeOff, Sparkles } from 'lucide-react';
+import { Send, Mic, MicOff, Volume2, VolumeX, Eye, EyeOff, Sparkles, HelpCircle, X, CheckCircle2 } from 'lucide-react';
 import { useVoiceMode } from '@/hooks/useVoiceMode';
 import { useSpeechToText } from '@/hooks/useSpeechToText';
 import ContextualCards, { LocationRequestCard } from './ContextualCards';
@@ -52,6 +52,7 @@ export default function VoiceFirstChat() {
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [showModeModal, setShowModeModal] = useState(false);
+  const [showHelpModal, setShowHelpModal] = useState(false);
   const [showHistoryFull, setShowHistoryFull] = useState(false);
   const [pendingLocationRequest, setPendingLocationRequest] = useState(false);
   const [userLocation, setUserLocation] = useState<{ latitude: number; longitude: number } | undefined>();
@@ -303,6 +304,97 @@ export default function VoiceFirstChat() {
         onModeChange={setMode}
       />
 
+      {/* Help Modal */}
+      <AnimatePresence>
+        {showHelpModal && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50"
+            onClick={() => setShowHelpModal(false)}
+          >
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              onClick={(e) => e.stopPropagation()}
+              className="bg-white rounded-2xl p-6 max-w-md w-full max-h-[80vh] overflow-y-auto shadow-2xl"
+            >
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-bold text-gray-900">¿Qué puedo hacer?</h3>
+                <button
+                  onClick={() => setShowHelpModal(false)}
+                  className="p-1 hover:bg-gray-100 rounded-lg transition-colors"
+                >
+                  <X className="w-5 h-5 text-gray-600" />
+                </button>
+              </div>
+
+              <div className="space-y-4">
+                <div>
+                  <h4 className="font-semibold text-gray-900 mb-2 text-sm">Capacidades del Asistente</h4>
+                  <ul className="space-y-2.5 text-sm text-gray-700">
+                    <li className="flex items-start gap-2.5">
+                      <CheckCircle2 className="w-4 h-4 text-emerald-500 mt-0.5 flex-shrink-0" />
+                      <span>Crear recetas keto personalizadas según tus preferencias</span>
+                    </li>
+                    <li className="flex items-start gap-2.5">
+                      <CheckCircle2 className="w-4 h-4 text-emerald-500 mt-0.5 flex-shrink-0" />
+                      <span>Recomendar productos de la tienda y agregar al carrito</span>
+                    </li>
+                    <li className="flex items-start gap-2.5">
+                      <CheckCircle2 className="w-4 h-4 text-emerald-500 mt-0.5 flex-shrink-0" />
+                      <span>Responder dudas sobre dieta keto y cetosis</span>
+                    </li>
+                    <li className="flex items-start gap-2.5">
+                      <CheckCircle2 className="w-4 h-4 text-emerald-500 mt-0.5 flex-shrink-0" />
+                      <span>Sugerir planes de alimentación semanales</span>
+                    </li>
+                    <li className="flex items-start gap-2.5">
+                      <CheckCircle2 className="w-4 h-4 text-emerald-500 mt-0.5 flex-shrink-0" />
+                      <span>Conectarte con nutricionistas certificados</span>
+                    </li>
+                    <li className="flex items-start gap-2.5">
+                      <CheckCircle2 className="w-4 h-4 text-emerald-500 mt-0.5 flex-shrink-0" />
+                      <span>Navegar por todas las secciones de la plataforma</span>
+                    </li>
+                  </ul>
+                </div>
+
+                <div className="pt-4 border-t border-gray-200">
+                  <h4 className="font-semibold text-gray-900 mb-2 text-sm">Modos de Interacción</h4>
+                  <p className="text-xs text-gray-600 mb-3">
+                    Puedes interactuar usando voz o texto. Haz clic en el indicador de modo en la esquina superior derecha para cambiar.
+                  </p>
+                  <div className="grid grid-cols-2 gap-2 text-xs">
+                    <div className="bg-emerald-50 p-2 rounded-lg border border-emerald-200">
+                      <div className="font-semibold text-emerald-900">Texto → Texto</div>
+                      <div className="text-emerald-700 mt-1">Escribe y lee respuestas</div>
+                    </div>
+                    <div className="bg-purple-50 p-2 rounded-lg border border-purple-200">
+                      <div className="font-semibold text-purple-900">Voz → Voz</div>
+                      <div className="text-purple-700 mt-1">Habla y escucha</div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="pt-4 border-t border-gray-200">
+                  <h4 className="font-semibold text-gray-900 mb-2 text-sm">Ejemplos de Preguntas</h4>
+                  <div className="space-y-1.5 text-xs text-gray-600">
+                    <p>• &quot;Dame recetas keto para desayuno&quot;</p>
+                    <p>• &quot;Agrega brownies keto al carrito&quot;</p>
+                    <p>• &quot;Quiero agendar una cita con un nutricionista&quot;</p>
+                    <p>• &quot;¿Cuántos carbohidratos puedo comer al día?&quot;</p>
+                    <p>• &quot;Muéstrame productos sin gluten&quot;</p>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* Header with Mode Indicator */}
       <div className="bg-gradient-to-r from-emerald-500 to-teal-500 px-4 py-3 rounded-t-2xl flex items-center justify-between">
         <div className="flex items-center gap-3">
@@ -318,8 +410,19 @@ export default function VoiceFirstChat() {
           </div>
         </div>
 
-        {/* Mode Indicator - Always Visible */}
-        <ModeIndicator mode={mode} onClick={() => setShowModeModal(true)} />
+        <div className="flex items-center gap-2">
+          {/* Help Button */}
+          <button
+            onClick={() => setShowHelpModal(true)}
+            className="p-2 hover:bg-white/20 rounded-lg transition-colors"
+            title="Ver ayuda"
+          >
+            <HelpCircle className="w-5 h-5 text-white" />
+          </button>
+
+          {/* Mode Indicator */}
+          <ModeIndicator mode={mode} onClick={() => setShowModeModal(true)} />
+        </div>
       </div>
 
       {/* Messages Container */}
