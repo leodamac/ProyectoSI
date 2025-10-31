@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Navigation from '@/components/Navigation';
 import { motion } from 'framer-motion';
-import { Download, Smartphone, Monitor, Tablet, CheckCircle, ArrowRight } from 'lucide-react';
+import { Download, Smartphone, Monitor, CheckCircle, ArrowRight } from 'lucide-react';
 
 export default function InstalarPage() {
   const [selectedDevice, setSelectedDevice] = useState<'android' | 'ios' | 'desktop'>('android');
@@ -131,9 +131,9 @@ export default function InstalarPage() {
                       3
                     </div>
                     <div>
-                      <h4 className="font-semibold text-gray-900 mb-2">Selecciona "Agregar a la pantalla de inicio"</h4>
+                      <h4 className="font-semibold text-gray-900 mb-2">Selecciona &quot;Agregar a la pantalla de inicio&quot;</h4>
                       <p className="text-gray-700">
-                        O "Instalar aplicación" si aparece esa opción. Se abrirá un diálogo de confirmación.
+                        O &quot;Instalar aplicación&quot; si aparece esa opción. Se abrirá un diálogo de confirmación.
                       </p>
                     </div>
                   </div>
@@ -144,7 +144,7 @@ export default function InstalarPage() {
                     <div>
                       <h4 className="font-semibold text-gray-900 mb-2">Confirma la instalación</h4>
                       <p className="text-gray-700">
-                        Toca "Instalar" o "Agregar". ¡Listo! El icono aparecerá en tu pantalla de inicio.
+                        Toca &quot;Instalar&quot; o &quot;Agregar&quot;. ¡Listo! El icono aparecerá en tu pantalla de inicio.
                       </p>
                     </div>
                   </div>
@@ -200,9 +200,9 @@ export default function InstalarPage() {
                       3
                     </div>
                     <div>
-                      <h4 className="font-semibold text-gray-900 mb-2">Desplázate y selecciona "Agregar a pantalla de inicio"</h4>
+                      <h4 className="font-semibold text-gray-900 mb-2">Desplázate y selecciona &quot;Agregar a pantalla de inicio&quot;</h4>
                       <p className="text-gray-700">
-                        Busca la opción en el menú que aparece. Tiene un icono de un "+" dentro de un cuadrado.
+                        Busca la opción en el menú que aparece. Tiene un icono de un &quot;+&quot; dentro de un cuadrado.
                       </p>
                     </div>
                   </div>
@@ -213,7 +213,7 @@ export default function InstalarPage() {
                     <div>
                       <h4 className="font-semibold text-gray-900 mb-2">Personaliza y confirma</h4>
                       <p className="text-gray-700">
-                        Puedes cambiar el nombre si quieres, luego toca "Agregar" en la esquina superior derecha.
+                        Puedes cambiar el nombre si quieres, luego toca &quot;Agregar&quot; en la esquina superior derecha.
                       </p>
                     </div>
                   </div>
@@ -260,7 +260,7 @@ export default function InstalarPage() {
                     <div>
                       <h4 className="font-semibold text-gray-900 mb-2">Busca el icono de instalación</h4>
                       <p className="text-gray-700">
-                        En la barra de direcciones (derecha), verás un icono de computadora o un símbolo "+". Haz clic en él.
+                        En la barra de direcciones (derecha), verás un icono de computadora o un símbolo &quot;+&quot;. Haz clic en él.
                       </p>
                     </div>
                   </div>
@@ -269,9 +269,9 @@ export default function InstalarPage() {
                       3
                     </div>
                     <div>
-                      <h4 className="font-semibold text-gray-900 mb-2">Haz clic en "Instalar"</h4>
+                      <h4 className="font-semibold text-gray-900 mb-2">Haz clic en &quot;Instalar&quot;</h4>
                       <p className="text-gray-700">
-                        Aparecerá un diálogo preguntando si quieres instalar la aplicación. Confirma haciendo clic en "Instalar".
+                        Aparecerá un diálogo preguntando si quieres instalar la aplicación. Confirma haciendo clic en &quot;Instalar&quot;.
                       </p>
                     </div>
                   </div>
