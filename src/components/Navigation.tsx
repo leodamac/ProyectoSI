@@ -2,12 +2,15 @@
 
 import Link from 'next/link';
 import { useCart } from './CartContext';
-import { Sparkles, Users, LayoutGrid, MessageSquare, Menu, X, Download } from 'lucide-react';
+import { useAuth } from '@/context/AuthContext';
+import { Sparkles, Users, LayoutGrid, MessageSquare, Menu, X, Download, LogIn, LogOut, User } from 'lucide-react';
 import { useState } from 'react';
 
 export default function Navigation() {
   const { itemCount } = useCart();
+  const { user, isAuthenticated, logout } = useAuth();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [showUserMenu, setShowUserMenu] = useState(false);
 
   return (
     <nav className="bg-white shadow-md sticky top-0 z-50">
@@ -75,13 +78,66 @@ export default function Navigation() {
             </button>
           </div>
 
-          {/* Desktop Cart */}
-          <Link 
-            href="/carrito"
-            className="hidden md:block bg-emerald-600 text-white px-4 py-2 rounded-lg hover:bg-emerald-700 transition-colors font-medium"
-          >
-            🛒 Carrito ({itemCount})
-          </Link>
+          {/* Desktop Cart and User Menu */}
+          <div className="hidden md:flex items-center gap-3">
+            <Link 
+              href="/carrito"
+              className="bg-emerald-600 text-white px-4 py-2 rounded-lg hover:bg-emerald-700 transition-colors font-medium"
+            >
+              🛒 Carrito ({itemCount})
+            </Link>
+            
+            {isAuthenticated ? (
+              <div className="relative">
+                <button
+                  onClick={() => setShowUserMenu(!showUserMenu)}
+                  className="flex items-center gap-2 bg-gray-100 hover:bg-gray-200 px-4 py-2 rounded-lg transition-colors"
+                >
+                  <span className="text-2xl">{user?.avatar || '👤'}</span>
+                  <div className="text-left">
+                    <div className="text-sm font-semibold text-gray-900">{user?.name}</div>
+                    <div className="text-xs text-gray-600">
+                      {user?.role === 'professional' ? '👩‍⚕️ Profesional' : '👤 Usuario'}
+                      {user?.isPremium && ' ⭐'}
+                    </div>
+                  </div>
+                </button>
+                
+                {showUserMenu && (
+                  <>
+                    <div 
+                      className="fixed inset-0 z-40" 
+                      onClick={() => setShowUserMenu(false)}
+                    />
+                    <div className="absolute right-0 mt-2 w-64 bg-white rounded-lg shadow-xl border border-gray-200 py-2 z-50">
+                      <div className="px-4 py-3 border-b border-gray-200">
+                        <p className="text-sm font-semibold text-gray-900">{user?.name}</p>
+                        <p className="text-xs text-gray-600">{user?.email}</p>
+                      </div>
+                      <button
+                        onClick={() => {
+                          logout();
+                          setShowUserMenu(false);
+                        }}
+                        className="w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-red-50 flex items-center gap-2"
+                      >
+                        <LogOut className="w-4 h-4" />
+                        Cerrar Sesión
+                      </button>
+                    </div>
+                  </>
+                )}
+              </div>
+            ) : (
+              <Link 
+                href="/login"
+                className="flex items-center gap-2 bg-gradient-to-r from-emerald-600 to-teal-600 text-white px-4 py-2 rounded-lg hover:from-emerald-700 hover:to-teal-700 transition-colors font-medium"
+              >
+                <LogIn className="w-4 h-4" />
+                Iniciar Sesión
+              </Link>
+            )}
+          </div>
         </div>
 
         {/* Mobile Menu */}
@@ -149,6 +205,45 @@ export default function Navigation() {
                 <Download className="w-5 h-5" />
                 Instalar App
               </Link>
+              
+              {/* User Section */}
+              <div className="border-t border-gray-200 pt-3 mt-3">
+                {isAuthenticated ? (
+                  <>
+                    <div className="bg-gray-50 p-3 rounded-lg mb-3">
+                      <div className="flex items-center gap-3">
+                        <span className="text-3xl">{user?.avatar || '👤'}</span>
+                        <div>
+                          <div className="text-sm font-semibold text-gray-900">{user?.name}</div>
+                          <div className="text-xs text-gray-600">
+                            {user?.role === 'professional' ? '👩‍⚕️ Profesional' : '👤 Usuario'}
+                            {user?.isPremium && ' ⭐'}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <button
+                      onClick={() => {
+                        logout();
+                        setMobileMenuOpen(false);
+                      }}
+                      className="w-full flex items-center gap-2 text-red-600 hover:bg-red-50 font-medium px-4 py-3 rounded-lg transition-colors"
+                    >
+                      <LogOut className="w-5 h-5" />
+                      Cerrar Sesión
+                    </button>
+                  </>
+                ) : (
+                  <Link 
+                    href="/login"
+                    className="flex items-center gap-2 text-white bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 font-semibold px-4 py-3 rounded-lg transition-colors"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    <LogIn className="w-5 h-5" />
+                    Iniciar Sesión
+                  </Link>
+                )}
+              </div>
             </div>
           </div>
         )}
