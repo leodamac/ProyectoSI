@@ -82,7 +82,7 @@ export default function FloatingAIAssistant() {
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.9 }}
         onClick={openAssistant}
-        className="fixed bottom-6 right-6 z-50 bg-gradient-to-r from-emerald-500 to-teal-500 text-white rounded-full p-4 shadow-lg hover:shadow-xl transition-shadow"
+        className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50 bg-gradient-to-r from-emerald-500 to-teal-500 text-white rounded-full p-4 shadow-lg hover:shadow-xl transition-shadow"
         aria-label="Abrir asistente de IA"
       >
         <MessageCircle className="w-6 h-6" />
@@ -101,15 +101,15 @@ export default function FloatingAIAssistant() {
         initial={{ opacity: 0, y: 20, scale: 0.95 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
         exit={{ opacity: 0, y: 20, scale: 0.95 }}
-        className={`fixed bottom-6 right-6 z-50 bg-white rounded-2xl shadow-2xl border border-gray-200 flex flex-col ${
-          isMinimized ? 'w-80 h-16' : 'w-96 h-[600px]'
+        className={`fixed bottom-4 right-4 left-4 sm:left-auto sm:bottom-6 sm:right-6 z-50 bg-white rounded-2xl shadow-2xl border border-gray-200 flex flex-col ${
+          isMinimized ? 'sm:w-80 h-16' : 'sm:w-96 h-[500px] sm:h-[600px]'
         } transition-all duration-300`}
       >
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b border-gray-200 bg-gradient-to-r from-emerald-500 to-teal-500 text-white rounded-t-2xl">
           <div className="flex items-center gap-2">
             <Sparkles className="w-5 h-5" />
-            <h3 className="font-semibold">Keto Assistant</h3>
+            <h3 className="font-semibold">Asistente Keto</h3>
           </div>
           <div className="flex items-center gap-2">
             <button

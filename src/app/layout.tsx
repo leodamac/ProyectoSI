@@ -6,6 +6,7 @@ import { AIAssistantProvider } from "@/context/AIAssistantContext";
 import FloatingAIAssistant from "@/components/FloatingAIAssistant";
 import OfflineIndicator from "@/components/OfflineIndicator";
 import ServiceWorkerRegistration from "@/components/ServiceWorkerRegistration";
+import InstallPrompt from "@/components/InstallPrompt";
 
 export const metadata: Metadata = {
   title: "Alkadami Keto - Tu Asistente Inteligente de Nutrición Keto",
@@ -41,6 +42,7 @@ export default function RootLayout({
               <OfflineIndicator />
               {children}
               <FloatingAIAssistant />
+              <InstallPrompt />
             </AIAssistantProvider>
           </ForumProvider>
         </CartProvider>
