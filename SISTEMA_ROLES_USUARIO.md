@@ -355,7 +355,7 @@ npm run build
 
 6. **Reviews y Ratings**
    - Usuarios pueden dejar reseñas
-   - Rating en estrella s
+   - Rating en estrellas
    - Comentarios
 
 ### Baja Prioridad

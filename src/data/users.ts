@@ -106,7 +106,7 @@ export const mockUsers: (User & { password: string })[] = [
     institutionInfo: {
       type: 'nutrition-center',
       description: 'Centro integral de nutrición keto con 5 profesionales certificados',
-      professionalIds: ['prof-3', 'prof-4'], // Professionals working here
+      professionalIds: ['prof-3'], // Professionals working here (only Ana López for now)
       servicesOffered: ['Consultas nutricionales', 'Planes personalizados', 'Seguimiento mensual', 'Talleres grupales']
     }
   },
