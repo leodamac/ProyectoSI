@@ -4,14 +4,14 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 import Navigation from '@/components/Navigation';
-import { User, Mail, Phone, MapPin, Settings, Save, Edit2, X, Award } from 'lucide-react';
+import { User, Mail, MapPin, Settings, Save, Edit2, X, Award } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 export default function PerfilPage() {
   const { user, isAuthenticated, isLoading } = useAuth();
   const router = useRouter();
   const [isEditing, setIsEditing] = useState(false);
-  const [editedUser, setEditedUser] = useState(user);
+  const [editedUser, setEditedUser] = useState<typeof user>(user);
   const [successMessage, setSuccessMessage] = useState('');
 
   // Redirect if not authenticated
@@ -184,7 +184,7 @@ export default function PerfilPage() {
                       <input
                         type="text"
                         value={editedUser?.name || ''}
-                        onChange={(e) => setEditedUser({ ...editedUser!, name: e.target.value })}
+                        onChange={(e) => editedUser && setEditedUser({ ...editedUser, name: e.target.value })}
                         className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
                       />
                     ) : (
@@ -208,7 +208,7 @@ export default function PerfilPage() {
                       <input
                         type="tel"
                         value={editedUser?.phone || ''}
-                        onChange={(e) => setEditedUser({ ...editedUser!, phone: e.target.value })}
+                        onChange={(e) => editedUser && setEditedUser({ ...editedUser, phone: e.target.value })}
                         className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
                         placeholder="+593 99 123 4567"
                       />
@@ -323,10 +323,15 @@ export default function PerfilPage() {
                     {isEditing ? (
                       <select
                         value={editedUser?.ketoProfile?.activityLevel || 'moderate'}
-                        onChange={(e) => setEditedUser({
-                          ...editedUser!,
-                          ketoProfile: { ...editedUser?.ketoProfile, activityLevel: e.target.value as 'sedentary' | 'light' | 'moderate' | 'very-active' | 'extra-active' }
-                        })}
+                        onChange={(e) => {
+                          const value = e.target.value as 'sedentary' | 'light' | 'moderate' | 'very-active' | 'extra-active';
+                          if (editedUser) {
+                            setEditedUser({
+                              ...editedUser,
+                              ketoProfile: { ...editedUser.ketoProfile, activityLevel: value }
+                            });
+                          }
+                        }}
                         className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
                       >
                         <option value="sedentary">Sedentario</option>
@@ -355,9 +360,9 @@ export default function PerfilPage() {
                       <input
                         type="number"
                         value={editedUser?.ketoProfile?.weight || ''}
-                        onChange={(e) => setEditedUser({
-                          ...editedUser!,
-                          ketoProfile: { ...editedUser?.ketoProfile, weight: parseFloat(e.target.value) }
+                        onChange={(e) => editedUser && setEditedUser({
+                          ...editedUser,
+                          ketoProfile: { ...editedUser.ketoProfile, weight: parseFloat(e.target.value) || undefined }
                         })}
                         className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
                         placeholder="70"
@@ -375,9 +380,9 @@ export default function PerfilPage() {
                       <input
                         type="number"
                         value={editedUser?.ketoProfile?.height || ''}
-                        onChange={(e) => setEditedUser({
-                          ...editedUser!,
-                          ketoProfile: { ...editedUser?.ketoProfile, height: parseFloat(e.target.value) }
+                        onChange={(e) => editedUser && setEditedUser({
+                          ...editedUser,
+                          ketoProfile: { ...editedUser.ketoProfile, height: parseFloat(e.target.value) || undefined }
                         })}
                         className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
                         placeholder="170"
@@ -395,9 +400,9 @@ export default function PerfilPage() {
                       <input
                         type="number"
                         value={editedUser?.ketoProfile?.targetWeight || ''}
-                        onChange={(e) => setEditedUser({
-                          ...editedUser!,
-                          ketoProfile: { ...editedUser?.ketoProfile, targetWeight: parseFloat(e.target.value) }
+                        onChange={(e) => editedUser && setEditedUser({
+                          ...editedUser,
+                          ketoProfile: { ...editedUser.ketoProfile, targetWeight: parseFloat(e.target.value) || undefined }
                         })}
                         className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
                         placeholder="65"
@@ -476,9 +481,9 @@ export default function PerfilPage() {
                     <input
                       type="checkbox"
                       checked={editedUser?.preferences?.notifications ?? true}
-                      onChange={(e) => setEditedUser({
-                        ...editedUser!,
-                        preferences: { ...editedUser?.preferences, notifications: e.target.checked }
+                      onChange={(e) => editedUser && setEditedUser({
+                        ...editedUser,
+                        preferences: { ...editedUser.preferences, notifications: e.target.checked }
                       })}
                       disabled={!isEditing}
                       className="w-5 h-5 text-emerald-600 border-gray-300 rounded focus:ring-emerald-500"
@@ -493,9 +498,9 @@ export default function PerfilPage() {
                     <input
                       type="checkbox"
                       checked={editedUser?.preferences?.newsletter ?? true}
-                      onChange={(e) => setEditedUser({
-                        ...editedUser!,
-                        preferences: { ...editedUser?.preferences, newsletter: e.target.checked }
+                      onChange={(e) => editedUser && setEditedUser({
+                        ...editedUser,
+                        preferences: { ...editedUser.preferences, newsletter: e.target.checked }
                       })}
                       disabled={!isEditing}
                       className="w-5 h-5 text-emerald-600 border-gray-300 rounded focus:ring-emerald-500"
