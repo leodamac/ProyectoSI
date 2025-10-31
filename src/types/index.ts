@@ -28,7 +28,7 @@ export interface User {
   id: string;
   email: string;
   name: string;
-  role: 'professional' | 'user';
+  role: 'user' | 'professional' | 'institution';
   avatar?: string;
   phone?: string;
   address?: {
@@ -42,6 +42,28 @@ export interface User {
   bio?: string;
   birthDate?: string;
   gender?: 'male' | 'female' | 'other' | 'prefer-not-to-say';
+  // Professional/Institution specific data
+  professionalInfo?: {
+    specialty?: string;
+    certifications?: string[];
+    experience?: number;
+    rating?: number;
+    reviewCount?: number;
+    hourlyRate?: number;
+    availability?: {
+      day: string;
+      hours: string;
+    }[];
+    languages?: string[];
+    institutionId?: string; // For professionals that belong to an institution
+  };
+  // Institution specific data
+  institutionInfo?: {
+    type: 'nutrition-center' | 'medical-center' | 'distributor' | 'independent';
+    description?: string;
+    professionalIds?: string[]; // Professionals managed by this institution
+    servicesOffered?: string[];
+  };
   // Keto-specific profile data
   ketoProfile?: {
     dietaryRestrictions?: string[];
@@ -243,4 +265,41 @@ export interface ForumComment {
   downvotes: number;
   parentId?: string; // for nested comments
   replies?: ForumComment[];
+}
+
+// Appointment System Types
+export interface Appointment {
+  id: string;
+  userId: string; // User who booked the appointment
+  professionalId: string; // Professional or institution providing the service
+  serviceType: 'consultation' | 'nutrition-plan' | 'follow-up' | 'group-session';
+  date: Date;
+  duration: number; // in minutes
+  status: 'pending' | 'confirmed' | 'completed' | 'cancelled' | 'rejected';
+  notes?: string;
+  price: number;
+  paymentStatus: 'pending' | 'paid' | 'refunded';
+  paymentId?: string;
+  createdAt: Date;
+  updatedAt?: Date;
+  meetingLink?: string; // For virtual appointments
+}
+
+// Payment System Types (Wizard of Oz - Mockup)
+export interface Payment {
+  id: string;
+  userId: string;
+  amount: number;
+  currency: string;
+  type: 'appointment' | 'product' | 'subscription';
+  status: 'pending' | 'processing' | 'completed' | 'failed' | 'refunded';
+  method: 'credit-card' | 'debit-card' | 'paypal' | 'bank-transfer';
+  relatedId?: string; // appointmentId or orderId
+  createdAt: Date;
+  completedAt?: Date;
+  metadata?: {
+    cardLast4?: string;
+    cardBrand?: string;
+    transactionId?: string;
+  };
 }

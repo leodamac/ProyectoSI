@@ -3,12 +3,12 @@
 import Link from 'next/link';
 import { useCart } from './CartContext';
 import { useAuth } from '@/context/AuthContext';
-import { Sparkles, Users, LayoutGrid, MessageSquare, Menu, X, Download, LogIn, LogOut, UserCircle, ChevronDown, ShoppingBag, BookOpen } from 'lucide-react';
+import { Sparkles, Users, LayoutGrid, MessageSquare, Menu, X, Download, LogIn, LogOut, UserCircle, ChevronDown, ShoppingBag, BookOpen, Calendar, Briefcase } from 'lucide-react';
 import { useState } from 'react';
 
 export default function Navigation() {
   const { itemCount } = useCart();
-  const { user, isAuthenticated, logout } = useAuth();
+  const { user, isAuthenticated, logout, isProfessional, isInstitution } = useAuth();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showServicesMenu, setShowServicesMenu] = useState(false);
@@ -143,7 +143,8 @@ export default function Navigation() {
                   <div className="text-left">
                     <div className="text-sm font-semibold text-gray-900">{user?.name}</div>
                     <div className="text-xs text-gray-600">
-                      {user?.role === 'professional' ? '👩‍⚕️ Profesional' : '👤 Usuario'}
+                      {user?.role === 'professional' ? '👩‍⚕️ Profesional' : 
+                       user?.role === 'institution' ? '🏥 Institución' : '👤 Usuario'}
                       {user?.isPremium && ' ⭐'}
                     </div>
                   </div>
@@ -168,6 +169,33 @@ export default function Navigation() {
                         <UserCircle className="w-4 h-4" />
                         Ver Perfil
                       </Link>
+                      
+                      {/* Professional/Institution specific menu items */}
+                      {(isProfessional() || isInstitution()) && (
+                        <>
+                          <Link
+                            href="/panel-profesional"
+                            onClick={() => setShowUserMenu(false)}
+                            className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-blue-50 flex items-center gap-2"
+                          >
+                            <Briefcase className="w-4 h-4" />
+                            Panel Profesional
+                          </Link>
+                        </>
+                      )}
+                      
+                      {/* Regular user menu items */}
+                      {user?.role === 'user' && (
+                        <Link
+                          href="/mis-citas"
+                          onClick={() => setShowUserMenu(false)}
+                          className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-purple-50 flex items-center gap-2"
+                        >
+                          <Calendar className="w-4 h-4" />
+                          Mis Citas
+                        </Link>
+                      )}
+                      
                       <button
                         onClick={() => {
                           logout();
@@ -281,7 +309,8 @@ export default function Navigation() {
                         <div>
                           <div className="text-sm font-semibold text-gray-900">{user?.name}</div>
                           <div className="text-xs text-gray-600">
-                            {user?.role === 'professional' ? '👩‍⚕️ Profesional' : '👤 Usuario'}
+                            {user?.role === 'professional' ? '👩‍⚕️ Profesional' : 
+                             user?.role === 'institution' ? '🏥 Institución' : '👤 Usuario'}
                             {user?.isPremium && ' ⭐'}
                           </div>
                         </div>
@@ -295,6 +324,31 @@ export default function Navigation() {
                       <UserCircle className="w-5 h-5" />
                       Ver Perfil
                     </Link>
+                    
+                    {/* Professional/Institution menu items */}
+                    {(isProfessional() || isInstitution()) && (
+                      <Link
+                        href="/panel-profesional"
+                        onClick={() => setMobileMenuOpen(false)}
+                        className="w-full flex items-center gap-2 text-gray-700 hover:bg-blue-50 font-medium px-4 py-3 rounded-lg transition-colors mb-2"
+                      >
+                        <Briefcase className="w-5 h-5" />
+                        Panel Profesional
+                      </Link>
+                    )}
+                    
+                    {/* Regular user menu items */}
+                    {user?.role === 'user' && (
+                      <Link
+                        href="/mis-citas"
+                        onClick={() => setMobileMenuOpen(false)}
+                        className="w-full flex items-center gap-2 text-gray-700 hover:bg-purple-50 font-medium px-4 py-3 rounded-lg transition-colors mb-2"
+                      >
+                        <Calendar className="w-5 h-5" />
+                        Mis Citas
+                      </Link>
+                    )}
+                    
                     <button
                       onClick={() => {
                         logout();

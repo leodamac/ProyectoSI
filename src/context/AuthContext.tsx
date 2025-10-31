@@ -11,6 +11,7 @@ interface AuthContextType {
   login: (email: string, password: string) => Promise<{ success: boolean; error?: string }>;
   logout: () => void;
   isProfessional: () => boolean;
+  isInstitution: () => boolean;
   isPremium: () => boolean;
 }
 
@@ -88,6 +89,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return user?.role === 'professional';
   };
 
+  const isInstitution = (): boolean => {
+    return user?.role === 'institution';
+  };
+
   const isPremium = (): boolean => {
     return user?.isPremium === true;
   };
@@ -99,6 +104,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     login,
     logout,
     isProfessional,
+    isInstitution,
     isPremium
   };
 
