@@ -39,6 +39,25 @@ export interface User {
     country: string;
   };
   isPremium?: boolean;
+  bio?: string;
+  birthDate?: string;
+  gender?: 'male' | 'female' | 'other' | 'prefer-not-to-say';
+  // Keto-specific profile data
+  ketoProfile?: {
+    dietaryRestrictions?: string[];
+    allergies?: string[];
+    goals?: string[];
+    activityLevel?: 'sedentary' | 'light' | 'moderate' | 'very-active' | 'extra-active';
+    weight?: number;
+    height?: number;
+    targetWeight?: number;
+  };
+  preferences?: {
+    language?: string;
+    notifications?: boolean;
+    newsletter?: boolean;
+  };
+  joinDate?: string;
 }
 
 export interface Order {

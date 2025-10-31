@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { useCart } from './CartContext';
 import { useAuth } from '@/context/AuthContext';
-import { Sparkles, Users, LayoutGrid, MessageSquare, Menu, X, Download, LogIn, LogOut, User } from 'lucide-react';
+import { Sparkles, Users, LayoutGrid, MessageSquare, Menu, X, Download, LogIn, LogOut, UserCircle, ChevronDown, ShoppingBag, BookOpen } from 'lucide-react';
 import { useState } from 'react';
 
 export default function Navigation() {
@@ -11,6 +11,7 @@ export default function Navigation() {
   const { user, isAuthenticated, logout } = useAuth();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
+  const [showServicesMenu, setShowServicesMenu] = useState(false);
 
   return (
     <nav className="bg-white shadow-md sticky top-0 z-50">
@@ -21,43 +22,88 @@ export default function Navigation() {
           </Link>
           
           {/* Desktop Navigation */}
-          <div className="hidden md:flex space-x-6 items-center">
+          <div className="hidden md:flex space-x-4 items-center">
             <Link href="/" className="text-gray-700 hover:text-emerald-600 font-medium transition-colors">
               Inicio
             </Link>
-            <Link 
-              href="/chat-ia" 
-              className="flex items-center gap-2 text-emerald-700 hover:text-emerald-800 font-semibold bg-emerald-50 px-4 py-2 rounded-lg transition-colors"
-            >
-              <Sparkles className="w-4 h-4" />
-              Chat IA
-            </Link>
-            <Link 
-              href="/foro" 
-              className="flex items-center gap-2 text-purple-700 hover:text-purple-800 font-semibold bg-purple-50 px-4 py-2 rounded-lg transition-colors"
-            >
-              <MessageSquare className="w-4 h-4" />
-              Foro
-            </Link>
-            <Link 
-              href="/nutricionistas" 
-              className="flex items-center gap-2 text-teal-700 hover:text-teal-800 font-semibold bg-teal-50 px-4 py-2 rounded-lg transition-colors"
-            >
-              <Users className="w-4 h-4" />
-              Nutricionistas
-            </Link>
-            <Link 
-              href="/personalizados" 
-              className="flex items-center gap-2 text-blue-700 hover:text-blue-800 font-semibold bg-blue-50 px-4 py-2 rounded-lg transition-colors"
-            >
-              <LayoutGrid className="w-4 h-4" />
-              Personalizados
-            </Link>
-            <Link href="/productos" className="text-gray-700 hover:text-emerald-600 font-medium transition-colors">
+            
+            {/* Services Dropdown */}
+            <div className="relative">
+              <button
+                onClick={() => setShowServicesMenu(!showServicesMenu)}
+                onMouseEnter={() => setShowServicesMenu(true)}
+                className="flex items-center gap-1 text-gray-700 hover:text-emerald-600 font-medium transition-colors py-2"
+              >
+                Servicios
+                <ChevronDown className="w-4 h-4" />
+              </button>
+              
+              {showServicesMenu && (
+                <>
+                  <div 
+                    className="fixed inset-0 z-40" 
+                    onClick={() => setShowServicesMenu(false)}
+                  />
+                  <div 
+                    className="absolute left-0 mt-2 w-64 bg-white rounded-lg shadow-xl border border-gray-200 py-2 z-50"
+                    onMouseLeave={() => setShowServicesMenu(false)}
+                  >
+                    <Link 
+                      href="/chat-ia" 
+                      className="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-emerald-50 hover:text-emerald-700 transition-colors"
+                      onClick={() => setShowServicesMenu(false)}
+                    >
+                      <Sparkles className="w-5 h-5 text-emerald-600" />
+                      <div>
+                        <div className="font-semibold">Chat IA</div>
+                        <div className="text-xs text-gray-500">Asistente inteligente gratis</div>
+                      </div>
+                    </Link>
+                    <Link 
+                      href="/nutricionistas" 
+                      className="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-teal-50 hover:text-teal-700 transition-colors"
+                      onClick={() => setShowServicesMenu(false)}
+                    >
+                      <Users className="w-5 h-5 text-teal-600" />
+                      <div>
+                        <div className="font-semibold">Nutricionistas</div>
+                        <div className="text-xs text-gray-500">Consultas profesionales</div>
+                      </div>
+                    </Link>
+                    <Link 
+                      href="/personalizados" 
+                      className="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-700 transition-colors"
+                      onClick={() => setShowServicesMenu(false)}
+                    >
+                      <LayoutGrid className="w-5 h-5 text-blue-600" />
+                      <div>
+                        <div className="font-semibold">Personalizados</div>
+                        <div className="text-xs text-gray-500">Planes y recetas</div>
+                      </div>
+                    </Link>
+                    <Link 
+                      href="/foro" 
+                      className="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-purple-50 hover:text-purple-700 transition-colors"
+                      onClick={() => setShowServicesMenu(false)}
+                    >
+                      <MessageSquare className="w-5 h-5 text-purple-600" />
+                      <div>
+                        <div className="font-semibold">Foro</div>
+                        <div className="text-xs text-gray-500">Comunidad keto</div>
+                      </div>
+                    </Link>
+                  </div>
+                </>
+              )}
+            </div>
+            
+            <Link href="/productos" className="flex items-center gap-2 text-gray-700 hover:text-emerald-600 font-medium transition-colors">
+              <ShoppingBag className="w-4 h-4" />
               Productos
             </Link>
-            <Link href="/contacto" className="text-gray-700 hover:text-emerald-600 font-medium transition-colors">
-              Contacto
+            <Link href="/blog" className="flex items-center gap-2 text-gray-700 hover:text-emerald-600 font-medium transition-colors">
+              <BookOpen className="w-4 h-4" />
+              Blog
             </Link>
           </div>
 
@@ -114,6 +160,14 @@ export default function Navigation() {
                         <p className="text-sm font-semibold text-gray-900">{user?.name}</p>
                         <p className="text-xs text-gray-600">{user?.email}</p>
                       </div>
+                      <Link
+                        href="/perfil"
+                        onClick={() => setShowUserMenu(false)}
+                        className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-emerald-50 flex items-center gap-2"
+                      >
+                        <UserCircle className="w-4 h-4" />
+                        Ver Perfil
+                      </Link>
                       <button
                         onClick={() => {
                           logout();
@@ -151,60 +205,71 @@ export default function Navigation() {
               >
                 Inicio
               </Link>
-              <Link 
-                href="/chat-ia" 
-                className="flex items-center gap-2 text-emerald-700 hover:text-emerald-800 font-semibold bg-emerald-50 px-4 py-3 rounded-lg transition-colors"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                <Sparkles className="w-5 h-5" />
-                Chat IA
-              </Link>
-              <Link 
-                href="/foro" 
-                className="flex items-center gap-2 text-purple-700 hover:text-purple-800 font-semibold bg-purple-50 px-4 py-3 rounded-lg transition-colors"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                <MessageSquare className="w-5 h-5" />
-                Foro
-              </Link>
-              <Link 
-                href="/nutricionistas" 
-                className="flex items-center gap-2 text-teal-700 hover:text-teal-800 font-semibold bg-teal-50 px-4 py-3 rounded-lg transition-colors"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                <Users className="w-5 h-5" />
-                Nutricionistas
-              </Link>
-              <Link 
-                href="/personalizados" 
-                className="flex items-center gap-2 text-blue-700 hover:text-blue-800 font-semibold bg-blue-50 px-4 py-3 rounded-lg transition-colors"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                <LayoutGrid className="w-5 h-5" />
-                Personalizados
-              </Link>
-              <Link 
-                href="/productos" 
-                className="text-gray-700 hover:text-emerald-600 font-medium transition-colors py-2"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                Productos
-              </Link>
-              <Link 
-                href="/contacto" 
-                className="text-gray-700 hover:text-emerald-600 font-medium transition-colors py-2"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                Contacto
-              </Link>
-              <Link 
-                href="/instalar" 
-                className="flex items-center gap-2 text-white bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 font-semibold px-4 py-3 rounded-lg transition-colors mt-2"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                <Download className="w-5 h-5" />
-                Instalar App
-              </Link>
+              
+              {/* Services Section */}
+              <div className="border-t border-gray-200 pt-3">
+                <p className="text-xs font-semibold text-gray-500 uppercase mb-2 px-2">Servicios</p>
+                <Link 
+                  href="/chat-ia" 
+                  className="flex items-center gap-2 text-emerald-700 hover:text-emerald-800 font-semibold bg-emerald-50 px-4 py-3 rounded-lg transition-colors"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  <Sparkles className="w-5 h-5" />
+                  Chat IA
+                </Link>
+                <Link 
+                  href="/nutricionistas" 
+                  className="flex items-center gap-2 text-teal-700 hover:text-teal-800 font-medium px-4 py-3 rounded-lg transition-colors mt-2"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  <Users className="w-5 h-5" />
+                  Nutricionistas
+                </Link>
+                <Link 
+                  href="/personalizados" 
+                  className="flex items-center gap-2 text-blue-700 hover:text-blue-800 font-medium px-4 py-3 rounded-lg transition-colors"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  <LayoutGrid className="w-5 h-5" />
+                  Personalizados
+                </Link>
+                <Link 
+                  href="/foro" 
+                  className="flex items-center gap-2 text-purple-700 hover:text-purple-800 font-medium px-4 py-3 rounded-lg transition-colors"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  <MessageSquare className="w-5 h-5" />
+                  Foro
+                </Link>
+              </div>
+              
+              {/* Other Links */}
+              <div className="border-t border-gray-200 pt-3">
+                <Link 
+                  href="/productos" 
+                  className="flex items-center gap-2 text-gray-700 hover:text-emerald-600 font-medium transition-colors py-2"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  <ShoppingBag className="w-5 h-5" />
+                  Productos
+                </Link>
+                <Link 
+                  href="/blog" 
+                  className="flex items-center gap-2 text-gray-700 hover:text-emerald-600 font-medium transition-colors py-2"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  <BookOpen className="w-5 h-5" />
+                  Blog
+                </Link>
+                <Link 
+                  href="/instalar" 
+                  className="flex items-center gap-2 text-white bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 font-semibold px-4 py-3 rounded-lg transition-colors mt-2"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  <Download className="w-5 h-5" />
+                  Instalar App
+                </Link>
+              </div>
               
               {/* User Section */}
               <div className="border-t border-gray-200 pt-3 mt-3">
@@ -222,6 +287,14 @@ export default function Navigation() {
                         </div>
                       </div>
                     </div>
+                    <Link
+                      href="/perfil"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="w-full flex items-center gap-2 text-gray-700 hover:bg-emerald-50 font-medium px-4 py-3 rounded-lg transition-colors mb-2"
+                    >
+                      <UserCircle className="w-5 h-5" />
+                      Ver Perfil
+                    </Link>
                     <button
                       onClick={() => {
                         logout();
