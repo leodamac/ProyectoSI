@@ -69,7 +69,6 @@ export const mockUsers: (User & { password: string })[] = [
     isPremium: true,
     phone: '+593 97 654 3210',
     bio: 'Nutricionista deportiva especializada en rendimiento atlético con dieta keto',
-    institutionId: 'inst-1', // Works for Centro Keto Guayaquil
     professionalInfo: {
       specialty: 'Nutrición Deportiva Keto',
       certifications: ['Nutricionista Deportiva', 'Certificación Keto'],
@@ -82,7 +81,7 @@ export const mockUsers: (User & { password: string })[] = [
         { day: 'Viernes', hours: '4:00 PM - 8:00 PM' }
       ],
       languages: ['Español', 'Inglés'],
-      institutionId: 'inst-1'
+      institutionId: 'inst-1' // Works for Centro Keto Guayaquil
     }
   },
 
