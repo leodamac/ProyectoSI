@@ -3,6 +3,7 @@ import "./globals.css";
 import { CartProvider } from "@/components/CartContext";
 import { ForumProvider } from "@/context/ForumContext";
 import { AIAssistantProvider } from "@/context/AIAssistantContext";
+import { AuthProvider } from "@/context/AuthContext";
 import FloatingAIAssistant from "@/components/FloatingAIAssistant";
 import OfflineIndicator from "@/components/OfflineIndicator";
 import ServiceWorkerRegistration from "@/components/ServiceWorkerRegistration";
@@ -35,17 +36,19 @@ export default function RootLayout({
         <link rel="apple-touch-icon" href="/icon-192.svg" />
       </head>
       <body className="antialiased">
-        <CartProvider>
-          <ForumProvider>
-            <AIAssistantProvider>
-              <ServiceWorkerRegistration />
-              <OfflineIndicator />
-              {children}
-              <FloatingAIAssistant />
-              <InstallPrompt />
-            </AIAssistantProvider>
-          </ForumProvider>
-        </CartProvider>
+        <AuthProvider>
+          <CartProvider>
+            <ForumProvider>
+              <AIAssistantProvider>
+                <ServiceWorkerRegistration />
+                <OfflineIndicator />
+                {children}
+                <FloatingAIAssistant />
+                <InstallPrompt />
+              </AIAssistantProvider>
+            </ForumProvider>
+          </CartProvider>
+        </AuthProvider>
       </body>
     </html>
   );

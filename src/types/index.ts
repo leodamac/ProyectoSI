@@ -28,6 +28,8 @@ export interface User {
   id: string;
   email: string;
   name: string;
+  role: 'professional' | 'user';
+  avatar?: string;
   phone?: string;
   address?: {
     street: string;
@@ -36,6 +38,7 @@ export interface User {
     zipCode: string;
     country: string;
   };
+  isPremium?: boolean;
 }
 
 export interface Order {
