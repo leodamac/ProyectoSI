@@ -1,11 +1,13 @@
 'use client';
 
+import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { ShoppingCart, Calendar, Plus } from 'lucide-react';
+import { ShoppingCart, Calendar, Plus, Copy, Check } from 'lucide-react';
 import { usePersonalized } from '@/context/PersonalizedContext';
 
 export default function ShoppingLists() {
   const { currentShoppingList, currentMealPlan, generateShoppingListFromMealPlan, toggleShoppingItem } = usePersonalized();
+  const [copied, setCopied] = useState(false);
 
   const handleGenerateList = () => {
     if (currentMealPlan) {
@@ -30,6 +32,40 @@ export default function ShoppingLists() {
     dairy: 'Lácteos',
     pantry: 'Despensa',
     other: 'Otros',
+  };
+
+  const handleCopyList = async () => {
+    if (!currentShoppingList) return;
+
+    // Format shopping list text with emojis
+    let text = '🛒 LISTA DE COMPRAS\n\n';
+    
+    // Add date range
+    text += `📅 ${currentShoppingList.startDate.toLocaleDateString('es-ES', { month: 'long', day: 'numeric' })} - ${currentShoppingList.endDate.toLocaleDateString('es-ES', { month: 'long', day: 'numeric' })}\n\n`;
+
+    // Add items by category
+    Object.entries(categorizedItems).forEach(([category, items]) => {
+      const categoryLabel = categoryLabels[category as keyof typeof categoryLabels] || category;
+      text += `\n${categoryLabel}:\n`;
+      items.forEach((item) => {
+        const emoji = item.emoji || '📦';
+        const checked = item.checked ? '✅' : '';
+        text += `${emoji} ${item.name} - ${item.quantity} ${item.unit} ${checked}\n`;
+      });
+    });
+
+    // Add progress
+    const checkedCount = currentShoppingList.items.filter(i => i.checked).length;
+    const totalCount = currentShoppingList.items.length;
+    text += `\n\n📊 Progreso: ${checkedCount}/${totalCount} artículos`;
+
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (err) {
+      console.error('Error al copiar al portapapeles:', err);
+    }
   };
 
   return (
@@ -138,7 +174,28 @@ export default function ShoppingLists() {
               ))}
             </div>
 
-            {/* Progress */}
+            
+            {/* Copy Button */}
+            <div className="pt-1 border-t border-gray-200">
+            <button
+                onClick={handleCopyList}
+                className="mt-4 w-full px-4 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors font-semibold inline-flex items-center justify-center gap-2"
+              >
+                {copied ? (
+                  <>
+                    <Check className="w-5 h-5" />
+                    ¡Copiado!
+                  </>
+                ) : (
+                  <>
+                    <Copy className="w-5 h-5" />
+                    Copiar lista de compra
+                  </>
+                )}
+              </button>
+            </div>
+            
+              {/* Progress */}
             <div className="pt-4 border-t border-gray-200">
               <div className="flex items-center justify-between text-sm mb-2">
                 <span className="text-gray-600">Progreso</span>
@@ -155,6 +212,8 @@ export default function ShoppingLists() {
                   className="bg-gradient-to-r from-emerald-500 to-green-500 h-2 rounded-full"
                 />
               </div>
+              
+              
             </div>
           </motion.div>
         )}
