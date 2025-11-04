@@ -46,10 +46,13 @@ export default function LoginPage() {
     }
   };
 
-  const fillDemoCredentials = (role: 'professional' | 'user') => {
+  const fillDemoCredentials = (role: 'professional' | 'user' | 'institution') => {
     if (role === 'professional') {
       setEmail('dr.martinez@alkadami.com');
       setPassword('keto2024');
+    } else if (role === 'institution') {
+      setEmail('admin@centroketo.com');
+      setPassword('centro2024');
     } else {
       setEmail('usuario@gmail.com');
       setPassword('user123');
@@ -195,6 +198,24 @@ export default function LoginPage() {
                     </button>
                     <p className="text-xs text-gray-500 mt-1">
                       Puede crear recetas, vender productos, gestionar citas
+                    </p>
+                  </div>
+
+                  {/* Institution Account */}
+                  <div>
+                    <p className="text-xs font-semibold text-blue-700 mb-1">
+                      🏥 Cuenta Institución
+                    </p>
+                    <button
+                      type="button"
+                      onClick={() => fillDemoCredentials('institution')}
+                      className="w-full text-left text-xs bg-white p-2 rounded border border-blue-200 hover:bg-blue-50 transition-colors"
+                    >
+                      <div className="font-mono">admin@centroketo.com</div>
+                      <div className="font-mono text-gray-600">centro2024</div>
+                    </button>
+                    <p className="text-xs text-gray-500 mt-1">
+                      Gestiona profesionales, ofrece servicios, vende productos
                     </p>
                   </div>
 
