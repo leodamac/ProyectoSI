@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { MessageCircle, X, Minus, Send, Sparkles, ShoppingCart, Calendar, BookOpen, Utensils, ChefHat, Info, Mic, MicOff, Volume2, VolumeX, Settings } from 'lucide-react';
 import { useAIAssistant } from '@/context/AIAssistantContext';
 import { usePathname } from 'next/navigation';
-import { useVoiceMode, InteractionMode } from '@/hooks/useVoiceMode';
+import { useVoiceMode } from '@/hooks/useVoiceMode';
 import { useSpeechToText } from '@/hooks/useSpeechToText';
 import InteractionModeModal from '@/components/chat/InteractionModeModal';
 
@@ -38,7 +38,6 @@ export default function FloatingAIAssistant() {
   const {
     mode,
     setMode,
-    config,
     shouldPlayAudio,
     playResponse,
     stopAudio,
@@ -401,7 +400,7 @@ export default function FloatingAIAssistant() {
                 )}
 
                 {/* Voice-only mode (no text input) */}
-                {mode === 'voice-voice' && !(mode === 'voice-text') && (
+                {mode === 'voice-voice' && (
                   <div className="flex-1 text-center text-sm text-gray-500 py-2">
                     Usa el botón de micrófono para hablar
                   </div>

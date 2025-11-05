@@ -89,7 +89,7 @@ export function sanitizeForVoice(text: string): string {
  * Converts bullet points to spoken format
  */
 export function convertListsToSpeech(text: string): string {
-  let spokenText = text;
+  const spokenText = text;
 
   // Replace bullet points with "primero", "segundo", etc.
   const lines = spokenText.split('\n');
