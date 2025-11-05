@@ -401,9 +401,9 @@ export default function FloatingAIAssistant() {
 
                 {/* Voice-only mode (no text input) */}
                 {mode === 'voice-voice' && (
-                  <div className="flex-1 text-center text-sm text-gray-500 py-2">
+                  <p className="flex-1 text-center text-sm text-gray-500 py-2" role="status" aria-live="polite">
                     Usa el botón de micrófono para hablar
-                  </div>
+                  </p>
                 )}
               </div>
             </div>

@@ -87,12 +87,10 @@ export function sanitizeForVoice(text: string): string {
 
 /**
  * Converts bullet points to spoken format
+ * Note: List counter resets for each separate list in the text
  */
 export function convertListsToSpeech(text: string): string {
-  const spokenText = text;
-
-  // Replace bullet points with "primero", "segundo", etc.
-  const lines = spokenText.split('\n');
+  const lines = text.split('\n');
   let listCounter = 0;
   const ordinals = ['primero', 'segundo', 'tercero', 'cuarto', 'quinto', 'sexto', 'séptimo', 'octavo', 'noveno', 'décimo'];
 
