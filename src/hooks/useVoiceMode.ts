@@ -7,6 +7,7 @@
 
 import { useState, useCallback, useRef, useEffect } from 'react';
 import { AudioManager, AudioConfig } from '@/lib/audioProvider';
+import { sanitizeForVoice, convertListsToSpeech } from '@/utils/textForVoice';
 
 export type InteractionMode = 'voice-voice' | 'voice-text' | 'text-voice' | 'text-text';
 
@@ -126,6 +127,9 @@ export function useVoiceMode(initialMode: InteractionMode = 'text-text'): UseVoi
     async (text: string, audioSource?: string) => {
       if (!audioManagerRef.current) return;
       
+      // Sanitize text for voice output (remove markdown, emojis, etc.)
+      const cleanText = audioSource ? text : sanitizeForVoice(convertListsToSpeech(text));
+      
       const audioConfig: AudioConfig = audioSource
         ? {
             type: 'file',
@@ -134,7 +138,7 @@ export function useVoiceMode(initialMode: InteractionMode = 'text-text'): UseVoi
           }
         : {
             type: 'tts',
-            text: text,
+            text: cleanText,
             lang: 'es-ES',
             rate: 1.0,
             pitch: 1.0,

@@ -2,9 +2,12 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { MessageCircle, X, Minus, Send, Sparkles, ShoppingCart, Calendar, BookOpen, Utensils, ChefHat, Info } from 'lucide-react';
+import { MessageCircle, X, Minus, Send, Sparkles, ShoppingCart, Calendar, BookOpen, Utensils, ChefHat, Info, Mic, MicOff, Volume2, VolumeX, Settings } from 'lucide-react';
 import { useAIAssistant } from '@/context/AIAssistantContext';
 import { usePathname } from 'next/navigation';
+import { useVoiceMode } from '@/hooks/useVoiceMode';
+import { useSpeechToText } from '@/hooks/useSpeechToText';
+import InteractionModeModal from '@/components/chat/InteractionModeModal';
 
 const MAX_TEXTAREA_HEIGHT = 100; // Maximum height for auto-resizing textarea in pixels
 
@@ -27,14 +30,49 @@ export default function FloatingAIAssistant() {
   const shouldHide = pathname === '/chat-ia';
 
   const [input, setInput] = useState('');
+  const [showModeModal, setShowModeModal] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
+  // Voice mode integration
+  const {
+    mode,
+    setMode,
+    shouldPlayAudio,
+    playResponse,
+    stopAudio,
+    isAudioPlaying,
+  } = useVoiceMode('text-text');
+
+  const { listening, startRecognition, stopRecognition, isSupported: sttSupported } =
+    useSpeechToText((transcript, isFinal) => {
+      if (isFinal) {
+        handleSendVoice(transcript);
+      }
+    });
+
+  // Auto-scroll to bottom when messages change
   useEffect(() => {
     if (messagesEndRef.current) {
       messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
     }
   }, [messages]);
+
+  // Auto-play audio when new assistant messages arrive
+  useEffect(() => {
+    const playLastAssistantMessage = async () => {
+      if (messages.length === 0) return;
+      
+      const lastMessage = messages[messages.length - 1];
+      if (lastMessage.role === 'assistant' && shouldPlayAudio(true)) {
+        await playResponse(lastMessage.content);
+      }
+    };
+
+    if (!isLoading) {
+      playLastAssistantMessage();
+    }
+  }, [messages, isLoading, shouldPlayAudio, playResponse]);
 
   // Auto-resize textarea
   useEffect(() => {
@@ -52,6 +90,20 @@ export default function FloatingAIAssistant() {
     const message = input;
     setInput('');
     await sendMessage(message);
+  };
+
+  const handleSendVoice = async (transcript: string) => {
+    if (!transcript.trim() || isLoading) return;
+    
+    await sendMessage(transcript);
+  };
+
+  const handleVoiceToggle = async () => {
+    if (listening) {
+      stopRecognition();
+    } else {
+      await startRecognition();
+    }
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
@@ -97,6 +149,14 @@ export default function FloatingAIAssistant() {
 
   return (
     <AnimatePresence>
+      {/* Interaction Mode Modal */}
+      <InteractionModeModal
+        isOpen={showModeModal}
+        currentMode={mode}
+        onClose={() => setShowModeModal(false)}
+        onModeChange={setMode}
+      />
+
       <motion.div
         initial={{ opacity: 0, y: 20, scale: 0.95 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -112,6 +172,17 @@ export default function FloatingAIAssistant() {
             <h3 className="font-semibold">Asistente Keto</h3>
           </div>
           <div className="flex items-center gap-2">
+            {/* Mode Settings Button */}
+            {!isMinimized && (
+              <button
+                onClick={() => setShowModeModal(true)}
+                className="hover:bg-white/20 p-1 rounded transition-colors"
+                aria-label="Configurar modo de interacción"
+                title="Cambiar modo (Voz/Texto)"
+              >
+                <Settings className="w-4 h-4" />
+              </button>
+            )}
             <button
               onClick={toggleMinimize}
               className="hover:bg-white/20 p-1 rounded transition-colors"
@@ -244,27 +315,96 @@ export default function FloatingAIAssistant() {
             </div>
 
             {/* Input Area */}
-            <div className="border-t border-gray-200 p-4 bg-gray-50 rounded-b-2xl">
+            <div className="border-t border-gray-200 p-3 bg-gray-50 rounded-b-2xl">
+              {/* Voice Visualizer (when listening) */}
+              {listening && (
+                <div className="mb-3 p-3 bg-red-50 border border-red-200 rounded-lg">
+                  <div className="flex items-center gap-3">
+                    <div className="flex gap-1">
+                      {[0, 1, 2, 3, 4].map((i) => (
+                        <motion.div
+                          key={i}
+                          className="w-1 bg-red-500 rounded-full"
+                          animate={{ height: ['12px', '24px', '12px'] }}
+                          transition={{
+                            repeat: Infinity,
+                            duration: 0.6,
+                            delay: i * 0.1,
+                          }}
+                        />
+                      ))}
+                    </div>
+                    <span className="text-sm font-medium text-red-700">Escuchando...</span>
+                  </div>
+                </div>
+              )}
+
+              {/* Audio Playing Indicator */}
+              {isAudioPlaying && (
+                <div className="mb-3 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                  <div className="flex items-center gap-2">
+                    <Volume2 className="w-4 h-4 text-blue-600 animate-pulse" />
+                    <span className="text-sm font-medium text-blue-700">Hablando...</span>
+                    <button
+                      onClick={stopAudio}
+                      className="ml-auto p-1 hover:bg-blue-100 rounded"
+                      aria-label="Detener audio"
+                    >
+                      <VolumeX className="w-4 h-4 text-blue-600" />
+                    </button>
+                  </div>
+                </div>
+              )}
+
               <div className="flex gap-2 items-end">
-                <textarea
-                  ref={textareaRef}
-                  value={input}
-                  onChange={(e) => setInput(e.target.value)}
-                  onKeyPress={handleKeyPress}
-                  placeholder="Escribe tu mensaje..."
-                  className="flex-1 resize-none rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent bg-white"
-                  style={{ maxHeight: `${MAX_TEXTAREA_HEIGHT}px` }}
-                  rows={1}
-                  disabled={isLoading}
-                />
-                <button
-                  onClick={handleSend}
-                  disabled={!input.trim() || isLoading}
-                  className="bg-gradient-to-r from-emerald-500 to-teal-500 text-white rounded-lg px-4 py-2 hover:from-emerald-600 hover:to-teal-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
-                  aria-label="Enviar mensaje"
-                >
-                  <Send className="w-4 h-4" />
-                </button>
+                {/* Voice Input Button (for voice modes) */}
+                {(mode === 'voice-voice' || mode === 'voice-text') && (
+                  <button
+                    type="button"
+                    onClick={handleVoiceToggle}
+                    className={`p-3 rounded-lg transition-all ${
+                      listening
+                        ? 'bg-red-500 text-white animate-pulse'
+                        : 'bg-emerald-500 text-white hover:bg-emerald-600'
+                    }`}
+                    disabled={!sttSupported}
+                    aria-label={listening ? 'Detener grabación' : 'Activar voz'}
+                  >
+                    {listening ? <MicOff className="w-4 h-4" /> : <Mic className="w-4 h-4" />}
+                  </button>
+                )}
+
+                {/* Text Input (for text modes or hybrid) */}
+                {(mode === 'text-text' || mode === 'text-voice' || mode === 'voice-text') && (
+                  <>
+                    <textarea
+                      ref={textareaRef}
+                      value={input}
+                      onChange={(e) => setInput(e.target.value)}
+                      onKeyPress={handleKeyPress}
+                      placeholder="Escribe tu mensaje..."
+                      className="flex-1 resize-none rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent bg-white"
+                      style={{ maxHeight: `${MAX_TEXTAREA_HEIGHT}px` }}
+                      rows={1}
+                      disabled={isLoading}
+                    />
+                    <button
+                      onClick={handleSend}
+                      disabled={!input.trim() || isLoading}
+                      className="bg-gradient-to-r from-emerald-500 to-teal-500 text-white rounded-lg px-4 py-2 hover:from-emerald-600 hover:to-teal-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                      aria-label="Enviar mensaje"
+                    >
+                      <Send className="w-4 h-4" />
+                    </button>
+                  </>
+                )}
+
+                {/* Voice-only mode (no text input) */}
+                {mode === 'voice-voice' && (
+                  <p className="flex-1 text-center text-sm text-gray-500 py-2" role="status" aria-live="polite">
+                    Usa el botón de micrófono para hablar
+                  </p>
+                )}
               </div>
             </div>
           </>
