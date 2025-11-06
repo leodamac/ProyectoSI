@@ -8,6 +8,7 @@ import { usePathname } from 'next/navigation';
 import { useVoiceMode } from '@/hooks/useVoiceMode';
 import { useSpeechToText } from '@/hooks/useSpeechToText';
 import InteractionModeModal from '@/components/chat/InteractionModeModal';
+import CompactVoiceVisualizer from '@/components/chat/CompactVoiceVisualizer';
 
 const MAX_TEXTAREA_HEIGHT = 100; // Maximum height for auto-resizing textarea in pixels
 
@@ -46,6 +47,11 @@ export default function FloatingAIAssistant() {
 
   const { listening, startRecognition, stopRecognition, isSupported: sttSupported } =
     useSpeechToText((transcript, isFinal) => {
+      // Interrupt audio playback when user starts speaking
+      if (isAudioPlaying) {
+        stopAudio();
+      }
+      
       if (isFinal) {
         handleSendVoice(transcript);
       }
@@ -126,6 +132,27 @@ export default function FloatingAIAssistant() {
     return null;
   }
 
+  // In voice-voice mode on mobile, use compact visualizer
+  const isMobile = typeof window !== 'undefined' && window.innerWidth < 640;
+  if (isOpen && mode === 'voice-voice' && isMobile) {
+    return (
+      <>
+        <InteractionModeModal
+          isOpen={showModeModal}
+          currentMode={mode}
+          onClose={() => setShowModeModal(false)}
+          onModeChange={setMode}
+        />
+        <CompactVoiceVisualizer
+          listening={listening}
+          isAudioPlaying={isAudioPlaying}
+          messages={messages.map(m => ({ role: m.role, content: m.content }))}
+          onClose={closeAssistant}
+        />
+      </>
+    );
+  }
+
   if (!isOpen) {
     return (
       <motion.button
@@ -134,7 +161,7 @@ export default function FloatingAIAssistant() {
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.9 }}
         onClick={openAssistant}
-        className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50 bg-gradient-to-r from-emerald-500 to-teal-500 text-white rounded-full p-4 shadow-lg hover:shadow-xl transition-shadow"
+        className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-[45] bg-gradient-to-r from-emerald-500 to-teal-500 text-white rounded-full p-4 shadow-lg hover:shadow-xl transition-shadow"
         aria-label="Abrir asistente de IA"
       >
         <MessageCircle className="w-6 h-6" />
@@ -161,7 +188,7 @@ export default function FloatingAIAssistant() {
         initial={{ opacity: 0, y: 20, scale: 0.95 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
         exit={{ opacity: 0, y: 20, scale: 0.95 }}
-        className={`fixed bottom-4 right-4 left-4 sm:left-auto sm:bottom-6 sm:right-6 z-50 bg-white rounded-2xl shadow-2xl border border-gray-200 flex flex-col ${
+        className={`fixed bottom-4 right-4 left-4 sm:left-auto sm:bottom-6 sm:right-6 z-[45] bg-white rounded-2xl shadow-2xl border border-gray-200 flex flex-col ${
           isMinimized ? 'sm:w-80 h-16' : 'sm:w-96 h-[500px] sm:h-[600px]'
         } transition-all duration-300`}
       >

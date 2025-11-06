@@ -15,6 +15,7 @@ import { simulateEnhancedStreamingResponse, SimulationTrigger } from '@/utils/en
 import { Nutritionist } from '@/types';
 import InteractionModeModal from './InteractionModeModal';
 import ModeIndicator from './ModeIndicator';
+import CompactVoiceVisualizer from './CompactVoiceVisualizer';
 
 interface ProductCard {
   id: string;
@@ -73,6 +74,11 @@ export default function VoiceFirstChat() {
 
   const { listening, startRecognition, stopRecognition, isSupported: sttSupported } =
     useSpeechToText((transcript, isFinal) => {
+      // Interrupt audio playback when user starts speaking
+      if (isAudioPlaying) {
+        stopAudio();
+      }
+      
       if (isFinal) {
         sendMessage(transcript);
       }
@@ -293,6 +299,29 @@ export default function VoiceFirstChat() {
     : messages.slice(-config.maxVisibleMessages);
 
   const hiddenCount = messages.length - visibleMessages.length;
+
+  // Check if mobile for compact voice mode
+  const isMobile = typeof window !== 'undefined' && window.innerWidth < 640;
+  const useCompactVoiceMode = mode === 'voice-voice' && isMobile;
+
+  // Render compact voice visualizer for mobile voice-voice mode
+  if (useCompactVoiceMode) {
+    return (
+      <>
+        <InteractionModeModal
+          isOpen={showModeModal}
+          currentMode={mode}
+          onClose={() => setShowModeModal(false)}
+          onModeChange={setMode}
+        />
+        <CompactVoiceVisualizer
+          listening={listening}
+          isAudioPlaying={isAudioPlaying}
+          messages={messages.map(m => ({ role: m.role, content: m.content }))}
+        />
+      </>
+    );
+  }
 
   return (
     <div className="flex flex-col h-full max-h-[calc(100vh-120px)] bg-white rounded-2xl shadow-xl border border-gray-200">
