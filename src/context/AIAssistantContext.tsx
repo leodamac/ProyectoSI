@@ -43,9 +43,27 @@ export function AIAssistantProvider({ children }: { children: ReactNode }) {
     if (typeof window !== 'undefined') {
       try {
         const saved = localStorage.getItem('ai-assistant-messages');
-        return saved ? JSON.parse(saved) : [];
-      } catch {
-        return [];
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          // Validate that it's an array
+          if (Array.isArray(parsed)) {
+            // Basic validation of message structure
+            const isValid = parsed.every(
+              (msg: unknown) =>
+                msg &&
+                typeof msg === 'object' &&
+                'id' in msg &&
+                'role' in msg &&
+                'content' in msg &&
+                'timestamp' in msg
+            );
+            if (isValid) {
+              return parsed;
+            }
+          }
+        }
+      } catch (error) {
+        console.error('Failed to parse saved messages:', error);
       }
     }
     return [];

@@ -7,6 +7,7 @@ import { useAIAssistant } from '@/context/AIAssistantContext';
 import { usePathname } from 'next/navigation';
 import { useVoiceMode } from '@/hooks/useVoiceMode';
 import { useSpeechToText } from '@/hooks/useSpeechToText';
+import { useMobileDetection } from '@/hooks/useMobileDetection';
 import InteractionModeModal from '@/components/chat/InteractionModeModal';
 import CompactVoiceVisualizer from '@/components/chat/CompactVoiceVisualizer';
 
@@ -32,20 +33,11 @@ export default function FloatingAIAssistant() {
 
   const [input, setInput] = useState('');
   const [showModeModal, setShowModeModal] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-  // Track mobile screen size
-  useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 640);
-    };
-    
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
+  // Track mobile screen size with custom hook
+  const isMobile = useMobileDetection();
 
   // Voice mode integration
   const {

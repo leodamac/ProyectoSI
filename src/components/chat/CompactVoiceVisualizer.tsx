@@ -6,7 +6,7 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Mic, Volume2, X, ChevronUp, VolumeX } from 'lucide-react';
 
@@ -29,8 +29,13 @@ export default function CompactVoiceVisualizer({
 }: CompactVoiceVisualizerProps) {
   const [isExpanded, setIsExpanded] = useState(false);
 
-  // Don't show if neither listening nor playing and no messages
-  if (!listening && !isAudioPlaying && !isExpanded && messages.length === 0) {
+  // Determine if component should be visible
+  const shouldShow = useMemo(() => {
+    return listening || isAudioPlaying || isExpanded || messages.length > 0;
+  }, [listening, isAudioPlaying, isExpanded, messages.length]);
+
+  // Don't render if not needed
+  if (!shouldShow) {
     return null;
   }
 

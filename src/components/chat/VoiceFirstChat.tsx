@@ -10,6 +10,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Send, Mic, MicOff, Volume2, VolumeX, Eye, EyeOff, Sparkles, HelpCircle, X, CheckCircle2 } from 'lucide-react';
 import { useVoiceMode } from '@/hooks/useVoiceMode';
 import { useSpeechToText } from '@/hooks/useSpeechToText';
+import { useMobileDetection } from '@/hooks/useMobileDetection';
 import ContextualCards, { LocationRequestCard } from './ContextualCards';
 import { simulateEnhancedStreamingResponse, SimulationTrigger } from '@/utils/enhancedSimulation';
 import { Nutritionist } from '@/types';
@@ -57,22 +58,13 @@ export default function VoiceFirstChat() {
   const [showHistoryFull, setShowHistoryFull] = useState(false);
   const [pendingLocationRequest, setPendingLocationRequest] = useState(false);
   const [userLocation, setUserLocation] = useState<{ latitude: number; longitude: number } | undefined>();
-  const [isMobile, setIsMobile] = useState(false);
   
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const messagesContainerRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-  // Track mobile screen size
-  useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 640);
-    };
-    
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
+  // Track mobile screen size with custom hook
+  const isMobile = useMobileDetection();
 
   const {
     mode,
@@ -86,7 +78,10 @@ export default function VoiceFirstChat() {
 
   const { listening, startRecognition, stopRecognition, isSupported: sttSupported } =
     useSpeechToText((transcript, isFinal) => {
-      // Interrupt audio playback when user starts speaking
+      // VOICE INTERRUPTION: Stop bot's audio immediately when user starts speaking
+      // This creates a natural conversation flow where the bot yields to the user,
+      // preventing overlapping speech and improving UX in voice-voice mode.
+      // Similar to how humans pause when interrupted in conversation.
       if (isAudioPlaying) {
         stopAudio();
       }
