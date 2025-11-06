@@ -32,8 +32,20 @@ export default function FloatingAIAssistant() {
 
   const [input, setInput] = useState('');
   const [showModeModal, setShowModeModal] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  // Track mobile screen size
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 640);
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   // Voice mode integration
   const {
@@ -133,7 +145,6 @@ export default function FloatingAIAssistant() {
   }
 
   // In voice-voice mode on mobile, use compact visualizer
-  const isMobile = typeof window !== 'undefined' && window.innerWidth < 640;
   if (isOpen && mode === 'voice-voice' && isMobile) {
     return (
       <>
@@ -148,6 +159,8 @@ export default function FloatingAIAssistant() {
           isAudioPlaying={isAudioPlaying}
           messages={messages.map(m => ({ role: m.role, content: m.content }))}
           onClose={closeAssistant}
+          onToggleListening={handleVoiceToggle}
+          onStopAudio={stopAudio}
         />
       </>
     );

@@ -57,10 +57,22 @@ export default function VoiceFirstChat() {
   const [showHistoryFull, setShowHistoryFull] = useState(false);
   const [pendingLocationRequest, setPendingLocationRequest] = useState(false);
   const [userLocation, setUserLocation] = useState<{ latitude: number; longitude: number } | undefined>();
+  const [isMobile, setIsMobile] = useState(false);
   
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const messagesContainerRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  // Track mobile screen size
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 640);
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   const {
     mode,
@@ -300,8 +312,7 @@ export default function VoiceFirstChat() {
 
   const hiddenCount = messages.length - visibleMessages.length;
 
-  // Check if mobile for compact voice mode
-  const isMobile = typeof window !== 'undefined' && window.innerWidth < 640;
+  // Use compact voice mode for mobile voice-voice mode
   const useCompactVoiceMode = mode === 'voice-voice' && isMobile;
 
   // Render compact voice visualizer for mobile voice-voice mode
@@ -318,6 +329,8 @@ export default function VoiceFirstChat() {
           listening={listening}
           isAudioPlaying={isAudioPlaying}
           messages={messages.map(m => ({ role: m.role, content: m.content }))}
+          onToggleListening={handleVoiceToggle}
+          onStopAudio={stopAudio}
         />
       </>
     );

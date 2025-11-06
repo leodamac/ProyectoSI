@@ -8,13 +8,15 @@
 
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Mic, Volume2, X, ChevronUp } from 'lucide-react';
+import { Mic, Volume2, X, ChevronUp, VolumeX } from 'lucide-react';
 
 interface CompactVoiceVisualizerProps {
   listening: boolean;
   isAudioPlaying: boolean;
   messages: Array<{ role: string; content: string }>;
   onClose?: () => void;
+  onToggleListening?: () => void;
+  onStopAudio?: () => void;
 }
 
 export default function CompactVoiceVisualizer({
@@ -22,11 +24,13 @@ export default function CompactVoiceVisualizer({
   isAudioPlaying,
   messages,
   onClose,
+  onToggleListening,
+  onStopAudio,
 }: CompactVoiceVisualizerProps) {
   const [isExpanded, setIsExpanded] = useState(false);
 
-  // Don't show if neither listening nor playing
-  if (!listening && !isAudioPlaying && !isExpanded) {
+  // Don't show if neither listening nor playing and no messages
+  if (!listening && !isAudioPlaying && !isExpanded && messages.length === 0) {
     return null;
   }
 
@@ -152,13 +156,35 @@ export default function CompactVoiceVisualizer({
                     </>
                   )}
                 </div>
-                <button
-                  onClick={() => setIsExpanded(false)}
-                  className="p-1.5 hover:bg-white/20 rounded-lg transition-colors"
-                  aria-label="Minimizar"
-                >
-                  <ChevronUp className="w-5 h-5 text-white" />
-                </button>
+                <div className="flex items-center gap-2">
+                  {/* Stop audio button */}
+                  {isAudioPlaying && onStopAudio && (
+                    <button
+                      onClick={onStopAudio}
+                      className="p-1.5 hover:bg-white/20 rounded-lg transition-colors"
+                      aria-label="Detener audio"
+                    >
+                      <VolumeX className="w-4 h-4 text-white" />
+                    </button>
+                  )}
+                  <button
+                    onClick={() => setIsExpanded(false)}
+                    className="p-1.5 hover:bg-white/20 rounded-lg transition-colors"
+                    aria-label="Minimizar"
+                  >
+                    <ChevronUp className="w-5 h-5 text-white" />
+                  </button>
+                  {/* Close button if provided */}
+                  {onClose && (
+                    <button
+                      onClick={onClose}
+                      className="p-1.5 hover:bg-white/20 rounded-lg transition-colors"
+                      aria-label="Cerrar"
+                    >
+                      <X className="w-4 h-4 text-white" />
+                    </button>
+                  )}
+                </div>
               </div>
 
               {/* Conversation */}
@@ -208,6 +234,19 @@ export default function CompactVoiceVisualizer({
                       />
                     ))}
                   </div>
+                  {/* Mic button to toggle listening */}
+                  {onToggleListening && (
+                    <button
+                      onClick={onToggleListening}
+                      className={`mt-3 w-full py-2 rounded-lg font-semibold transition-all ${
+                        listening
+                          ? 'bg-red-500 text-white hover:bg-red-600'
+                          : 'bg-emerald-500 text-white hover:bg-emerald-600'
+                      }`}
+                    >
+                      {listening ? 'Detener' : 'Hablar'}
+                    </button>
+                  )}
                 </div>
               )}
             </motion.div>
