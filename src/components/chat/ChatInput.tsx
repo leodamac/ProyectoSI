@@ -60,7 +60,7 @@ export function ChatInput() {
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
             placeholder="Escribe tu mensaje... (Shift+Enter para nueva línea)"
-            className="w-full px-4 py-3 pr-14 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm placeholder:text-gray-400 bg-gray-50 focus:bg-white transition-colors resize-none overflow-hidden"
+            className="w-full px-4 py-3 pr-14 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm placeholder:text-gray-500 bg-gray-50 focus:bg-white transition-colors resize-none overflow-hidden"
             disabled={isLoading}
             rows={1}
             style={{ minHeight: '56px', maxHeight: '240px' }}

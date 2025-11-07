@@ -697,7 +697,7 @@ export default function VoiceFirstChat() {
                 }}
                 placeholder="Escribe tu mensaje..."
                 aria-label="Escribe tu mensaje"
-                className="flex-1 px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm placeholder:text-gray-400 bg-gray-50 focus:bg-white transition-colors resize-none overflow-y-auto min-h-[48px] max-h-[120px]"
+                className="flex-1 px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm placeholder:text-gray-500 bg-gray-50 focus:bg-white transition-colors resize-none overflow-y-auto min-h-[48px] max-h-[120px]"
                 disabled={isLoading}
                 rows={1}
               />
