@@ -1,6 +1,6 @@
 'use client';
 
-import React, { createContext, useContext, useState, ReactNode, useCallback } from 'react';
+import React, { createContext, useContext, useState, ReactNode, useCallback, useEffect } from 'react';
 import { useCart } from '@/components/CartContext';
 import { useRouter } from 'next/navigation';
 import { sampleProducts } from '@/data/products';
@@ -38,7 +38,36 @@ interface AIAssistantContextType {
 const AIAssistantContext = createContext<AIAssistantContextType | undefined>(undefined);
 
 export function AIAssistantProvider({ children }: { children: ReactNode }) {
-  const [messages, setMessages] = useState<AIMessage[]>([]);
+  // Initialize messages from localStorage for persistence
+  const [messages, setMessages] = useState<AIMessage[]>(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const saved = localStorage.getItem('ai-assistant-messages');
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          // Validate that it's an array
+          if (Array.isArray(parsed)) {
+            // Basic validation of message structure
+            const isValid = parsed.every(
+              (msg: unknown) =>
+                msg &&
+                typeof msg === 'object' &&
+                'id' in msg &&
+                'role' in msg &&
+                'content' in msg &&
+                'timestamp' in msg
+            );
+            if (isValid) {
+              return parsed;
+            }
+          }
+        }
+      } catch (error) {
+        console.error('Failed to parse saved messages:', error);
+      }
+    }
+    return [];
+  });
   const [isOpen, setIsOpen] = useState(false);
   const [isMinimized, setIsMinimized] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -46,6 +75,13 @@ export function AIAssistantProvider({ children }: { children: ReactNode }) {
   const { addToCart } = useCart();
   const router = useRouter();
   const isOnline = useOnlineStatus();
+
+  // Persist messages to localStorage whenever they change
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('ai-assistant-messages', JSON.stringify(messages));
+    }
+  }, [messages]);
 
   const openAssistant = useCallback(() => {
     setIsOpen(true);

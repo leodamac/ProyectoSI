@@ -84,30 +84,30 @@ export default function InteractionModeModal({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50"
+            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[60]"
           />
 
           {/* Modal */}
-          <div className="fixed inset-0 flex items-center justify-center z-50 p-4">
+          <div className="fixed inset-0 flex items-end sm:items-center justify-center z-[70] p-0 sm:p-4 pointer-events-none">
             <motion.div
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
               transition={{ type: 'spring', duration: 0.5, bounce: 0.3 }}
-              className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto"
+              className="bg-white rounded-t-2xl sm:rounded-2xl shadow-2xl w-full sm:max-w-2xl max-h-[85vh] sm:max-h-[90vh] overflow-y-auto pointer-events-auto"
               onClick={(e) => e.stopPropagation()}
             >
               {/* Header */}
-              <div className="sticky top-0 bg-gradient-to-r from-emerald-500 to-teal-500 px-6 py-4 rounded-t-2xl flex items-center justify-between z-10">
+              <div className="sticky top-0 bg-gradient-to-r from-emerald-500 to-teal-500 px-4 sm:px-6 py-3 sm:py-4 rounded-t-2xl flex items-center justify-between z-10">
                 <div>
-                  <h2 className="text-xl font-bold text-white">Modo de Interacción</h2>
-                  <p className="text-sm text-white/90 mt-1">
+                  <h2 className="text-lg sm:text-xl font-bold text-white">Modo de Interacción</h2>
+                  <p className="text-xs sm:text-sm text-white/90 mt-1">
                     Elige cómo quieres comunicarte
                   </p>
                 </div>
                 <button
                   onClick={onClose}
-                  className="p-2 hover:bg-white/20 rounded-lg transition-colors"
+                  className="p-2 hover:bg-white/20 rounded-lg transition-colors flex-shrink-0"
                   aria-label="Cerrar"
                 >
                   <X className="w-5 h-5 text-white" />
@@ -115,8 +115,8 @@ export default function InteractionModeModal({
               </div>
 
               {/* Content */}
-              <div className="p-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="p-4 sm:p-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                   {modeOptions.map((option) => {
                     const isSelected = currentMode === option.mode;
                     return (
@@ -128,7 +128,7 @@ export default function InteractionModeModal({
                         }}
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.98 }}
-                        className={`relative p-5 rounded-xl border-2 transition-all text-left ${
+                        className={`relative p-4 sm:p-5 rounded-xl border-2 transition-all text-left ${
                           isSelected
                             ? 'border-emerald-500 bg-emerald-50 shadow-lg'
                             : 'border-gray-200 bg-white hover:border-gray-300 hover:shadow-md'
@@ -136,23 +136,23 @@ export default function InteractionModeModal({
                       >
                         {/* Selected Badge */}
                         {isSelected && (
-                          <div className="absolute -top-2 -right-2 bg-emerald-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-md">
+                          <div className="absolute -top-2 -right-2 bg-emerald-500 text-white text-xs font-bold px-2 sm:px-3 py-1 rounded-full shadow-md">
                             Activo
                           </div>
                         )}
 
                         {/* Title with gradient */}
-                        <div className="flex items-center gap-2 mb-3">
+                        <div className="flex items-center gap-2 mb-2 sm:mb-3">
                           <div
-                            className={`w-10 h-10 bg-gradient-to-br ${option.color} rounded-lg flex items-center justify-center shadow-md`}
+                            className={`w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br ${option.color} rounded-lg flex items-center justify-center shadow-md`}
                           >
                             {option.inputIcon}
                           </div>
-                          <h3 className="font-bold text-gray-900">{option.label}</h3>
+                          <h3 className="font-bold text-gray-900 text-sm sm:text-base">{option.label}</h3>
                         </div>
 
                         {/* Input/Output Flow */}
-                        <div className="flex items-center gap-3 mb-3">
+                        <div className="flex items-center gap-2 sm:gap-3 mb-2 sm:mb-3">
                           <div className="flex items-center gap-1.5 flex-1">
                             <div className="text-gray-600">{option.inputIcon}</div>
                             <span className="text-sm font-medium text-gray-700">
@@ -178,8 +178,8 @@ export default function InteractionModeModal({
                 </div>
 
                 {/* Info Footer */}
-                <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-xl">
-                  <p className="text-sm text-blue-900">
+                <div className="mt-4 sm:mt-6 p-3 sm:p-4 bg-blue-50 border border-blue-200 rounded-xl">
+                  <p className="text-xs sm:text-sm text-blue-900">
                     <strong>💡 Tip:</strong> Puedes cambiar el modo en cualquier momento durante
                     la conversación.
                   </p>

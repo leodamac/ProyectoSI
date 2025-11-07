@@ -10,11 +10,13 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Send, Mic, MicOff, Volume2, VolumeX, Eye, EyeOff, Sparkles, HelpCircle, X, CheckCircle2 } from 'lucide-react';
 import { useVoiceMode } from '@/hooks/useVoiceMode';
 import { useSpeechToText } from '@/hooks/useSpeechToText';
+import { useMobileDetection } from '@/hooks/useMobileDetection';
 import ContextualCards, { LocationRequestCard } from './ContextualCards';
 import { simulateEnhancedStreamingResponse, SimulationTrigger } from '@/utils/enhancedSimulation';
 import { Nutritionist } from '@/types';
 import InteractionModeModal from './InteractionModeModal';
 import ModeIndicator from './ModeIndicator';
+import CompactVoiceVisualizer from './CompactVoiceVisualizer';
 
 interface ProductCard {
   id: string;
@@ -61,6 +63,9 @@ export default function VoiceFirstChat() {
   const messagesContainerRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
+  // Track mobile screen size with custom hook
+  const isMobile = useMobileDetection();
+
   const {
     mode,
     setMode,
@@ -73,6 +78,14 @@ export default function VoiceFirstChat() {
 
   const { listening, startRecognition, stopRecognition, isSupported: sttSupported } =
     useSpeechToText((transcript, isFinal) => {
+      // VOICE INTERRUPTION: Stop bot's audio immediately when user starts speaking
+      // This creates a natural conversation flow where the bot yields to the user,
+      // preventing overlapping speech and improving UX in voice-voice mode.
+      // Similar to how humans pause when interrupted in conversation.
+      if (isAudioPlaying) {
+        stopAudio();
+      }
+      
       if (isFinal) {
         sendMessage(transcript);
       }
@@ -293,6 +306,30 @@ export default function VoiceFirstChat() {
     : messages.slice(-config.maxVisibleMessages);
 
   const hiddenCount = messages.length - visibleMessages.length;
+
+  // Use compact voice mode for mobile voice-voice mode
+  const useCompactVoiceMode = mode === 'voice-voice' && isMobile;
+
+  // Render compact voice visualizer for mobile voice-voice mode
+  if (useCompactVoiceMode) {
+    return (
+      <>
+        <InteractionModeModal
+          isOpen={showModeModal}
+          currentMode={mode}
+          onClose={() => setShowModeModal(false)}
+          onModeChange={setMode}
+        />
+        <CompactVoiceVisualizer
+          listening={listening}
+          isAudioPlaying={isAudioPlaying}
+          messages={messages.map(m => ({ role: m.role, content: m.content }))}
+          onToggleListening={handleVoiceToggle}
+          onStopAudio={stopAudio}
+        />
+      </>
+    );
+  }
 
   return (
     <div className="flex flex-col h-full max-h-[calc(100vh-120px)] bg-white rounded-2xl shadow-xl border border-gray-200">
