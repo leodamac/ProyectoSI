@@ -240,7 +240,7 @@ export default function FloatingAIAssistant() {
                 <div className="text-center text-gray-500 py-8">
                   <Sparkles className="w-12 h-12 mx-auto mb-4 text-emerald-400" />
                   <p className="text-sm font-medium">¡Hola! Soy tu asistente Keto.</p>
-                  <p className="text-xs mt-2 text-gray-400">Pregúntame sobre productos, recetas,<br />citas o cualquier cosa keto.</p>
+                  <p className="text-xs mt-2 text-gray-500">Pregúntame sobre productos, recetas,<br />citas o cualquier cosa keto.</p>
                   
                   {/* Quick Actions */}
                   <div className="grid grid-cols-2 gap-2 mt-6">

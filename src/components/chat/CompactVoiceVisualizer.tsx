@@ -196,7 +196,7 @@ export default function CompactVoiceVisualizer({
               <div className="p-4 overflow-y-auto max-h-[50vh] space-y-3">
                 {messages.length === 0 ? (
                   <div className="text-center py-8 text-gray-500 text-sm">
-                    <Mic className="w-8 h-8 mx-auto mb-2 text-gray-400" />
+                    <Mic className="w-8 h-8 mx-auto mb-2 text-gray-500" />
                     <p>Habla para comenzar</p>
                   </div>
                 ) : (
