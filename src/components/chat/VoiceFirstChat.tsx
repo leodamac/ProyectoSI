@@ -7,7 +7,7 @@
 
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Send, Mic, MicOff, Volume2, VolumeX, Eye, EyeOff, Sparkles, HelpCircle, X, CheckCircle2, FileText } from 'lucide-react';
+import { Send, Mic, MicOff, Volume2, VolumeX, Eye, EyeOff, Sparkles, HelpCircle, X, CheckCircle2 } from 'lucide-react';
 import { useVoiceMode } from '@/hooks/useVoiceMode';
 import { useSpeechToText } from '@/hooks/useSpeechToText';
 import { useMobileDetection } from '@/hooks/useMobileDetection';
@@ -18,7 +18,6 @@ import InteractionModeModal from './InteractionModeModal';
 import ModeIndicator from './ModeIndicator';
 import CompactVoiceVisualizer from './CompactVoiceVisualizer';
 import ScriptSelector from './ScriptSelector';
-import ScriptIndicator from './ScriptIndicator';
 import { getScriptEngine, streamScriptResponse } from '@/lib/scriptEngine';
 
 interface ProductCard {
@@ -356,10 +355,11 @@ export default function VoiceFirstChat() {
     }, 500);
   };
 
-  const handleCloseScript = () => {
-    setCurrentScript(null);
-    scriptEngine.current.unloadScript();
-  };
+  // Unused but kept for potential manual script closing
+  // const handleCloseScript = () => {
+  //   setCurrentScript(null);
+  //   scriptEngine.current.unloadScript();
+  // };
 
   // Get visible messages based on mode
   const visibleMessages = showHistoryFull
@@ -510,7 +510,8 @@ export default function VoiceFirstChat() {
         </div>
 
         <div className="flex items-center gap-2">
-          {/* Script Button */}
+          {/* Script Button - Hidden for Wizard of Oz demo */}
+          {/* 
           <button
             onClick={() => setShowScriptSelector(true)}
             className="p-2 hover:bg-white/20 rounded-lg transition-colors"
@@ -518,6 +519,7 @@ export default function VoiceFirstChat() {
           >
             <FileText className="w-5 h-5 text-white" />
           </button>
+          */}
 
           {/* Help Button */}
           <button
@@ -538,8 +540,8 @@ export default function VoiceFirstChat() {
         ref={messagesContainerRef}
         className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50 min-h-0"
       >
-        {/* Script Indicator */}
-        {currentScript && (
+        {/* Script Indicator - Hidden for Wizard of Oz demo */}
+        {/* currentScript && (
           <ScriptIndicator
             scriptName={currentScript.name}
             progress={scriptEngine.current.getProgress()}
@@ -548,7 +550,7 @@ export default function VoiceFirstChat() {
             hint={scriptEngine.current.getHint() || undefined}
             onClose={handleCloseScript}
           />
-        )}
+        ) */}
 
         {messages.length === 0 && (
           <div className="text-center py-8">

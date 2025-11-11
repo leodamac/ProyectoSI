@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { MessageCircle, X, Minus, Send, Sparkles, ShoppingCart, Calendar, BookOpen, Utensils, ChefHat, Info, Mic, MicOff, Volume2, VolumeX, Settings } from 'lucide-react';
 import { useAIAssistant } from '@/context/AIAssistantContext';
@@ -10,6 +10,9 @@ import { useSpeechToText } from '@/hooks/useSpeechToText';
 import { useMobileDetection } from '@/hooks/useMobileDetection';
 import InteractionModeModal from '@/components/chat/InteractionModeModal';
 import CompactVoiceVisualizer from '@/components/chat/CompactVoiceVisualizer';
+import { ConversationScript } from '@/types';
+import { beginnerKetoScript } from '@/data/scripts';
+import { getScriptEngine } from '@/lib/scriptEngine';
 
 const MAX_TEXTAREA_HEIGHT = 100; // Maximum height for auto-resizing textarea in pixels
 
@@ -35,6 +38,11 @@ export default function FloatingAIAssistant() {
   const [showModeModal, setShowModeModal] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  // Script system state
+  const [currentScript, setCurrentScript] = useState<ConversationScript | null>(null);
+  const scriptEngine = useRef(getScriptEngine());
+  const [scriptInitialized, setScriptInitialized] = useState(false);
 
   // Track mobile screen size with custom hook
   const isMobile = useMobileDetection();
@@ -94,6 +102,22 @@ export default function FloatingAIAssistant() {
     textarea.style.height = newHeight + 'px';
   }, [input]);
 
+  // Auto-initialize script when assistant opens
+  useEffect(() => {
+    if (isOpen && !scriptInitialized && messages.length === 0) {
+      // Load the beginner script automatically
+      scriptEngine.current.loadScript(beginnerKetoScript);
+      setCurrentScript(beginnerKetoScript);
+      setScriptInitialized(true);
+      
+      // Auto-send first message after a short delay
+      setTimeout(() => {
+        handleSendVoice('Hola');
+      }, 500);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isOpen, scriptInitialized, messages.length]);
+
   const handleSend = async () => {
     if (!input.trim() || isLoading) return;
     
@@ -102,11 +126,10 @@ export default function FloatingAIAssistant() {
     await sendMessage(message);
   };
 
-  const handleSendVoice = async (transcript: string) => {
+  const handleSendVoice = useCallback(async (transcript: string) => {
     if (!transcript.trim() || isLoading) return;
-    
     await sendMessage(transcript);
-  };
+  }, [isLoading, sendMessage]);
 
   const handleVoiceToggle = async () => {
     if (listening) {

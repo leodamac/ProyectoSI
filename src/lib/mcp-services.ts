@@ -10,6 +10,7 @@ import { ChatMessage, UserProfile, KetoRecipe } from '@/types';
 import { generateKetoRecipe, ketoRecipes } from '@/data/recipes';
 import { sampleProducts } from '@/data/products';
 import { nutritionists } from '@/data/nutritionists';
+import { getScriptEngine } from './scriptEngine';
 
 export interface MCPServiceConfig {
   provider: 'mock' | 'openai' | 'gemini' | 'local';
@@ -35,7 +36,7 @@ export class MCPChatService {
 
   /**
    * Send a message and get AI response with potential actions
-   * Currently uses mock responses, but interface is ready for real AI
+   * Checks for active script first (Wizard of Oz), then falls back to mock responses
    */
   async sendMessage(content: string): Promise<ChatMessage & { actions?: AgentAction[] }> {
     const userMessage: ChatMessage = {
@@ -46,6 +47,35 @@ export class MCPChatService {
     };
 
     this.conversationHistory.push(userMessage);
+
+    // Check if script is active (Wizard of Oz approach)
+    const scriptEngine = getScriptEngine();
+    if (scriptEngine.isScriptActive()) {
+      const scriptResult = scriptEngine.processInput(content);
+      
+      // Convert script actions to agent actions
+      let actions: AgentAction[] | undefined;
+      if (scriptResult.actions && Array.isArray(scriptResult.actions)) {
+        actions = scriptResult.actions.map((a) => {
+          const action = a as { type: string; data?: unknown };
+          return {
+            type: action.type as AgentAction['type'],
+            data: action.data,
+          };
+        });
+      }
+      
+      const assistantMessage: ChatMessage & { actions?: AgentAction[] } = {
+        id: `msg-${Date.now()}-assistant`,
+        role: 'assistant',
+        content: scriptResult.response,
+        timestamp: new Date(),
+        actions,
+      };
+
+      this.conversationHistory.push(assistantMessage);
+      return assistantMessage;
+    }
 
     // Extract information from user message (mock implementation)
     this.extractUserInfo(content);
