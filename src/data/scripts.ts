@@ -208,12 +208,32 @@ export const availableScripts: ConversationScript[] = [
   athleteKetoScript,
 ];
 
-// Helper function to find script by ID
+// Helper function to get uploaded scripts from localStorage
+export function getUploadedScripts(): ConversationScript[] {
+  if (typeof window === 'undefined') return [];
+  
+  try {
+    const saved = localStorage.getItem('mago-de-oz-scripts');
+    if (saved) {
+      return JSON.parse(saved);
+    }
+  } catch (e) {
+    console.error('Error loading uploaded scripts:', e);
+  }
+  return [];
+}
+
+// Helper function to get all scripts (built-in + uploaded)
+export function getAllScripts(): ConversationScript[] {
+  return [...availableScripts, ...getUploadedScripts()];
+}
+
+// Helper function to find script by ID (searches both built-in and uploaded)
 export function getScriptById(id: string): ConversationScript | undefined {
-  return availableScripts.find(script => script.id === id);
+  return getAllScripts().find(script => script.id === id);
 }
 
 // Helper function to get script by user profile type
 export function getScriptsByType(type: ConversationScript['userProfile']['type']): ConversationScript[] {
-  return availableScripts.filter(script => script.userProfile.type === type);
+  return getAllScripts().filter(script => script.userProfile.type === type);
 }
