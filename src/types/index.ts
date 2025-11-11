@@ -303,3 +303,60 @@ export interface Payment {
     transactionId?: string;
   };
 }
+
+// Script/Scenario System Types for Demo Simulations
+export interface ScriptStep {
+  id: string;
+  order: number;
+  userInput?: string; // Expected user input (can be flexible/pattern-based)
+  assistantResponse: string;
+  trigger?: {
+    type: 'product' | 'nutritionist' | 'forum' | 'recipe' | 'navigate';
+    data?: unknown;
+  };
+  actions?: Array<{
+    type: 'add_to_cart' | 'schedule_appointment' | 'navigate' | 'show_card';
+    data?: unknown;
+  }>;
+  variants?: Array<{
+    pattern: string; // Regex pattern to match user input variations
+    response: string;
+  }>;
+  nextStepId?: string; // For branching conversations
+}
+
+export interface ConversationScript {
+  id: string;
+  name: string;
+  description: string;
+  userProfile: {
+    type: 'beginner' | 'experienced' | 'athlete' | 'professional' | 'custom';
+    name?: string;
+    goals?: string[];
+    restrictions?: string[];
+    background?: string;
+  };
+  steps: ScriptStep[];
+  metadata?: {
+    estimatedDuration?: number; // in minutes
+    difficulty?: 'easy' | 'medium' | 'hard';
+    tags?: string[];
+    author?: string;
+    createdAt?: Date;
+  };
+}
+
+export interface ScriptSession {
+  id: string;
+  scriptId: string;
+  currentStepIndex: number;
+  completedSteps: string[];
+  startedAt: Date;
+  completedAt?: Date;
+  deviations?: Array<{
+    stepId: string;
+    userInput: string;
+    expectedInput: string;
+    timestamp: Date;
+  }>;
+}
