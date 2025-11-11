@@ -387,6 +387,7 @@ export default function VoiceFirstChat() {
           messages={messages.map(m => ({ role: m.role, content: m.content }))}
           onToggleListening={handleVoiceToggle}
           onStopAudio={stopAudio}
+          alwaysShow={true}
         />
       </>
     );

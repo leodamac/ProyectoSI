@@ -153,6 +153,7 @@ export default function FloatingAIAssistant() {
           onClose={closeAssistant}
           onToggleListening={handleVoiceToggle}
           onStopAudio={stopAudio}
+          alwaysShow={true}
         />
       </>
     );

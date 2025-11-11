@@ -17,6 +17,7 @@ interface CompactVoiceVisualizerProps {
   onClose?: () => void;
   onToggleListening?: () => void;
   onStopAudio?: () => void;
+  alwaysShow?: boolean; // New prop to force visibility
 }
 
 export default function CompactVoiceVisualizer({
@@ -26,13 +27,14 @@ export default function CompactVoiceVisualizer({
   onClose,
   onToggleListening,
   onStopAudio,
+  alwaysShow = false,
 }: CompactVoiceVisualizerProps) {
   const [isExpanded, setIsExpanded] = useState(false);
 
   // Determine if component should be visible
   const shouldShow = useMemo(() => {
-    return listening || isAudioPlaying || isExpanded || messages.length > 0;
-  }, [listening, isAudioPlaying, isExpanded, messages.length]);
+    return alwaysShow || listening || isAudioPlaying || isExpanded || messages.length > 0;
+  }, [alwaysShow, listening, isAudioPlaying, isExpanded, messages.length]);
 
   // Don't render if not needed
   if (!shouldShow) {
