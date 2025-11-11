@@ -13,10 +13,12 @@ import { useSpeechToText } from '@/hooks/useSpeechToText';
 import { useMobileDetection } from '@/hooks/useMobileDetection';
 import ContextualCards, { LocationRequestCard } from './ContextualCards';
 import { simulateEnhancedStreamingResponse, SimulationTrigger } from '@/utils/enhancedSimulation';
-import { Nutritionist } from '@/types';
+import { ConversationScript, Nutritionist } from '@/types';
 import InteractionModeModal from './InteractionModeModal';
 import ModeIndicator from './ModeIndicator';
 import CompactVoiceVisualizer from './CompactVoiceVisualizer';
+import ScriptSelector from './ScriptSelector';
+import { getScriptEngine, streamScriptResponse } from '@/lib/scriptEngine';
 
 interface ProductCard {
   id: string;
@@ -58,6 +60,11 @@ export default function VoiceFirstChat() {
   const [showHistoryFull, setShowHistoryFull] = useState(false);
   const [pendingLocationRequest, setPendingLocationRequest] = useState(false);
   const [userLocation, setUserLocation] = useState<{ latitude: number; longitude: number } | undefined>();
+  
+  // Script system state
+  const [showScriptSelector, setShowScriptSelector] = useState(false);
+  const [currentScript, setCurrentScript] = useState<ConversationScript | null>(null);
+  const scriptEngine = useRef(getScriptEngine());
   
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const messagesContainerRef = useRef<HTMLDivElement>(null);
@@ -141,29 +148,62 @@ export default function VoiceFirstChat() {
       let trigger: SimulationTrigger | undefined;
       let shouldRequestLocation = false;
 
-      for await (const chunk of simulateEnhancedStreamingResponse(
-        messageText,
-        conversationHistory,
-        userLocation
-      )) {
-        if (chunk.text) {
-          fullText += chunk.text;
-          setMessages(prev => {
-            const updated = [...prev];
-            const lastMsg = updated[updated.length - 1];
-            if (lastMsg && lastMsg.id === assistantId) {
-              lastMsg.content = fullText;
-            }
-            return updated;
-          });
+      // Check if script is active
+      if (scriptEngine.current.isScriptActive()) {
+        // Use script engine for response
+        const scriptResult = scriptEngine.current.processInput(messageText);
+        
+        // Stream the script response
+        for await (const chunk of streamScriptResponse(scriptResult.response)) {
+          if (chunk.text) {
+            fullText += chunk.text;
+            setMessages(prev => {
+              const updated = [...prev];
+              const lastMsg = updated[updated.length - 1];
+              if (lastMsg && lastMsg.id === assistantId) {
+                lastMsg.content = fullText;
+              }
+              return updated;
+            });
+          }
         }
 
-        if (chunk.trigger) {
-          trigger = chunk.trigger;
-        }
+        trigger = scriptResult.trigger as SimulationTrigger | undefined;
 
-        if (chunk.shouldRequestLocation) {
-          shouldRequestLocation = true;
+        // Check if script is complete
+        if (scriptResult.isComplete) {
+          // Auto-close script after a delay
+          setTimeout(() => {
+            setCurrentScript(null);
+            scriptEngine.current.unloadScript();
+          }, 3000);
+        }
+      } else {
+        // Use regular enhanced simulation
+        for await (const chunk of simulateEnhancedStreamingResponse(
+          messageText,
+          conversationHistory,
+          userLocation
+        )) {
+          if (chunk.text) {
+            fullText += chunk.text;
+            setMessages(prev => {
+              const updated = [...prev];
+              const lastMsg = updated[updated.length - 1];
+              if (lastMsg && lastMsg.id === assistantId) {
+                lastMsg.content = fullText;
+              }
+              return updated;
+            });
+          }
+
+          if (chunk.trigger) {
+            trigger = chunk.trigger;
+          }
+
+          if (chunk.shouldRequestLocation) {
+            shouldRequestLocation = true;
+          }
         }
       }
 
@@ -300,6 +340,27 @@ export default function VoiceFirstChat() {
     // Implement actions like adding to cart, scheduling, viewing posts
   };
 
+  // Script handlers
+  const handleSelectScript = (script: ConversationScript) => {
+    scriptEngine.current.loadScript(script);
+    setCurrentScript(script);
+    setMessages([]); // Clear messages to start fresh
+    
+    // Send initial greeting to start the script
+    setTimeout(() => {
+      const firstStep = scriptEngine.current.getCurrentStep();
+      if (firstStep?.userInput) {
+        sendMessage(firstStep.userInput);
+      }
+    }, 500);
+  };
+
+  // Unused but kept for potential manual script closing
+  // const handleCloseScript = () => {
+  //   setCurrentScript(null);
+  //   scriptEngine.current.unloadScript();
+  // };
+
   // Get visible messages based on mode
   const visibleMessages = showHistoryFull
     ? messages
@@ -326,6 +387,7 @@ export default function VoiceFirstChat() {
           messages={messages.map(m => ({ role: m.role, content: m.content }))}
           onToggleListening={handleVoiceToggle}
           onStopAudio={stopAudio}
+          alwaysShow={true}
         />
       </>
     );
@@ -448,6 +510,17 @@ export default function VoiceFirstChat() {
         </div>
 
         <div className="flex items-center gap-2">
+          {/* Script Button - Hidden for Wizard of Oz demo */}
+          {/* 
+          <button
+            onClick={() => setShowScriptSelector(true)}
+            className="p-2 hover:bg-white/20 rounded-lg transition-colors"
+            title="Seleccionar guion de demo"
+          >
+            <FileText className="w-5 h-5 text-white" />
+          </button>
+          */}
+
           {/* Help Button */}
           <button
             onClick={() => setShowHelpModal(true)}
@@ -467,6 +540,18 @@ export default function VoiceFirstChat() {
         ref={messagesContainerRef}
         className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50 min-h-0"
       >
+        {/* Script Indicator - Hidden for Wizard of Oz demo */}
+        {/* currentScript && (
+          <ScriptIndicator
+            scriptName={currentScript.name}
+            progress={scriptEngine.current.getProgress()}
+            currentStep={scriptEngine.current.getCurrentSession()?.currentStepIndex || 0}
+            totalSteps={currentScript.steps.length}
+            hint={scriptEngine.current.getHint() || undefined}
+            onClose={handleCloseScript}
+          />
+        ) */}
+
         {messages.length === 0 && (
           <div className="text-center py-8">
             <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-emerald-500 to-teal-500 rounded-full mb-4 shadow-lg">
@@ -712,6 +797,14 @@ export default function VoiceFirstChat() {
           )}
         </form>
       </div>
+
+      {/* Script Selector Modal */}
+      <ScriptSelector
+        isOpen={showScriptSelector}
+        onClose={() => setShowScriptSelector(false)}
+        onSelectScript={handleSelectScript}
+        currentScriptId={currentScript?.id}
+      />
     </div>
   );
 }
