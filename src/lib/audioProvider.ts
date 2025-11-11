@@ -59,17 +59,11 @@ class TTSProvider implements AudioProvider {
         this.startCallback?.();
       };
 
-      this.utterance.onend = () => {
-        this.playing = false;
-        this.utterance = null;
-        this.endCallback?.();
-        resolve();
-      };
-
       this.utterance.onerror = (error) => {
         this.playing = false;
         this.utterance = null;
         this.endCallback?.();
+        clearTimeout(timeout);
         reject(error);
       };
 
@@ -83,11 +77,13 @@ class TTSProvider implements AudioProvider {
         }
       }, 120000);
 
-      // Clear timeout when done
-      const originalOnEnd = this.utterance.onend;
+      // Set onend handler to clear timeout and resolve
       this.utterance.onend = () => {
         clearTimeout(timeout);
-        originalOnEnd?.();
+        this.playing = false;
+        this.utterance = null;
+        this.endCallback?.();
+        resolve();
       };
 
       window.speechSynthesis.speak(this.utterance);
