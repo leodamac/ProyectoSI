@@ -74,7 +74,7 @@ export function ChatWindow() {
               <div
                 className={`max-w-[80%] rounded-2xl px-4 py-3 shadow-sm ${
                   isUser
-                    ? 'bg-emerald-500 text-white rounded-br-md'
+                    ? 'bg-emerald-700 text-white rounded-br-md'
                     : 'bg-white border border-gray-200 text-gray-800 rounded-bl-md'
                 }`}
               >
@@ -89,7 +89,7 @@ export function ChatWindow() {
                 </p>
                 <p
                   className={`text-xs mt-2 ${
-                    isUser ? 'text-emerald-100' : 'text-gray-500'
+                    isUser ? 'text-white/90' : 'text-gray-500'
                   }`}
                 >
                   {message.timestamp.toLocaleTimeString('es-ES', {

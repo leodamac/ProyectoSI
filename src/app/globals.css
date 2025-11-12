@@ -26,6 +26,19 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
+/* Ensure proper contrast for input fields and textareas */
+input:disabled,
+textarea:disabled {
+  -webkit-text-fill-color: currentColor;
+  opacity: 1;
+}
+
+/* Prevent browser from applying default disabled styling that reduces contrast */
+input:disabled::placeholder,
+textarea:disabled::placeholder {
+  opacity: 1;
+}
+
 @keyframes slide-up {
   from {
     transform: translateY(100%);

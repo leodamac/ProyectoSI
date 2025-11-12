@@ -610,12 +610,12 @@ export default function VoiceFirstChat() {
                   <div
                     className={`max-w-[85%] px-4 py-2.5 rounded-2xl ${
                       isUser
-                        ? 'bg-emerald-500 text-white rounded-br-sm'
+                        ? 'bg-emerald-700 text-white rounded-br-sm'
                         : 'bg-white border border-gray-200 text-gray-800 rounded-bl-sm'
                     }`}
                   >
                     <p className="text-sm leading-relaxed whitespace-pre-wrap">{message.content}</p>
-                    <p className={`text-xs mt-1 ${isUser ? 'text-emerald-100' : 'text-gray-500'}`}>
+                    <p className={`text-xs mt-1 ${isUser ? 'text-white/90' : 'text-gray-500'}`}>
                       {message.timestamp.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}
                     </p>
                   </div>
@@ -782,7 +782,7 @@ export default function VoiceFirstChat() {
                 }}
                 placeholder="Escribe tu mensaje..."
                 aria-label="Escribe tu mensaje"
-                className="flex-1 px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm placeholder:text-gray-500 bg-gray-50 focus:bg-white transition-colors resize-none overflow-y-auto min-h-[48px] max-h-[120px]"
+                className="flex-1 px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm text-gray-900 placeholder:text-gray-600 bg-gray-50 focus:bg-white disabled:bg-gray-100 disabled:text-gray-700 disabled:placeholder:text-gray-500 transition-colors resize-none overflow-y-auto min-h-[48px] max-h-[120px]"
                 disabled={isLoading}
                 rows={1}
               />

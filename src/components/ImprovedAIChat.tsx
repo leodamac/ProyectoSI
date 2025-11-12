@@ -480,7 +480,7 @@ export default function ImprovedAIChat({ onClose, isFloating = false, onHelpClic
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={handleKeyDown}
                 placeholder={quickSuggestions[placeholderIndex].text}
-                className="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm placeholder:text-gray-500 bg-gray-50 focus:bg-white transition-colors resize-none overflow-y-auto min-h-[42px] max-h-[120px]"
+                className="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm text-gray-900 placeholder:text-gray-600 bg-gray-50 focus:bg-white disabled:bg-gray-100 disabled:text-gray-700 disabled:placeholder:text-gray-500 transition-colors resize-none overflow-y-auto min-h-[42px] max-h-[120px]"
                 disabled={isLoading || (!isPro && messageCount >= FREE_MESSAGE_LIMIT)}
                 rows={1}
               />
