@@ -17,11 +17,13 @@ import {
   CheckCircle2,
   Eye,
   HelpCircle,
-  Code
+  Code,
+  Eraser
 } from 'lucide-react';
 import { ConversationScript } from '@/types';
 import { availableScripts } from '@/data/scripts';
 import { getScriptEngine } from '@/lib/scriptEngine';
+import { useAIAssistant } from '@/context/AIAssistantContext';
 
 export default function MagoDeOzPage() {
   const [uploadedScripts, setUploadedScripts] = useState<ConversationScript[]>([]);
@@ -31,6 +33,7 @@ export default function MagoDeOzPage() {
   const [uploadSuccess, setUploadSuccess] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const scriptEngine = getScriptEngine();
+  const { clearMessages } = useAIAssistant();
 
   // Load saved scripts from localStorage on mount
   useEffect(() => {
@@ -105,6 +108,11 @@ export default function MagoDeOzPage() {
       scriptEngine.unloadScript();
       setActiveScriptId(null);
     }
+  };
+
+  const handleClearMessages = () => {
+    clearMessages();
+    setUploadSuccess('Historial de chat limpiado! Puedes iniciar una nueva conversación desde cero.');
   };
 
   const handleDownloadTemplate = () => {
@@ -276,6 +284,14 @@ export default function MagoDeOzPage() {
               >
                 <Download className="w-4 h-4" />
                 Descargar Plantilla
+              </button>
+
+              <button
+                onClick={handleClearMessages}
+                className="w-full mt-2 flex items-center justify-center gap-2 px-4 py-2 bg-red-50 hover:bg-red-100 border border-red-200 rounded-lg transition-colors text-sm font-medium text-red-700"
+              >
+                <Eraser className="w-4 h-4" />
+                Limpiar Historial de Chat
               </button>
             </div>
 

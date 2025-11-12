@@ -122,6 +122,18 @@ export default function FloatingAIAssistant() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen, scriptInitialized, messages.length]);
 
+  // Auto-start listening when switching to voice mode
+  useEffect(() => {
+    if (isOpen && (mode === 'voice-voice' || mode === 'voice-text') && !listening && sttSupported) {
+      // Start listening automatically after a short delay
+      const timer = setTimeout(() => {
+        startRecognition();
+      }, 500);
+      
+      return () => clearTimeout(timer);
+    }
+  }, [mode, isOpen, listening, sttSupported, startRecognition]);
+
   const handleSend = async () => {
     if (!input.trim() || isLoading) return;
     
@@ -463,7 +475,7 @@ export default function FloatingAIAssistant() {
                       onChange={(e) => setInput(e.target.value)}
                       onKeyPress={handleKeyPress}
                       placeholder="Escribe tu mensaje..."
-                      className="flex-1 resize-none rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent bg-white"
+                      className="flex-1 resize-none rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent bg-white"
                       style={{ maxHeight: `${MAX_TEXTAREA_HEIGHT}px` }}
                       rows={1}
                       disabled={isLoading}

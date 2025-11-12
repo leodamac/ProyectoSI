@@ -52,8 +52,8 @@ const SIMULATED_PHRASES = [
 ];
 
 // Voice recognition timeout settings
-const SILENCE_TIMEOUT = 3000; // 3 seconds of silence before auto-stopping
-const MAX_LISTENING_TIME = 30000; // 30 seconds maximum listening time
+const SILENCE_TIMEOUT = 300000; // 5 minutes of silence before auto-stopping (300000ms = 5min)
+const MAX_LISTENING_TIME = 600000; // 10 minutes maximum listening time (600000ms = 10min)
 
 export function useSpeechToText(
   onResult?: (transcript: string, isFinal: boolean) => void
