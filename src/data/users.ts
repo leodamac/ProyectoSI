@@ -84,6 +84,79 @@ export const mockUsers: (User & { password: string })[] = [
       institutionId: 'inst-1' // Works for Centro Keto Guayaquil
     }
   },
+  {
+    id: 'prof-4',
+    email: 'dr.garcia@centroketo.com',
+    password: 'garcia2024',
+    name: 'Dr. Roberto García',
+    role: 'professional',
+    avatar: '👨‍⚕️',
+    isPremium: true,
+    phone: '+593 99 234 5678',
+    bio: 'Médico endocrinólogo especializado en tratamiento de obesidad y diabetes con dieta cetogénica',
+    professionalInfo: {
+      specialty: 'Endocrinología y Nutrición Keto',
+      certifications: ['Médico Endocrinólogo', 'Especialista en Obesidad', 'Certificación Keto Médica'],
+      experience: 15,
+      rating: 4.9,
+      reviewCount: 203,
+      hourlyRate: 60,
+      availability: [
+        { day: 'Lunes - Viernes', hours: '8:00 AM - 4:00 PM' }
+      ],
+      languages: ['Español', 'Inglés', 'Portugués'],
+      institutionId: 'inst-1' // Works for Centro Keto Guayaquil
+    }
+  },
+  {
+    id: 'prof-5',
+    email: 'lic.fernandez@centroketo.com',
+    password: 'fernandez2024',
+    name: 'Lic. Carmen Fernández',
+    role: 'professional',
+    avatar: '👩‍🔬',
+    isPremium: true,
+    phone: '+593 98 345 6789',
+    bio: 'Nutricionista clínica con enfoque en nutrición cetogénica terapéutica',
+    professionalInfo: {
+      specialty: 'Nutrición Clínica Cetogénica',
+      certifications: ['Nutricionista Clínica', 'Terapia Nutricional Keto', 'Manejo de Epilepsia Refractaria'],
+      experience: 10,
+      rating: 4.8,
+      reviewCount: 145,
+      hourlyRate: 55,
+      availability: [
+        { day: 'Martes - Jueves', hours: '9:00 AM - 5:00 PM' },
+        { day: 'Sábado', hours: '9:00 AM - 1:00 PM' }
+      ],
+      languages: ['Español', 'Inglés'],
+      institutionId: 'inst-1' // Works for Centro Keto Guayaquil
+    }
+  },
+  {
+    id: 'prof-6',
+    email: 'nut.morales@centroketo.com',
+    password: 'morales2024',
+    name: 'Nutricionista Diego Morales',
+    role: 'professional',
+    avatar: '👨‍⚕️',
+    isPremium: true,
+    phone: '+593 97 456 7890',
+    bio: 'Nutricionista especializado en nutrición pediátrica keto y manejo de epilepsia infantil',
+    professionalInfo: {
+      specialty: 'Nutrición Pediátrica Keto',
+      certifications: ['Nutricionista Pediátrico', 'Especialista en Dieta Cetogénica Pediátrica', 'Manejo de Epilepsia Infantil'],
+      experience: 8,
+      rating: 4.9,
+      reviewCount: 98,
+      hourlyRate: 50,
+      availability: [
+        { day: 'Lunes - Viernes', hours: '10:00 AM - 6:00 PM' }
+      ],
+      languages: ['Español'],
+      institutionId: 'inst-1' // Works for Centro Keto Guayaquil
+    }
+  },
 
   // Institution users (can manage professionals, sell products, offer services)
   {
@@ -106,7 +179,7 @@ export const mockUsers: (User & { password: string })[] = [
     institutionInfo: {
       type: 'nutrition-center',
       description: 'Centro integral de nutrición keto con 5 profesionales certificados',
-      professionalIds: ['prof-3'], // Professionals working here (only Ana López for now)
+      professionalIds: ['prof-3', 'prof-4', 'prof-5', 'prof-6'], // Professionals working here
       servicesOffered: ['Consultas nutricionales', 'Planes personalizados', 'Seguimiento mensual', 'Talleres grupales']
     }
   },
@@ -176,6 +249,35 @@ export const mockUsers: (User & { password: string })[] = [
     avatar: '👩‍💼',
     isPremium: true, // Premium subscriber
     bio: 'Profesional ocupada que busca mantener un estilo de vida saludable'
+  },
+  {
+    id: 'user-5',
+    email: 'leonardo@gmail.com',
+    password: 'leo2024',
+    name: 'Leonardo',
+    role: 'user',
+    avatar: '🧑',
+    isPremium: false,
+    phone: '+593 99 567 8901',
+    bio: 'Interesado en comenzar una dieta keto para mejorar mi salud',
+    birthDate: '1990-05-15',
+    gender: 'male',
+    ketoProfile: {
+      dietaryRestrictions: ['Sin lácteos'],
+      allergies: ['Nueces'],
+      goals: ['Pérdida de peso', 'Mejorar energía', 'Control de glucosa'],
+      activityLevel: 'moderate',
+      weight: 95,
+      height: 175,
+      targetWeight: 80
+    },
+    address: {
+      street: 'Av. Francisco de Orellana 234',
+      city: 'Guayaquil',
+      state: 'Guayas',
+      zipCode: '090152',
+      country: 'Ecuador'
+    }
   }
 ];
 

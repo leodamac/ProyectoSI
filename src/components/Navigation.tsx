@@ -3,8 +3,9 @@
 import Link from 'next/link';
 import { useCart } from './CartContext';
 import { useAuth } from '@/context/AuthContext';
-import { Sparkles, Users, LayoutGrid, MessageSquare, Menu, X, Download, LogIn, LogOut, UserCircle, ChevronDown, ShoppingBag, BookOpen, Calendar, Briefcase } from 'lucide-react';
-import { useState } from 'react';
+import { Sparkles, Users, LayoutGrid, MessageSquare, Menu, X, Download, LogIn, LogOut, UserCircle, ChevronDown, ShoppingBag, BookOpen, Calendar, Briefcase, Bell } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { getPendingAppointmentsByProfessional, getAssignedAppointments, getPendingInstitutionAppointments } from '@/data/appointments';
 
 export default function Navigation() {
   const { itemCount } = useCart();
@@ -12,6 +13,24 @@ export default function Navigation() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showServicesMenu, setShowServicesMenu] = useState(false);
+  const [pendingCount, setPendingCount] = useState(0);
+  const [showNotifications, setShowNotifications] = useState(false);
+
+  // Check for pending appointments
+  useEffect(() => {
+    if (user && (isProfessional() || isInstitution())) {
+      if (isInstitution()) {
+        // For institutions: count unassigned pending requests
+        const institutionRequests = getPendingInstitutionAppointments(user.id);
+        const unassigned = institutionRequests.filter(apt => !apt.assignedProfessionalId);
+        setPendingCount(unassigned.length);
+      } else {
+        // For professionals: count assigned pending appointments
+        const assigned = getAssignedAppointments(user.id).filter(apt => apt.status === 'pending');
+        setPendingCount(assigned.length);
+      }
+    }
+  }, [user, isProfessional, isInstitution]);
 
   return (
     <nav className="bg-white shadow-md sticky top-0 z-50">
@@ -132,6 +151,68 @@ export default function Navigation() {
             >
               🛒 Carrito ({itemCount})
             </Link>
+            
+            {/* Notifications Bell for Professionals/Institutions */}
+            {isAuthenticated && (isProfessional() || isInstitution()) && (
+              <div className="relative">
+                <button
+                  onClick={() => setShowNotifications(!showNotifications)}
+                  className="relative p-2 text-gray-700 hover:text-emerald-600 transition-colors"
+                  aria-label="Notificaciones"
+                >
+                  <Bell className="w-6 h-6" />
+                  {pendingCount > 0 && (
+                    <span className="absolute top-0 right-0 bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center animate-pulse">
+                      {pendingCount}
+                    </span>
+                  )}
+                </button>
+                
+                {showNotifications && (
+                  <>
+                    <div 
+                      className="fixed inset-0 z-40" 
+                      onClick={() => setShowNotifications(false)}
+                    />
+                    <div className="absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-xl border border-gray-200 py-2 z-50">
+                      <div className="px-4 py-3 border-b border-gray-200">
+                        <h3 className="font-semibold text-gray-900">Notificaciones</h3>
+                      </div>
+                      {pendingCount > 0 ? (
+                        <div className="p-4">
+                          <div className="bg-yellow-50 border-l-4 border-yellow-400 p-3 rounded">
+                            <div className="flex items-start">
+                              <Bell className="w-5 h-5 text-yellow-600 mt-0.5 mr-2" />
+                              <div>
+                                <p className="text-sm font-semibold text-yellow-900">
+                                  Tienes {pendingCount} {pendingCount === 1 ? 'solicitud pendiente' : 'solicitudes pendientes'}
+                                </p>
+                                <p className="text-xs text-yellow-700 mt-1">
+                                  {isProfessional() 
+                                    ? 'Nuevas citas asignadas esperando tu confirmación'
+                                    : 'Nuevas solicitudes de consulta de clientes'}
+                                </p>
+                                <Link
+                                  href="/panel-profesional"
+                                  onClick={() => setShowNotifications(false)}
+                                  className="inline-block mt-2 text-xs font-medium text-yellow-800 hover:text-yellow-900 underline"
+                                >
+                                  Ver panel profesional →
+                                </Link>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="p-4 text-center text-gray-500 text-sm">
+                          No tienes notificaciones pendientes
+                        </div>
+                      )}
+                    </div>
+                  </>
+                )}
+              </div>
+            )}
             
             {isAuthenticated ? (
               <div className="relative">
