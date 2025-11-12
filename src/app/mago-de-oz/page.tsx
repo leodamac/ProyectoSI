@@ -125,6 +125,7 @@ export default function MagoDeOzPage() {
           order: 1,
           userInput: 'Hola',
           assistantResponse: '¡Hola! Bienvenido. ¿En qué puedo ayudarte?',
+          audioFile: '/audio/greeting.mp3', // Opcional: URL del archivo de audio
           nextStepId: 'step-2',
         },
         {
@@ -136,6 +137,7 @@ export default function MagoDeOzPage() {
             {
               pattern: '(info|información|ayuda)',
               response: 'Por supuesto, te ayudo con eso...',
+              audioFile: '/audio/help-response.mp3', // Audio para esta variante
             },
           ],
         },
@@ -182,10 +184,15 @@ export default function MagoDeOzPage() {
               <HelpCircle className="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" />
               <div className="text-sm text-blue-800">
                 <p className="font-semibold mb-1">¿Qué es el Mago de Oz?</p>
-                <p>
+                <p className="mb-2">
                   Este sistema te permite simular conversaciones reales con el asistente de IA 
                   para demostraciones. Los scripts se ejecutan de forma invisible - el usuario 
                   no sabe que está siguiendo un guion preparado.
+                </p>
+                <p className="text-xs">
+                  <strong>✨ Nuevo:</strong> Ahora puedes especificar archivos de audio personalizados para cada 
+                  respuesta del script. Agrega el campo <code className="bg-blue-100 px-1 rounded">audioFile</code> 
+                  con la URL del audio en tu JSON.
                 </p>
               </div>
             </div>
