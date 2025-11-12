@@ -240,6 +240,25 @@ export default function MisCitasPage() {
                             </p>
                           </div>
                         )}
+
+                        {/* Greeting Video from Professional */}
+                        {appointment.greetingVideoUrl && appointment.status === 'confirmed' && (
+                          <div className="mt-4 p-4 bg-emerald-50 border border-emerald-200 rounded-lg">
+                            <div className="flex items-center gap-2 mb-3">
+                              <Video className="w-5 h-5 text-emerald-600" />
+                              <h4 className="font-semibold text-emerald-900">Video de Saludo del Profesional</h4>
+                            </div>
+                            <video
+                              src={appointment.greetingVideoUrl}
+                              controls
+                              className="w-full rounded-lg shadow-md"
+                              style={{ maxHeight: '300px' }}
+                            />
+                            <p className="text-xs text-emerald-700 mt-2">
+                              El profesional ha enviado un video de bienvenida para comenzar tu tratamiento. 🎉
+                            </p>
+                          </div>
+                        )}
                       </div>
                     </div>
 

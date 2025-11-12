@@ -287,6 +287,7 @@ export interface Appointment {
   createdAt: Date;
   updatedAt?: Date;
   meetingLink?: string; // For virtual appointments
+  greetingVideoUrl?: string; // Professional's greeting video (Mago de Oz simulation)
   medicalHistory?: {
     conditions?: string[];
     medications?: string[];

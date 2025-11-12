@@ -297,12 +297,16 @@ export function createAppointment(
  */
 export function updateAppointmentStatus(
   appointmentId: string,
-  status: Appointment['status']
+  status: Appointment['status'],
+  greetingVideoUrl?: string
 ): Appointment | null {
   const appointment = mockAppointments.find(apt => apt.id === appointmentId);
   if (appointment) {
     appointment.status = status;
     appointment.updatedAt = new Date();
+    if (greetingVideoUrl) {
+      appointment.greetingVideoUrl = greetingVideoUrl;
+    }
     return appointment;
   }
   return null;

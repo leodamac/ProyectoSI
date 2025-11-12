@@ -4,8 +4,9 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 import Navigation from '@/components/Navigation';
+import VideoRecorder from '@/components/VideoRecorder';
 import { Calendar, Clock, CheckCircle, XCircle, AlertCircle, User, DollarSign, TrendingUp, Users as UsersIcon, Building2, UserCheck } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { 
   getAppointmentsByProfessional, 
   getPendingAppointmentsByProfessional, 
@@ -31,6 +32,8 @@ export default function PanelProfesionalPage() {
   const [showAssignModal, setShowAssignModal] = useState(false);
   const [newAssignments, setNewAssignments] = useState<string[]>([]); // Track new assignments for notifications
   const [newInstitutionRequests, setNewInstitutionRequests] = useState<string[]>([]); // Track new requests for institution
+  const [showVideoRecorder, setShowVideoRecorder] = useState(false);
+  const [appointmentToConfirm, setAppointmentToConfirm] = useState<string | null>(null);
 
   // Set initial tab based on user role
   useEffect(() => {
@@ -174,10 +177,30 @@ export default function PanelProfesionalPage() {
   };
 
   const handleConfirmAppointment = (appointmentId: string) => {
-    updateAppointmentStatus(appointmentId, 'confirmed');
-    // Refresh appointments
-    const updated = getAppointmentsByProfessional(user.id);
-    setAppointments(updated);
+    // Open video recorder first
+    setAppointmentToConfirm(appointmentId);
+    setShowVideoRecorder(true);
+  };
+
+  const handleVideoRecorded = (videoUrl: string) => {
+    if (appointmentToConfirm) {
+      // Update appointment with video and confirm status
+      updateAppointmentStatus(appointmentToConfirm, 'confirmed', videoUrl);
+      
+      // Refresh appointments
+      const updated = getAppointmentsByProfessional(user.id);
+      setAppointments(updated);
+      
+      // Close video recorder
+      setShowVideoRecorder(false);
+      setAppointmentToConfirm(null);
+    }
+  };
+
+  const handleCancelVideoRecording = () => {
+    // Close video recorder without confirming
+    setShowVideoRecorder(false);
+    setAppointmentToConfirm(null);
   };
 
   const handleRejectAppointment = (appointmentId: string) => {
@@ -806,6 +829,16 @@ export default function PanelProfesionalPage() {
           </motion.div>
         </div>
       )}
+
+      {/* Video Recorder Modal */}
+      <AnimatePresence>
+        {showVideoRecorder && (
+          <VideoRecorder
+            onVideoRecorded={handleVideoRecorded}
+            onCancel={handleCancelVideoRecording}
+          />
+        )}
+      </AnimatePresence>
     </div>
   );
 }

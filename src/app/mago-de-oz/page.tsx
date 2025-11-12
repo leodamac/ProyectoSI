@@ -18,7 +18,8 @@ import {
   Eye,
   HelpCircle,
   Code,
-  Eraser
+  Eraser,
+  Video
 } from 'lucide-react';
 import { ConversationScript } from '@/types';
 import { availableScripts } from '@/data/scripts';
@@ -32,10 +33,12 @@ export default function MagoDeOzPage() {
   const [uploadError, setUploadError] = useState<string | null>(null);
   const [uploadSuccess, setUploadSuccess] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const videoInputRef = useRef<HTMLInputElement>(null);
+  const [uploadedVideoUrl, setUploadedVideoUrl] = useState<string | null>(null);
   const scriptEngine = getScriptEngine();
   const { clearMessages } = useAIAssistant();
 
-  // Load saved scripts from localStorage on mount
+  // Load saved scripts and video from localStorage on mount
   useEffect(() => {
     const saved = localStorage.getItem('mago-de-oz-scripts');
     if (saved) {
@@ -45,6 +48,12 @@ export default function MagoDeOzPage() {
       } catch (e) {
         console.error('Error loading saved scripts:', e);
       }
+    }
+
+    // Load saved video
+    const savedVideo = localStorage.getItem('mago-de-oz-greeting-video');
+    if (savedVideo) {
+      setUploadedVideoUrl(savedVideo);
     }
   }, []);
 
@@ -113,6 +122,42 @@ export default function MagoDeOzPage() {
   const handleClearMessages = () => {
     clearMessages();
     setUploadSuccess('Historial de chat limpiado! Puedes iniciar una nueva conversación desde cero.');
+  };
+
+  const handleVideoUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    setUploadError(null);
+    setUploadSuccess(null);
+
+    // Validate file type
+    if (!file.type.startsWith('video/')) {
+      setUploadError('Por favor, sube un archivo de video válido (MP4, MOV, etc.)');
+      return;
+    }
+
+    // Create a blob URL for the video
+    const videoUrl = URL.createObjectURL(file);
+    
+    // Save to localStorage
+    localStorage.setItem('mago-de-oz-greeting-video', videoUrl);
+    setUploadedVideoUrl(videoUrl);
+    setUploadSuccess('Video de saludo cargado exitosamente! Los profesionales podrán usarlo al aceptar citas.');
+
+    // Clear file input
+    if (videoInputRef.current) {
+      videoInputRef.current.value = '';
+    }
+  };
+
+  const handleDeleteVideo = () => {
+    if (uploadedVideoUrl) {
+      URL.revokeObjectURL(uploadedVideoUrl);
+    }
+    localStorage.removeItem('mago-de-oz-greeting-video');
+    setUploadedVideoUrl(null);
+    setUploadSuccess('Video eliminado correctamente.');
   };
 
   const handleDownloadTemplate = () => {
@@ -293,6 +338,66 @@ export default function MagoDeOzPage() {
                 <Eraser className="w-4 h-4" />
                 Limpiar Historial de Chat
               </button>
+            </div>
+
+            {/* Upload Greeting Video */}
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+              <h2 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+                <Video className="w-5 h-5" />
+                Video de Saludo
+              </h2>
+              
+              <input
+                ref={videoInputRef}
+                type="file"
+                accept="video/*"
+                onChange={handleVideoUpload}
+                className="hidden"
+                id="video-upload"
+              />
+
+              {!uploadedVideoUrl ? (
+                <label
+                  htmlFor="video-upload"
+                  className="block w-full cursor-pointer"
+                >
+                  <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 hover:border-emerald-500 transition-colors text-center">
+                    <Video className="w-8 h-8 text-gray-400 mx-auto mb-2" />
+                    <p className="text-sm text-gray-600 mb-1">
+                      <span className="text-emerald-600 font-semibold">Click para subir video</span>
+                    </p>
+                    <p className="text-xs text-gray-500">MP4, MOV, u otros formatos</p>
+                  </div>
+                </label>
+              ) : (
+                <div className="space-y-3">
+                  <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-3">
+                    <div className="flex items-center gap-2 mb-2">
+                      <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                      <p className="text-sm font-medium text-emerald-900">Video cargado</p>
+                    </div>
+                    <video
+                      src={uploadedVideoUrl}
+                      controls
+                      className="w-full rounded-lg"
+                      style={{ maxHeight: '200px' }}
+                    />
+                  </div>
+                  <button
+                    onClick={handleDeleteVideo}
+                    className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-red-50 hover:bg-red-100 border border-red-200 rounded-lg transition-colors text-sm font-medium text-red-700"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                    Eliminar Video
+                  </button>
+                </div>
+              )}
+
+              <div className="mt-3 bg-blue-50 border border-blue-200 rounded-lg p-3">
+                <p className="text-xs text-blue-800">
+                  💡 Este video se usará para simular la grabación cuando el profesional acepte una cita.
+                </p>
+              </div>
             </div>
 
             {/* Quick Links */}
