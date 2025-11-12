@@ -8,20 +8,12 @@
 import { motion } from 'framer-motion';
 import { ShoppingCart, Utensils } from 'lucide-react';
 import { useTypingEffect } from '@/hooks/useTypingEffect';
+import { AIMessage, AIAction } from '@/context/AIAssistantContext';
 
 interface MessageBubbleProps {
-  message: {
-    id: string;
-    role: 'user' | 'assistant';
-    content: string;
-    action?: {
-      type: string;
-      data?: unknown;
-      executed?: boolean;
-    };
-  };
+  message: AIMessage;
   isLatest: boolean;
-  onExecuteAction?: (action: unknown) => void;
+  onExecuteAction?: (action: AIAction) => Promise<void>;
 }
 
 export default function MessageBubble({ message, isLatest, onExecuteAction }: MessageBubbleProps) {
@@ -60,7 +52,7 @@ export default function MessageBubble({ message, isLatest, onExecuteAction }: Me
           <div className="mt-2 flex flex-wrap gap-2">
             {message.action.type === 'add_to_cart' && (
               <button
-                onClick={() => onExecuteAction?.(message.action)}
+                onClick={() => message.action && onExecuteAction?.(message.action)}
                 className="text-xs bg-white/90 hover:bg-white text-gray-800 px-3 py-1.5 rounded-full transition-colors flex items-center gap-1"
               >
                 <ShoppingCart className="w-3 h-3" />
@@ -69,7 +61,7 @@ export default function MessageBubble({ message, isLatest, onExecuteAction }: Me
             )}
             {message.action.type === 'create_meal' && (
               <button
-                onClick={() => onExecuteAction?.(message.action)}
+                onClick={() => message.action && onExecuteAction?.(message.action)}
                 className="text-xs bg-white/90 hover:bg-white text-gray-800 px-3 py-1.5 rounded-full transition-colors flex items-center gap-1"
               >
                 <Utensils className="w-3 h-3" />
@@ -78,7 +70,7 @@ export default function MessageBubble({ message, isLatest, onExecuteAction }: Me
             )}
             {message.action.type === 'navigate' && (
               <button
-                onClick={() => onExecuteAction?.(message.action)}
+                onClick={() => message.action && onExecuteAction?.(message.action)}
                 className="text-xs bg-white/90 hover:bg-white text-gray-800 px-3 py-1.5 rounded-full transition-colors flex items-center gap-1"
               >
                 <Utensils className="w-3 h-3" />

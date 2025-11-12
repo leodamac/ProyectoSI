@@ -2,16 +2,14 @@
 
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { MessageCircle, X, Minus, Send, Sparkles, ShoppingCart, Calendar, BookOpen, Utensils, ChefHat, Info, Mic, MicOff, Volume2, VolumeX, Settings } from 'lucide-react';
+import { MessageCircle, X, Minus, Send, Sparkles, ShoppingCart, Calendar, BookOpen, ChefHat, Info, Mic, MicOff, Volume2, VolumeX, Settings } from 'lucide-react';
 import { useAIAssistant } from '@/context/AIAssistantContext';
 import { usePathname } from 'next/navigation';
 import { useVoiceMode } from '@/hooks/useVoiceMode';
 import { useSpeechToText } from '@/hooks/useSpeechToText';
-import { useMobileDetection } from '@/hooks/useMobileDetection';
 import InteractionModeModal from '@/components/chat/InteractionModeModal';
 import CompactVoiceVisualizer from '@/components/chat/CompactVoiceVisualizer';
 import MessageBubble from '@/components/MessageBubble';
-import { ConversationScript } from '@/types';
 import { beginnerKetoScript } from '@/data/scripts';
 import { getScriptEngine } from '@/lib/scriptEngine';
 
@@ -41,12 +39,8 @@ export default function FloatingAIAssistant() {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   // Script system state
-  const [currentScript] = useState<ConversationScript | null>(null);
   const scriptEngine = useRef(getScriptEngine());
   const [scriptInitialized, setScriptInitialized] = useState(false);
-
-  // Track mobile screen size with custom hook
-  const isMobile = useMobileDetection();
 
   // Voice mode integration
   const {
