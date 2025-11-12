@@ -17,11 +17,13 @@ import {
   CheckCircle2,
   Eye,
   HelpCircle,
-  Code
+  Code,
+  Eraser
 } from 'lucide-react';
 import { ConversationScript } from '@/types';
 import { availableScripts } from '@/data/scripts';
 import { getScriptEngine } from '@/lib/scriptEngine';
+import { useAIAssistant } from '@/context/AIAssistantContext';
 
 export default function MagoDeOzPage() {
   const [uploadedScripts, setUploadedScripts] = useState<ConversationScript[]>([]);
@@ -31,6 +33,7 @@ export default function MagoDeOzPage() {
   const [uploadSuccess, setUploadSuccess] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const scriptEngine = getScriptEngine();
+  const { clearMessages } = useAIAssistant();
 
   // Load saved scripts from localStorage on mount
   useEffect(() => {
@@ -107,6 +110,11 @@ export default function MagoDeOzPage() {
     }
   };
 
+  const handleClearMessages = () => {
+    clearMessages();
+    setUploadSuccess('Historial de chat limpiado! Puedes iniciar una nueva conversación desde cero.');
+  };
+
   const handleDownloadTemplate = () => {
     const template: ConversationScript = {
       id: 'mi-script-ejemplo',
@@ -125,6 +133,7 @@ export default function MagoDeOzPage() {
           order: 1,
           userInput: 'Hola',
           assistantResponse: '¡Hola! Bienvenido. ¿En qué puedo ayudarte?',
+          audioFile: '/audio/greeting.mp3', // Opcional: URL del archivo de audio
           nextStepId: 'step-2',
         },
         {
@@ -136,6 +145,7 @@ export default function MagoDeOzPage() {
             {
               pattern: '(info|información|ayuda)',
               response: 'Por supuesto, te ayudo con eso...',
+              audioFile: '/audio/help-response.mp3', // Audio para esta variante
             },
           ],
         },
@@ -182,10 +192,15 @@ export default function MagoDeOzPage() {
               <HelpCircle className="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" />
               <div className="text-sm text-blue-800">
                 <p className="font-semibold mb-1">¿Qué es el Mago de Oz?</p>
-                <p>
+                <p className="mb-2">
                   Este sistema te permite simular conversaciones reales con el asistente de IA 
                   para demostraciones. Los scripts se ejecutan de forma invisible - el usuario 
                   no sabe que está siguiendo un guion preparado.
+                </p>
+                <p className="text-xs">
+                  <strong>✨ Nuevo:</strong> Ahora puedes especificar archivos de audio personalizados para cada 
+                  respuesta del script. Agrega el campo <code className="bg-blue-100 px-1 rounded">audioFile</code> 
+                  con la URL del audio en tu JSON.
                 </p>
               </div>
             </div>
@@ -269,6 +284,14 @@ export default function MagoDeOzPage() {
               >
                 <Download className="w-4 h-4" />
                 Descargar Plantilla
+              </button>
+
+              <button
+                onClick={handleClearMessages}
+                className="w-full mt-2 flex items-center justify-center gap-2 px-4 py-2 bg-red-50 hover:bg-red-100 border border-red-200 rounded-lg transition-colors text-sm font-medium text-red-700"
+              >
+                <Eraser className="w-4 h-4" />
+                Limpiar Historial de Chat
               </button>
             </div>
 

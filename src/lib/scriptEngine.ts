@@ -4,6 +4,7 @@
  */
 
 import { ConversationScript, ScriptStep, ScriptSession } from '@/types';
+import { matchesExpectedInput, calculateSimilarity } from '@/utils/fuzzyMatch';
 
 export class ScriptEngine {
   private currentScript: ConversationScript | null = null;
@@ -63,29 +64,34 @@ export class ScriptEngine {
 
   /**
    * Check if user input matches the current step
-   * Uses fuzzy matching to be more flexible
+   * Uses fuzzy matching to be more flexible (60% similarity threshold)
    */
-  matchesCurrentStep(userInput: string): boolean {
+  matchesCurrentStep(userInput: string, threshold: number = 60): boolean {
     const currentStep = this.getCurrentStep();
     if (!currentStep) return false;
 
-    const normalizedInput = userInput.toLowerCase().trim();
-
-    // Check exact expected input
-    if (currentStep.userInput && normalizedInput.includes(currentStep.userInput.toLowerCase())) {
+    // Check fuzzy match against expected input
+    if (currentStep.userInput && matchesExpectedInput(userInput, currentStep.userInput, threshold)) {
       return true;
     }
 
-    // Check variants
+    // Check variants with both regex and fuzzy matching
     if (currentStep.variants) {
       for (const variant of currentStep.variants) {
+        // Try regex pattern first
         try {
           const regex = new RegExp(variant.pattern, 'i');
-          if (regex.test(normalizedInput)) {
+          if (regex.test(userInput)) {
             return true;
           }
         } catch (e) {
-          console.warn('Invalid regex pattern:', variant.pattern);
+          console.warn('Invalid regex pattern:', variant.pattern, e);
+        }
+
+        // Also try fuzzy matching on the pattern itself
+        const patternText = variant.pattern.replace(/[()\\|.*+?^${}[\]]/g, '');
+        if (patternText.length > 2 && matchesExpectedInput(userInput, patternText, threshold)) {
+          return true;
         }
       }
     }
@@ -96,12 +102,14 @@ export class ScriptEngine {
   /**
    * Process user input and get assistant response based on script
    */
-  processInput(userInput: string): {
+  processInput(userInput: string, threshold: number = 60): {
     response: string;
+    audioFile?: string;
     trigger?: unknown;
     actions?: unknown[];
     matched: boolean;
     isComplete: boolean;
+    matchQuality?: number;
   } {
     if (!this.currentScript || !this.currentSession) {
       return {
@@ -120,24 +128,50 @@ export class ScriptEngine {
       };
     }
 
-    const matched = this.matchesCurrentStep(userInput);
+    const matched = this.matchesCurrentStep(userInput, threshold);
+
+    // Calculate match quality for expected input
+    let matchQuality = 0;
+    if (currentStep.userInput) {
+      matchQuality = calculateSimilarity(userInput, currentStep.userInput);
+    }
 
     // Get response (with variant if available)
     let response = currentStep.assistantResponse;
-    if (!matched && currentStep.variants) {
-      const normalizedInput = userInput.toLowerCase().trim();
+    let audioFile = currentStep.audioFile;
+    let bestVariantMatch = 0;
+    
+    if (currentStep.variants) {
       for (const variant of currentStep.variants) {
+        // Try regex pattern
         try {
           const regex = new RegExp(variant.pattern, 'i');
-          if (regex.test(normalizedInput)) {
+          if (regex.test(userInput)) {
             response = variant.response;
+            audioFile = variant.audioFile || audioFile;
+            bestVariantMatch = 100;
             break;
           }
         } catch (e) {
           // Continue to next variant
+          console.warn('Pattern matching error:', e);
+        }
+
+        // Try fuzzy matching on pattern
+        const patternText = variant.pattern.replace(/[()\\|.*+?^${}[\]]/g, '');
+        if (patternText.length > 2) {
+          const similarity = calculateSimilarity(userInput, patternText);
+          if (similarity >= threshold && similarity > bestVariantMatch) {
+            response = variant.response;
+            audioFile = variant.audioFile || audioFile;
+            bestVariantMatch = similarity;
+          }
         }
       }
     }
+
+    // Use the best match quality
+    matchQuality = Math.max(matchQuality, bestVariantMatch);
 
     // Mark step as completed
     if (!this.currentSession.completedSteps.includes(currentStep.id)) {
@@ -181,10 +215,12 @@ export class ScriptEngine {
 
     return {
       response,
+      audioFile,
       trigger: currentStep.trigger,
       actions: currentStep.actions,
       matched,
       isComplete,
+      matchQuality,
     };
   }
 
