@@ -726,55 +726,6 @@ export default function PanelProfesionalPage() {
             })}
           </div>
         )}
-
-        {/* Professional List for Institutions */}
-        {isInstitution() && institutionProfessionals.length > 0 && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
-            className="mt-12"
-          >
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">Profesionales del Centro</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {institutionProfessionals.map((prof) => (
-                <div key={prof.id} className="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-shadow">
-                  <div className="flex items-center gap-4 mb-4">
-                    <div className="text-4xl">{prof.avatar}</div>
-                    <div className="flex-1">
-                      <h3 className="font-bold text-gray-900">{prof.name}</h3>
-                      <p className="text-sm text-gray-600">{prof.professionalInfo?.specialty}</p>
-                    </div>
-                  </div>
-                  <div className="space-y-2 text-sm">
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">Experiencia:</span>
-                      <span className="font-medium">{prof.professionalInfo?.experience} años</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">Rating:</span>
-                      <span className="font-medium">⭐ {prof.professionalInfo?.rating}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">Tarifa:</span>
-                      <span className="font-medium">${prof.professionalInfo?.hourlyRate}/hora</span>
-                    </div>
-                  </div>
-                  {prof.professionalInfo?.availability && (
-                    <div className="mt-4 pt-4 border-t border-gray-200">
-                      <p className="text-xs text-gray-600 font-semibold mb-2">Disponibilidad:</p>
-                      {prof.professionalInfo.availability.map((avail, idx) => (
-                        <p key={idx} className="text-xs text-gray-600">
-                          {avail.day}: {avail.hours}
-                        </p>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
-          </motion.div>
-        )}
       </div>
 
       {/* Assignment Modal */}

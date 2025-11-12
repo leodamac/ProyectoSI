@@ -201,12 +201,13 @@ export function getAppointmentsByInstitution(institutionId: string): Appointment
 
 /**
  * Get pending appointments for an institution (not yet assigned)
+ * Returns appointments that have institutionId but no assignedProfessionalId yet
  */
 export function getPendingInstitutionAppointments(institutionId: string): Appointment[] {
   return mockAppointments.filter(
     apt => apt.institutionId === institutionId && 
            apt.status === 'pending' && 
-           apt.professionalId === institutionId
+           !apt.assignedProfessionalId // Not assigned yet
   ).sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
 }
 

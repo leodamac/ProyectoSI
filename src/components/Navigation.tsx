@@ -5,7 +5,7 @@ import { useCart } from './CartContext';
 import { useAuth } from '@/context/AuthContext';
 import { Sparkles, Users, LayoutGrid, MessageSquare, Menu, X, Download, LogIn, LogOut, UserCircle, ChevronDown, ShoppingBag, BookOpen, Calendar, Briefcase, Bell } from 'lucide-react';
 import { useState, useEffect } from 'react';
-import { getPendingAppointmentsByProfessional, getAssignedAppointments } from '@/data/appointments';
+import { getPendingAppointmentsByProfessional, getAssignedAppointments, getPendingInstitutionAppointments } from '@/data/appointments';
 
 export default function Navigation() {
   const { itemCount } = useCart();
@@ -19,10 +19,16 @@ export default function Navigation() {
   // Check for pending appointments
   useEffect(() => {
     if (user && (isProfessional() || isInstitution())) {
-      const pending = getPendingAppointmentsByProfessional(user.id);
-      const assigned = isProfessional() ? getAssignedAppointments(user.id).filter(apt => apt.status === 'pending') : [];
-      const totalPending = isProfessional() ? assigned.length : pending.length;
-      setPendingCount(totalPending);
+      if (isInstitution()) {
+        // For institutions: count unassigned pending requests
+        const institutionRequests = getPendingInstitutionAppointments(user.id);
+        const unassigned = institutionRequests.filter(apt => !apt.assignedProfessionalId);
+        setPendingCount(unassigned.length);
+      } else {
+        // For professionals: count assigned pending appointments
+        const assigned = getAssignedAppointments(user.id).filter(apt => apt.status === 'pending');
+        setPendingCount(assigned.length);
+      }
     }
   }, [user, isProfessional, isInstitution]);
 
