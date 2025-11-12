@@ -297,12 +297,16 @@ export function createAppointment(
  */
 export function updateAppointmentStatus(
   appointmentId: string,
-  status: Appointment['status']
+  status: Appointment['status'],
+  greetingVideoUrl?: string
 ): Appointment | null {
   const appointment = mockAppointments.find(apt => apt.id === appointmentId);
   if (appointment) {
     appointment.status = status;
     appointment.updatedAt = new Date();
+    if (greetingVideoUrl) {
+      appointment.greetingVideoUrl = greetingVideoUrl;
+    }
     return appointment;
   }
   return null;
@@ -358,6 +362,19 @@ export function approveAppointment(
     // Assign to the originally requested professional
     appointment.assignedProfessionalId = appointment.professionalId;
     appointment.status = 'pending'; // Pending professional confirmation
+    appointment.updatedAt = new Date();
+    return appointment;
+  }
+  return null;
+}
+
+/**
+ * Mark greeting video as viewed by patient
+ */
+export function markVideoAsViewed(appointmentId: string): Appointment | null {
+  const appointment = mockAppointments.find(apt => apt.id === appointmentId);
+  if (appointment) {
+    appointment.videoViewed = true;
     appointment.updatedAt = new Date();
     return appointment;
   }
