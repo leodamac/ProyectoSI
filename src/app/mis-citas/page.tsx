@@ -6,7 +6,7 @@ import { useAuth } from '@/context/AuthContext';
 import Navigation from '@/components/Navigation';
 import { Calendar, Clock, CheckCircle, XCircle, AlertCircle, Video, DollarSign, User } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { getAppointmentsByUser } from '@/data/appointments';
+import { getAppointmentsByUser, markVideoAsViewed } from '@/data/appointments';
 import { getUserById } from '@/data/users';
 import { Appointment } from '@/types';
 
@@ -247,12 +247,26 @@ export default function MisCitasPage() {
                             <div className="flex items-center gap-2 mb-3">
                               <Video className="w-5 h-5 text-emerald-600" />
                               <h4 className="font-semibold text-emerald-900">Video de Saludo del Profesional</h4>
+                              {!appointment.videoViewed && (
+                                <span className="ml-auto bg-red-500 text-white text-xs px-2 py-1 rounded-full animate-pulse">
+                                  Nuevo
+                                </span>
+                              )}
                             </div>
                             <video
                               src={appointment.greetingVideoUrl}
                               controls
                               className="w-full rounded-lg shadow-md"
                               style={{ maxHeight: '300px' }}
+                              onPlay={() => {
+                                // Mark video as viewed when user starts playing
+                                if (!appointment.videoViewed) {
+                                  markVideoAsViewed(appointment.id);
+                                  // Refresh appointments to update the state
+                                  const updated = getAppointmentsByUser(user.id);
+                                  setAppointments(updated);
+                                }
+                              }}
                             />
                             <p className="text-xs text-emerald-700 mt-2">
                               El profesional ha enviado un video de bienvenida para comenzar tu tratamiento. 🎉

@@ -367,3 +367,16 @@ export function approveAppointment(
   }
   return null;
 }
+
+/**
+ * Mark greeting video as viewed by patient
+ */
+export function markVideoAsViewed(appointmentId: string): Appointment | null {
+  const appointment = mockAppointments.find(apt => apt.id === appointmentId);
+  if (appointment) {
+    appointment.videoViewed = true;
+    appointment.updatedAt = new Date();
+    return appointment;
+  }
+  return null;
+}

@@ -5,7 +5,7 @@ import { useCart } from './CartContext';
 import { useAuth } from '@/context/AuthContext';
 import { Sparkles, Users, LayoutGrid, MessageSquare, Menu, X, Download, LogIn, LogOut, UserCircle, ChevronDown, ShoppingBag, BookOpen, Calendar, Briefcase, Bell } from 'lucide-react';
 import { useState, useEffect } from 'react';
-import { getPendingAppointmentsByProfessional, getAssignedAppointments, getPendingInstitutionAppointments } from '@/data/appointments';
+import { getPendingAppointmentsByProfessional, getAssignedAppointments, getPendingInstitutionAppointments, getAppointmentsByUser } from '@/data/appointments';
 
 export default function Navigation() {
   const { itemCount } = useCart();
@@ -18,16 +18,25 @@ export default function Navigation() {
 
   // Check for pending appointments
   useEffect(() => {
-    if (user && (isProfessional() || isInstitution())) {
-      if (isInstitution()) {
-        // For institutions: count unassigned pending requests
-        const institutionRequests = getPendingInstitutionAppointments(user.id);
-        const unassigned = institutionRequests.filter(apt => !apt.assignedProfessionalId);
-        setPendingCount(unassigned.length);
+    if (user) {
+      if (isProfessional() || isInstitution()) {
+        if (isInstitution()) {
+          // For institutions: count unassigned pending requests
+          const institutionRequests = getPendingInstitutionAppointments(user.id);
+          const unassigned = institutionRequests.filter(apt => !apt.assignedProfessionalId);
+          setPendingCount(unassigned.length);
+        } else {
+          // For professionals: count assigned pending appointments
+          const assigned = getAssignedAppointments(user.id).filter(apt => apt.status === 'pending');
+          setPendingCount(assigned.length);
+        }
       } else {
-        // For professionals: count assigned pending appointments
-        const assigned = getAssignedAppointments(user.id).filter(apt => apt.status === 'pending');
-        setPendingCount(assigned.length);
+        // For regular users: count newly confirmed appointments with videos
+        const userAppointments = getAppointmentsByUser(user.id);
+        const confirmedWithVideo = userAppointments.filter(
+          apt => apt.status === 'confirmed' && apt.greetingVideoUrl && !apt.videoViewed
+        );
+        setPendingCount(confirmedWithVideo.length);
       }
     }
   }, [user, isProfessional, isInstitution]);
@@ -152,8 +161,8 @@ export default function Navigation() {
               🛒 Carrito ({itemCount})
             </Link>
             
-            {/* Notifications Bell for Professionals/Institutions */}
-            {isAuthenticated && (isProfessional() || isInstitution()) && (
+            {/* Notifications Bell for All Users */}
+            {isAuthenticated && (
               <div className="relative">
                 <button
                   onClick={() => setShowNotifications(!showNotifications)}
@@ -185,19 +194,23 @@ export default function Navigation() {
                               <Bell className="w-5 h-5 text-yellow-600 mt-0.5 mr-2" />
                               <div>
                                 <p className="text-sm font-semibold text-yellow-900">
-                                  Tienes {pendingCount} {pendingCount === 1 ? 'solicitud pendiente' : 'solicitudes pendientes'}
+                                  {isProfessional() || isInstitution() 
+                                    ? `Tienes ${pendingCount} ${pendingCount === 1 ? 'solicitud pendiente' : 'solicitudes pendientes'}`
+                                    : `¡Tu cita fue aceptada! 🎉`}
                                 </p>
                                 <p className="text-xs text-yellow-700 mt-1">
                                   {isProfessional() 
                                     ? 'Nuevas citas asignadas esperando tu confirmación'
-                                    : 'Nuevas solicitudes de consulta de clientes'}
+                                    : isInstitution()
+                                    ? 'Nuevas solicitudes de consulta de clientes'
+                                    : 'El profesional te ha enviado un video de saludo'}
                                 </p>
                                 <Link
-                                  href="/panel-profesional"
+                                  href={isProfessional() || isInstitution() ? "/panel-profesional" : "/mis-citas"}
                                   onClick={() => setShowNotifications(false)}
                                   className="inline-block mt-2 text-xs font-medium text-yellow-800 hover:text-yellow-900 underline"
                                 >
-                                  Ver panel profesional →
+                                  {isProfessional() || isInstitution() ? 'Ver panel profesional →' : 'Ver mis citas →'}
                                 </Link>
                               </div>
                             </div>
