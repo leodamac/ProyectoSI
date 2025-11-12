@@ -272,6 +272,8 @@ export interface Appointment {
   id: string;
   userId: string; // User who booked the appointment
   professionalId: string; // Professional or institution providing the service
+  institutionId?: string; // Institution that received the request (if applicable)
+  assignedProfessionalId?: string; // For institution requests, the assigned professional
   serviceType: 'consultation' | 'nutrition-plan' | 'follow-up' | 'group-session';
   date: Date;
   duration: number; // in minutes
@@ -283,6 +285,32 @@ export interface Appointment {
   createdAt: Date;
   updatedAt?: Date;
   meetingLink?: string; // For virtual appointments
+  medicalHistory?: {
+    conditions?: string[];
+    medications?: string[];
+    surgeries?: string[];
+    familyHistory?: string[];
+    lifestyle?: {
+      smokingStatus?: 'never' | 'former' | 'current';
+      alcoholConsumption?: 'none' | 'occasional' | 'moderate' | 'heavy';
+      exerciseFrequency?: 'sedentary' | 'light' | 'moderate' | 'active' | 'very-active';
+      sleepHours?: number;
+      stressLevel?: 'low' | 'moderate' | 'high';
+    };
+    vitalSigns?: {
+      bloodPressure?: string;
+      heartRate?: number;
+      bloodGlucose?: number;
+      cholesterol?: {
+        total?: number;
+        ldl?: number;
+        hdl?: number;
+        triglycerides?: number;
+      };
+    };
+    previousDiets?: string[];
+    reasonForConsultation?: string;
+  };
 }
 
 // Payment System Types (Wizard of Oz - Mockup)

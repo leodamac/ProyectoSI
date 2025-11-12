@@ -129,6 +129,49 @@ export const mockAppointments: Appointment[] = [
     paymentId: 'pay-7',
     createdAt: new Date('2025-10-25T15:00:00'),
     updatedAt: new Date('2025-10-28T10:00:00')
+  },
+
+  // Leonardo's consultation request to Centro Keto (SIMULATION)
+  {
+    id: 'apt-9',
+    userId: 'user-5', // Leonardo
+    professionalId: 'inst-1', // Centro Keto Guayaquil
+    institutionId: 'inst-1',
+    assignedProfessionalId: 'prof-1', // Will be assigned to Dra. María Martínez by the center
+    serviceType: 'consultation',
+    date: new Date('2025-11-15T10:00:00'), // Future date
+    duration: 60,
+    status: 'pending',
+    notes: 'Primera consulta - Deseo comenzar con dieta cetogénica para pérdida de peso y mejorar mi control de glucosa',
+    price: 55,
+    paymentStatus: 'pending',
+    createdAt: new Date('2025-11-12T14:30:00'), // Recent request
+    medicalHistory: {
+      conditions: ['Prediabetes', 'Sobrepeso'],
+      medications: ['Metformina 500mg'],
+      surgeries: [],
+      familyHistory: ['Diabetes tipo 2 (padre)', 'Hipertensión (madre)'],
+      lifestyle: {
+        smokingStatus: 'never',
+        alcoholConsumption: 'occasional',
+        exerciseFrequency: 'moderate',
+        sleepHours: 6.5,
+        stressLevel: 'moderate'
+      },
+      vitalSigns: {
+        bloodPressure: '135/85',
+        heartRate: 78,
+        bloodGlucose: 115,
+        cholesterol: {
+          total: 215,
+          ldl: 145,
+          hdl: 42,
+          triglycerides: 180
+        }
+      },
+      previousDiets: ['Dieta baja en grasas', 'Dieta mediterránea', 'Ayuno intermitente'],
+      reasonForConsultation: 'Quiero comenzar una dieta cetogénica para perder peso (objetivo: 80kg desde 95kg actual) y mejorar mi control de glucosa. He escuchado buenos resultados sobre la dieta keto para casos de prediabetes y me gustaría un plan profesional adaptado a mis necesidades.'
+    }
   }
 ];
 
@@ -140,10 +183,39 @@ export function getAppointmentsByUser(userId: string): Appointment[] {
 }
 
 /**
- * Get appointments for a specific professional
+ * Get appointments for a specific professional (including assigned ones)
  */
 export function getAppointmentsByProfessional(professionalId: string): Appointment[] {
-  return mockAppointments.filter(apt => apt.professionalId === professionalId);
+  return mockAppointments.filter(apt => 
+    apt.professionalId === professionalId || apt.assignedProfessionalId === professionalId
+  );
+}
+
+/**
+ * Get appointments for an institution
+ */
+export function getAppointmentsByInstitution(institutionId: string): Appointment[] {
+  return mockAppointments.filter(apt => apt.institutionId === institutionId);
+}
+
+/**
+ * Get pending appointments for an institution (not yet assigned)
+ */
+export function getPendingInstitutionAppointments(institutionId: string): Appointment[] {
+  return mockAppointments.filter(
+    apt => apt.institutionId === institutionId && 
+           apt.status === 'pending' && 
+           apt.professionalId === institutionId
+  ).sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+}
+
+/**
+ * Get assigned appointments for a professional from their institution
+ */
+export function getAssignedAppointments(professionalId: string): Appointment[] {
+  return mockAppointments.filter(
+    apt => apt.assignedProfessionalId === professionalId
+  ).sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
 }
 
 /**
@@ -182,7 +254,8 @@ export function getUpcomingAppointmentsByProfessional(professionalId: string): A
  */
 export function getPendingAppointmentsByProfessional(professionalId: string): Appointment[] {
   return mockAppointments.filter(
-    apt => apt.professionalId === professionalId && apt.status === 'pending'
+    apt => (apt.professionalId === professionalId || apt.assignedProfessionalId === professionalId) && 
+           apt.status === 'pending'
   ).sort((a, b) => a.date.getTime() - b.date.getTime());
 }
 
@@ -227,6 +300,22 @@ export function updateAppointmentStatus(
   const appointment = mockAppointments.find(apt => apt.id === appointmentId);
   if (appointment) {
     appointment.status = status;
+    appointment.updatedAt = new Date();
+    return appointment;
+  }
+  return null;
+}
+
+/**
+ * Assign an appointment to a professional (for institutions)
+ */
+export function assignAppointmentToProfessional(
+  appointmentId: string,
+  professionalId: string
+): Appointment | null {
+  const appointment = mockAppointments.find(apt => apt.id === appointmentId);
+  if (appointment) {
+    appointment.assignedProfessionalId = professionalId;
     appointment.updatedAt = new Date();
     return appointment;
   }
