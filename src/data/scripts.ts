@@ -27,7 +27,7 @@ export const beginnerKetoScript: ConversationScript = {
       id: 'step-1',
       order: 1,
       userInput: 'Hola',
-      assistantResponse: '¡Hola! 👋 Soy **Keto Friend**, tu amigo personal en el estilo de vida cetogénico. Estoy aquí para hacer tu viaje keto más fácil y delicioso.\n\n💚 **Puedo ayudarte con:**\n\n🍳 Recetas personalizadas según tus gustos\n🛒 Recomendaciones de productos keto\n👨‍⚕️ Conectarte con nutricionistas expertos\n💬 Compartir lo que dice la comunidad\n📍 Encontrar especialistas cerca de ti\n🎯 Crear planes de comidas personalizados\n💪 Consejos para combinar keto con ejercicio\n\n¿Cuéntame, eres nuevo en keto o ya llevas tiempo en este estilo de vida? 😊',
+      assistantResponse: '¡Hola! 👋 Soy **Keto Friend**, tu amigo personal en el estilo de vida cetogénico. Estoy aquí para hacer tu viaje keto más fácil y delicioso.\n\n💚 **Puedo ayudarte con:**\n\n🍳 **Recetas personalizadas** según tus gustos y necesidades\n🛒 **Productos keto** - Recomendaciones y agregar al carrito\n👨‍⚕️ **Nutricionistas certificados** - Conectarte con expertos\n💬 **Foro de la comunidad** - Compartir experiencias y consejos\n📍 **Especialistas cerca de ti** - Encuentra profesionales locales\n🎯 **Planes de comidas semanales** - Organizados y balanceados\n💪 **Nutrición deportiva** - Combinar keto con ejercicio\n📊 **Seguimiento de macros** - Controla tu progreso\n🥑 **Listas de compras** - Productos recomendados para tu plan\n📚 **Educación keto** - Aprende sobre la dieta cetogénica\n\n¿Cuéntame, eres nuevo en keto o ya llevas tiempo en este estilo de vida? 😊',
       nextStepId: 'step-1-voice',
     },
     {

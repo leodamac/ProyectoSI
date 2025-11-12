@@ -51,6 +51,10 @@ const SIMULATED_PHRASES = [
   'Ayuda con mi dieta cetogénica',
 ];
 
+// Voice recognition timeout settings
+const SILENCE_TIMEOUT = 3000; // 3 seconds of silence before auto-stopping
+const MAX_LISTENING_TIME = 30000; // 30 seconds maximum listening time
+
 export function useSpeechToText(
   onResult?: (transcript: string, isFinal: boolean) => void
 ): UseSpeechToTextResult {
@@ -60,6 +64,8 @@ export function useSpeechToText(
   const [isSupported, setIsSupported] = useState(false);
   const recognitionRef = useRef<ISpeechRecognition | null>(null);
   const simulatedTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const silenceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const maxTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const onResultRef = useRef(onResult);
 
   // Keep the callback ref up to date
@@ -101,22 +107,63 @@ export function useSpeechToText(
           if (interim) {
             setInterimTranscript(interim);
             onResultRef.current?.(interim, false);
+            
+            // Reset silence timeout when there's activity
+            if (silenceTimeoutRef.current) {
+              clearTimeout(silenceTimeoutRef.current);
+            }
+            
+            // Set new silence timeout
+            silenceTimeoutRef.current = setTimeout(() => {
+              if (recognitionRef.current && listening) {
+                console.log('Auto-stopping due to silence');
+                stopRecognition();
+              }
+            }, SILENCE_TIMEOUT);
           }
 
           if (final) {
             setTranscript((prev) => prev + final);
             setInterimTranscript('');
             onResultRef.current?.(final.trim(), true);
+            
+            // Clear timeouts after final result
+            if (silenceTimeoutRef.current) {
+              clearTimeout(silenceTimeoutRef.current);
+            }
+            
+            // Auto-stop after getting a final result
+            setTimeout(() => {
+              if (recognitionRef.current && listening) {
+                stopRecognition();
+              }
+            }, 500);
           }
         };
 
         recognition.onerror = (event: Event) => {
           console.error('Speech recognition error:', event);
           setListening(false);
+          
+          // Clear all timeouts
+          if (silenceTimeoutRef.current) {
+            clearTimeout(silenceTimeoutRef.current);
+          }
+          if (maxTimeoutRef.current) {
+            clearTimeout(maxTimeoutRef.current);
+          }
         };
 
         recognition.onend = () => {
           setListening(false);
+          
+          // Clear all timeouts
+          if (silenceTimeoutRef.current) {
+            clearTimeout(silenceTimeoutRef.current);
+          }
+          if (maxTimeoutRef.current) {
+            clearTimeout(maxTimeoutRef.current);
+          }
         };
 
         recognitionRef.current = recognition;
@@ -132,6 +179,12 @@ export function useSpeechToText(
       if (simulatedTimeoutRef.current) {
         clearTimeout(simulatedTimeoutRef.current);
       }
+      if (silenceTimeoutRef.current) {
+        clearTimeout(silenceTimeoutRef.current);
+      }
+      if (maxTimeoutRef.current) {
+        clearTimeout(maxTimeoutRef.current);
+      }
     };
   }, []);
 
@@ -142,6 +195,12 @@ export function useSpeechToText(
         setTranscript('');
         setInterimTranscript('');
         recognitionRef.current.start();
+        
+        // Set maximum listening time timeout
+        maxTimeoutRef.current = setTimeout(() => {
+          console.log('Auto-stopping due to max time limit');
+          stopRecognition();
+        }, MAX_LISTENING_TIME);
       } catch (error) {
         console.error('Error starting recognition:', error);
         setListening(false);
@@ -183,6 +242,16 @@ export function useSpeechToText(
       }
       setListening(false);
       setInterimTranscript('');
+    }
+    
+    // Clear all timeouts
+    if (silenceTimeoutRef.current) {
+      clearTimeout(silenceTimeoutRef.current);
+      silenceTimeoutRef.current = null;
+    }
+    if (maxTimeoutRef.current) {
+      clearTimeout(maxTimeoutRef.current);
+      maxTimeoutRef.current = null;
     }
   }, [isSupported]);
 

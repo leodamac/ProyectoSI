@@ -310,6 +310,7 @@ export interface ScriptStep {
   order: number;
   userInput?: string; // Expected user input (can be flexible/pattern-based)
   assistantResponse: string;
+  audioFile?: string; // Optional audio file URL for this response
   trigger?: {
     type: 'product' | 'nutritionist' | 'forum' | 'recipe' | 'navigate';
     data?: unknown;
@@ -321,6 +322,7 @@ export interface ScriptStep {
   variants?: Array<{
     pattern: string; // Regex pattern to match user input variations
     response: string;
+    audioFile?: string; // Optional audio file for this variant
   }>;
   nextStepId?: string; // For branching conversations
 }

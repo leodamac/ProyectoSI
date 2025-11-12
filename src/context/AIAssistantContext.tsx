@@ -1,12 +1,13 @@
 'use client';
 
-import React, { createContext, useContext, useState, ReactNode, useCallback, useEffect } from 'react';
+import React, { createContext, useContext, useState, ReactNode, useCallback, useEffect, useRef } from 'react';
 import { useCart } from '@/components/CartContext';
 import { useRouter } from 'next/navigation';
 import { sampleProducts } from '@/data/products';
 import { nutritionists } from '@/data/nutritionists';
 import { chatService } from '@/lib/mcp-services';
 import { useOnlineStatus } from '@/hooks/useOnlineStatus';
+import { getScriptEngine } from '@/lib/scriptEngine';
 
 export interface AIMessage {
   id: string;
@@ -75,6 +76,9 @@ export function AIAssistantProvider({ children }: { children: ReactNode }) {
   const { addToCart } = useCart();
   const router = useRouter();
   const isOnline = useOnlineStatus();
+  
+  // Script engine reference
+  const scriptEngineRef = useRef(getScriptEngine());
 
   // Persist messages to localStorage whenever they change
   useEffect(() => {
@@ -177,8 +181,46 @@ export function AIAssistantProvider({ children }: { children: ReactNode }) {
         return;
       }
 
-      // Simulate AI response with action detection
-      const response = await processMessageWithActions(content, messages);
+      // Check if there's an active script
+      const scriptEngine = scriptEngineRef.current;
+      let response: AIMessage;
+
+      if (scriptEngine.isScriptActive()) {
+        // Use script engine for response
+        const scriptResult = scriptEngine.processInput(content);
+        
+        // Create response message
+        response = {
+          id: `assistant-${Date.now()}`,
+          role: 'assistant',
+          content: scriptResult.response,
+          timestamp: new Date(),
+        };
+
+        // Handle script actions
+        if (scriptResult.actions && Array.isArray(scriptResult.actions)) {
+          for (const action of scriptResult.actions) {
+            // Convert script actions to AI actions
+            if (action && typeof action === 'object' && 'type' in action) {
+              response.action = action as AIAction;
+            }
+          }
+        }
+
+        // Log match quality for debugging
+        if (scriptResult.matchQuality !== undefined) {
+          console.log(`Script match quality: ${scriptResult.matchQuality}%`);
+        }
+
+        // If script is complete, unload it
+        if (scriptResult.isComplete) {
+          scriptEngine.unloadScript();
+          console.log('Script completed and unloaded');
+        }
+      } else {
+        // No active script, use default simulation
+        response = await processMessageWithActions(content, messages);
+      }
       
       setMessages(prev => [...prev, response]);
 

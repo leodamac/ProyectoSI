@@ -13,6 +13,7 @@ export default function InstallPrompt() {
   const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const [showPrompt, setShowPrompt] = useState(false);
   const [isInstalled, setIsInstalled] = useState(false);
+  const [isCompact, setIsCompact] = useState(false);
 
   useEffect(() => {
     // Check if already installed
@@ -29,6 +30,11 @@ export default function InstallPrompt() {
       // Don't show prompt immediately, wait a bit for user to explore
       setTimeout(() => {
         setShowPrompt(true);
+        
+        // Auto-compact after 10 seconds
+        setTimeout(() => {
+          setIsCompact(true);
+        }, 10000);
       }, 30000); // Show after 30 seconds
     };
 
@@ -70,6 +76,10 @@ export default function InstallPrompt() {
     localStorage.setItem('installPromptDismissed', Date.now().toString());
   };
 
+  const handleExpand = () => {
+    setIsCompact(false);
+  };
+
   // Don't show if already installed or dismissed recently
   useEffect(() => {
     const dismissed = localStorage.getItem('installPromptDismissed');
@@ -86,8 +96,37 @@ export default function InstallPrompt() {
     return null;
   }
 
+  // Compact version
+  if (isCompact) {
+    return (
+      <div className="fixed bottom-4 left-4 z-[40] animate-slide-up">
+        <button
+          onClick={handleExpand}
+          className="bg-gradient-to-r from-emerald-600 to-teal-600 text-white rounded-full shadow-lg hover:shadow-xl transition-all p-3 flex items-center gap-2 group"
+          aria-label="Instalar app"
+        >
+          <Download className="w-5 h-5" />
+          <span className="text-sm font-medium max-w-0 overflow-hidden group-hover:max-w-xs transition-all duration-300 whitespace-nowrap">
+            Instalar App
+          </span>
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              handleDismiss();
+            }}
+            className="ml-1 hover:bg-white/20 rounded-full p-0.5"
+            aria-label="Cerrar"
+          >
+            <X className="w-4 h-4" />
+          </button>
+        </button>
+      </div>
+    );
+  }
+
+  // Full version
   return (
-    <div className="fixed bottom-4 left-4 right-4 sm:left-auto sm:right-4 sm:max-w-sm z-50 animate-slide-up">
+    <div className="fixed bottom-4 left-4 right-4 sm:left-auto sm:right-4 sm:max-w-sm z-[40] animate-slide-up">
       <div className="bg-gradient-to-r from-emerald-600 to-teal-600 text-white rounded-2xl shadow-2xl p-6 relative">
         <button
           onClick={handleDismiss}

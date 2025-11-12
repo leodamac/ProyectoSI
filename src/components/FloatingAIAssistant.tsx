@@ -40,7 +40,7 @@ export default function FloatingAIAssistant() {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   // Script system state
-  const [currentScript, setCurrentScript] = useState<ConversationScript | null>(null);
+  const [currentScript] = useState<ConversationScript | null>(null);
   const scriptEngine = useRef(getScriptEngine());
   const [scriptInitialized, setScriptInitialized] = useState(false);
 
@@ -83,7 +83,12 @@ export default function FloatingAIAssistant() {
       
       const lastMessage = messages[messages.length - 1];
       if (lastMessage.role === 'assistant' && shouldPlayAudio(true)) {
-        await playResponse(lastMessage.content);
+        // Check if script engine has an audio file for this message
+        const scriptEngine = scriptEngine.current;
+        const currentStep = scriptEngine.getCurrentStep();
+        const audioFile = currentStep?.audioFile;
+        
+        await playResponse(lastMessage.content, audioFile);
       }
     };
 
@@ -107,7 +112,6 @@ export default function FloatingAIAssistant() {
     if (isOpen && !scriptInitialized && messages.length === 0) {
       // Load the beginner script automatically
       scriptEngine.current.loadScript(beginnerKetoScript);
-      setCurrentScript(beginnerKetoScript);
       setScriptInitialized(true);
       
       // Auto-send first message after a short delay
