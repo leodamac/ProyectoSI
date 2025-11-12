@@ -32,7 +32,8 @@ export const mockUsers: (User & { password: string })[] = [
         { day: 'Lunes - Viernes', hours: '9:00 AM - 5:00 PM' },
         { day: 'Sábado', hours: '10:00 AM - 2:00 PM' }
       ],
-      languages: ['Español', 'Inglés']
+      languages: ['Español', 'Inglés'],
+      institutionId: 'inst-1' // Works for Centro Keto Guayaquil
     }
   },
   {
@@ -179,7 +180,7 @@ export const mockUsers: (User & { password: string })[] = [
     institutionInfo: {
       type: 'nutrition-center',
       description: 'Centro integral de nutrición keto con 5 profesionales certificados',
-      professionalIds: ['prof-3', 'prof-4', 'prof-5', 'prof-6'], // Professionals working here
+      professionalIds: ['prof-1', 'prof-3', 'prof-4', 'prof-5', 'prof-6'], // Professionals working here
       servicesOffered: ['Consultas nutricionales', 'Planes personalizados', 'Seguimiento mensual', 'Talleres grupales']
     }
   },
