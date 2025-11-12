@@ -271,14 +271,16 @@ export interface ForumComment {
 export interface Appointment {
   id: string;
   userId: string; // User who booked the appointment
-  professionalId: string; // Professional or institution providing the service
-  institutionId?: string; // Institution that received the request (if applicable)
+  professionalId: string; // Requested professional (or institution if general request)
+  institutionId?: string; // Institution that manages the request (if professional belongs to one)
   assignedProfessionalId?: string; // For institution requests, the assigned professional
   serviceType: 'consultation' | 'nutrition-plan' | 'follow-up' | 'group-session';
   date: Date;
   duration: number; // in minutes
-  status: 'pending' | 'confirmed' | 'completed' | 'cancelled' | 'rejected';
+  status: 'pending' | 'confirmed' | 'completed' | 'cancelled' | 'rejected' | 'info-requested';
   notes?: string;
+  institutionNotes?: string; // Notes from the institution to the patient
+  infoRequested?: string; // What information the institution needs from the patient
   price: number;
   paymentStatus: 'pending' | 'paid' | 'refunded';
   paymentId?: string;

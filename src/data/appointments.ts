@@ -131,19 +131,20 @@ export const mockAppointments: Appointment[] = [
     updatedAt: new Date('2025-10-28T10:00:00')
   },
 
-  // Leonardo's consultation request to Centro Keto (SIMULATION)
+  // Leonardo's consultation request to Dra. María Martínez (SIMULATION)
+  // The request goes through Centro Keto (her institution) for approval
   {
     id: 'apt-9',
     userId: 'user-5', // Leonardo
-    professionalId: 'inst-1', // Centro Keto Guayaquil
-    institutionId: 'inst-1',
-    assignedProfessionalId: 'prof-1', // Will be assigned to Dra. María Martínez by the center
+    professionalId: 'prof-1', // Dra. María Martínez - Requested professional
+    institutionId: 'inst-1', // Centro Keto Guayaquil - Manages the request
+    // assignedProfessionalId will be set when center approves/assigns
     serviceType: 'consultation',
     date: new Date('2025-11-15T10:00:00'), // Future date
     duration: 60,
-    status: 'pending',
+    status: 'pending', // Waiting for center approval
     notes: 'Primera consulta - Deseo comenzar con dieta cetogénica para pérdida de peso y mejorar mi control de glucosa',
-    price: 55,
+    price: 50,
     paymentStatus: 'pending',
     createdAt: new Date('2025-11-12T14:30:00'), // Recent request
     medicalHistory: {
@@ -308,6 +309,7 @@ export function updateAppointmentStatus(
 
 /**
  * Assign an appointment to a professional (for institutions)
+ * This approves the request and assigns it to the professional
  */
 export function assignAppointmentToProfessional(
   appointmentId: string,
@@ -316,6 +318,45 @@ export function assignAppointmentToProfessional(
   const appointment = mockAppointments.find(apt => apt.id === appointmentId);
   if (appointment) {
     appointment.assignedProfessionalId = professionalId;
+    appointment.status = 'pending'; // Still pending professional confirmation
+    appointment.updatedAt = new Date();
+    return appointment;
+  }
+  return null;
+}
+
+/**
+ * Request more information from patient (for institutions)
+ */
+export function requestMoreInformation(
+  appointmentId: string,
+  informationRequested: string,
+  institutionNotes?: string
+): Appointment | null {
+  const appointment = mockAppointments.find(apt => apt.id === appointmentId);
+  if (appointment) {
+    appointment.status = 'info-requested';
+    appointment.infoRequested = informationRequested;
+    if (institutionNotes) {
+      appointment.institutionNotes = institutionNotes;
+    }
+    appointment.updatedAt = new Date();
+    return appointment;
+  }
+  return null;
+}
+
+/**
+ * Approve and keep same professional (institution approves original request)
+ */
+export function approveAppointment(
+  appointmentId: string
+): Appointment | null {
+  const appointment = mockAppointments.find(apt => apt.id === appointmentId);
+  if (appointment) {
+    // Assign to the originally requested professional
+    appointment.assignedProfessionalId = appointment.professionalId;
+    appointment.status = 'pending'; // Pending professional confirmation
     appointment.updatedAt = new Date();
     return appointment;
   }
