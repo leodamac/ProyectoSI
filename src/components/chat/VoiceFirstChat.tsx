@@ -610,12 +610,12 @@ export default function VoiceFirstChat() {
                   <div
                     className={`max-w-[85%] px-4 py-2.5 rounded-2xl ${
                       isUser
-                        ? 'bg-emerald-500 text-white rounded-br-sm'
+                        ? 'bg-emerald-700 text-white rounded-br-sm'
                         : 'bg-white border border-gray-200 text-gray-800 rounded-bl-sm'
                     }`}
                   >
                     <p className="text-sm leading-relaxed whitespace-pre-wrap">{message.content}</p>
-                    <p className={`text-xs mt-1 ${isUser ? 'text-emerald-100' : 'text-gray-500'}`}>
+                    <p className={`text-xs mt-1 ${isUser ? 'text-white/90' : 'text-gray-500'}`}>
                       {message.timestamp.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}
                     </p>
                   </div>

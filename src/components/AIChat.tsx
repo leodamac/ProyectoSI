@@ -160,7 +160,7 @@ export default function AIChat({ onClose, isFloating = false }: AIChatProps) {
           </div>
           <div>
             <h3 className="font-bold text-lg">Asistente Keto AI</h3>
-            <p className="text-emerald-100 text-sm">Tu guía nutricional inteligente</p>
+            <p className="text-white/90 text-sm">Tu guía nutricional inteligente</p>
           </div>
         </div>
         {onClose && (
