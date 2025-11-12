@@ -84,8 +84,8 @@ export default function FloatingAIAssistant() {
       const lastMessage = messages[messages.length - 1];
       if (lastMessage.role === 'assistant' && shouldPlayAudio(true)) {
         // Check if script engine has an audio file for this message
-        const scriptEngine = scriptEngine.current;
-        const currentStep = scriptEngine.getCurrentStep();
+        const engine = scriptEngine.current;
+        const currentStep = engine.getCurrentStep();
         const audioFile = currentStep?.audioFile;
         
         await playResponse(lastMessage.content, audioFile);
@@ -376,44 +376,64 @@ export default function FloatingAIAssistant() {
 
             {/* Input Area */}
             <div className="border-t border-gray-200 p-3 bg-gray-50 rounded-b-2xl">
-              {/* Voice Visualizer (when listening) */}
+              {/* Voice Visualizer (when listening) - More compact */}
               {listening && (
-                <div className="mb-3 p-3 bg-red-50 border border-red-200 rounded-lg">
-                  <div className="flex items-center gap-3">
-                    <div className="flex gap-1">
-                      {[0, 1, 2, 3, 4].map((i) => (
-                        <motion.div
-                          key={i}
-                          className="w-1 bg-red-500 rounded-full"
-                          animate={{ height: ['12px', '24px', '12px'] }}
-                          transition={{
-                            repeat: Infinity,
-                            duration: 0.6,
-                            delay: i * 0.1,
-                          }}
-                        />
-                      ))}
+                <motion.div 
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: 'auto' }}
+                  exit={{ opacity: 0, height: 0 }}
+                  className="mb-2 p-2 bg-red-50 border border-red-200 rounded-lg"
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <div className="flex gap-0.5">
+                        {[0, 1, 2, 3, 4].map((i) => (
+                          <motion.div
+                            key={i}
+                            className="w-1 bg-red-500 rounded-full"
+                            animate={{ height: ['8px', '16px', '8px'] }}
+                            transition={{
+                              repeat: Infinity,
+                              duration: 0.6,
+                              delay: i * 0.1,
+                            }}
+                          />
+                        ))}
+                      </div>
+                      <span className="text-xs font-medium text-red-700">Escuchando...</span>
                     </div>
-                    <span className="text-sm font-medium text-red-700">Escuchando...</span>
-                  </div>
-                </div>
-              )}
-
-              {/* Audio Playing Indicator */}
-              {isAudioPlaying && (
-                <div className="mb-3 p-3 bg-blue-50 border border-blue-200 rounded-lg">
-                  <div className="flex items-center gap-2">
-                    <Volume2 className="w-4 h-4 text-blue-600 animate-pulse" />
-                    <span className="text-sm font-medium text-blue-700">Hablando...</span>
                     <button
-                      onClick={stopAudio}
-                      className="ml-auto p-1 hover:bg-blue-100 rounded"
-                      aria-label="Detener audio"
+                      onClick={stopRecognition}
+                      className="text-xs text-red-700 hover:text-red-900 font-medium"
                     >
-                      <VolumeX className="w-4 h-4 text-blue-600" />
+                      Detener
                     </button>
                   </div>
-                </div>
+                </motion.div>
+              )}
+
+              {/* Audio Playing Indicator - More compact */}
+              {isAudioPlaying && (
+                <motion.div 
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: 'auto' }}
+                  exit={{ opacity: 0, height: 0 }}
+                  className="mb-2 p-2 bg-blue-50 border border-blue-200 rounded-lg"
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <Volume2 className="w-4 h-4 text-blue-600 animate-pulse" />
+                      <span className="text-xs font-medium text-blue-700">Reproduciendo...</span>
+                    </div>
+                    <button
+                      onClick={stopAudio}
+                      className="p-1 hover:bg-blue-100 rounded"
+                      aria-label="Detener audio"
+                    >
+                      <VolumeX className="w-3 h-3 text-blue-600" />
+                    </button>
+                  </div>
+                </motion.div>
               )}
 
               <div className="flex gap-2 items-end">
