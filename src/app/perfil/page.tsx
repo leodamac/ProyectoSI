@@ -4,7 +4,8 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 import Navigation from '@/components/Navigation';
-import { User, Mail, MapPin, Settings, Save, Edit2, X, Award } from 'lucide-react';
+import Link from 'next/link';
+import { User, Mail, MapPin, Settings, Save, Edit2, X, Award, Crown } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 export default function PerfilPage() {
@@ -154,6 +155,23 @@ export default function PerfilPage() {
                   <div className="flex items-center justify-center gap-2 text-emerald-600 mt-4">
                     <Award className="w-5 h-5" />
                     <span className="font-semibold">Verificado</span>
+                  </div>
+                )}
+                {/* Premium upgrade section for non-premium regular users */}
+                {user.role === 'user' && !user.isPremium && (
+                  <div className="mt-6">
+                    <Link
+                      href="/suscripcion"
+                      className="block w-full bg-gradient-to-r from-amber-500 to-yellow-500 text-white px-4 py-3 rounded-lg hover:from-amber-600 hover:to-yellow-600 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1 font-semibold text-center"
+                    >
+                      <div className="flex items-center justify-center gap-2">
+                        <Crown className="w-5 h-5" />
+                        Activar Premium
+                      </div>
+                    </Link>
+                    <p className="text-xs text-gray-500 mt-2 text-center">
+                      Accede a nutricionistas y más
+                    </p>
                   </div>
                 )}
               </div>

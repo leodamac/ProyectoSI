@@ -2,7 +2,7 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { User } from '@/types';
-import { validateCredentials, getUserById } from '@/data/users';
+import { validateCredentials, getUserById, updateUserPremiumStatus } from '@/data/users';
 
 interface AuthContextType {
   user: User | null;
@@ -13,6 +13,7 @@ interface AuthContextType {
   isProfessional: () => boolean;
   isInstitution: () => boolean;
   isPremium: () => boolean;
+  upgradeToPremium: () => Promise<boolean>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -97,6 +98,28 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return user?.isPremium === true;
   };
 
+  const upgradeToPremium = async (): Promise<boolean> => {
+    if (!user) {
+      return false;
+    }
+
+    try {
+      // In a real application, this would make an API call to process payment
+      // For now, we just update the user status in our mock data
+      const updatedUser = updateUserPremiumStatus(user.id, true);
+      
+      if (updatedUser) {
+        setUser(updatedUser);
+        return true;
+      }
+      
+      return false;
+    } catch (error) {
+      console.error('Error upgrading to premium:', error);
+      return false;
+    }
+  };
+
   const value: AuthContextType = {
     user,
     isAuthenticated: !!user,
@@ -105,7 +128,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     logout,
     isProfessional,
     isInstitution,
-    isPremium
+    isPremium,
+    upgradeToPremium
   };
 
   return (
