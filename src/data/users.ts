@@ -357,3 +357,23 @@ export function getProfessionalsByInstitution(institutionId: string): User[] {
     .filter(u => u.role === 'professional' && u.professionalInfo?.institutionId === institutionId)
     .map(({ password: _, ...user }) => user);
 }
+
+/**
+ * Update user premium status
+ * In a real application, this would make an API call to update the user
+ */
+export function updateUserPremiumStatus(userId: string, isPremium: boolean): User | null {
+  const userIndex = mockUsers.findIndex(u => u.id === userId);
+  
+  if (userIndex === -1) {
+    return null;
+  }
+  
+  // Update the user
+  mockUsers[userIndex].isPremium = isPremium;
+  
+  // Return user without password
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { password: _, ...userWithoutPassword } = mockUsers[userIndex];
+  return userWithoutPassword;
+}

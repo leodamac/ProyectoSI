@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { useCart } from './CartContext';
 import { useAuth } from '@/context/AuthContext';
-import { Sparkles, Users, LayoutGrid, MessageSquare, Menu, X, Download, LogIn, LogOut, UserCircle, ChevronDown, ShoppingBag, BookOpen, Calendar, Briefcase, Bell } from 'lucide-react';
+import { Sparkles, Users, LayoutGrid, MessageSquare, Menu, X, Download, LogIn, LogOut, UserCircle, ChevronDown, ShoppingBag, BookOpen, Calendar, Briefcase, Bell, Crown } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { getPendingAppointmentsByProfessional, getAssignedAppointments, getPendingInstitutionAppointments, getAppointmentsByUser } from '@/data/appointments';
 
@@ -280,14 +280,28 @@ export default function Navigation() {
                       
                       {/* Regular user menu items */}
                       {user?.role === 'user' && (
-                        <Link
-                          href="/mis-citas"
-                          onClick={() => setShowUserMenu(false)}
-                          className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-purple-50 flex items-center gap-2"
-                        >
-                          <Calendar className="w-4 h-4" />
-                          Mis Citas
-                        </Link>
+                        <>
+                          <Link
+                            href="/mis-citas"
+                            onClick={() => setShowUserMenu(false)}
+                            className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-purple-50 flex items-center gap-2"
+                          >
+                            <Calendar className="w-4 h-4" />
+                            Mis Citas
+                          </Link>
+                          
+                          {/* Premium upgrade option for non-premium users */}
+                          {!user?.isPremium && (
+                            <Link
+                              href="/suscripcion"
+                              onClick={() => setShowUserMenu(false)}
+                              className="w-full px-4 py-2 text-left text-sm bg-gradient-to-r from-amber-50 to-yellow-50 text-amber-800 hover:from-amber-100 hover:to-yellow-100 flex items-center gap-2 font-semibold"
+                            >
+                              <Crown className="w-4 h-4" />
+                              Activar Premium ⭐
+                            </Link>
+                          )}
+                        </>
                       )}
                       
                       <button
@@ -433,14 +447,28 @@ export default function Navigation() {
                     
                     {/* Regular user menu items */}
                     {user?.role === 'user' && (
-                      <Link
-                        href="/mis-citas"
-                        onClick={() => setMobileMenuOpen(false)}
-                        className="w-full flex items-center gap-2 text-gray-700 hover:bg-purple-50 font-medium px-4 py-3 rounded-lg transition-colors mb-2"
-                      >
-                        <Calendar className="w-5 h-5" />
-                        Mis Citas
-                      </Link>
+                      <>
+                        <Link
+                          href="/mis-citas"
+                          onClick={() => setMobileMenuOpen(false)}
+                          className="w-full flex items-center gap-2 text-gray-700 hover:bg-purple-50 font-medium px-4 py-3 rounded-lg transition-colors mb-2"
+                        >
+                          <Calendar className="w-5 h-5" />
+                          Mis Citas
+                        </Link>
+                        
+                        {/* Premium upgrade option for non-premium users */}
+                        {!user?.isPremium && (
+                          <Link
+                            href="/suscripcion"
+                            onClick={() => setMobileMenuOpen(false)}
+                            className="w-full flex items-center gap-2 bg-gradient-to-r from-amber-500 to-yellow-500 text-white hover:from-amber-600 hover:to-yellow-600 font-semibold px-4 py-3 rounded-lg transition-colors mb-2 shadow-lg"
+                          >
+                            <Crown className="w-5 h-5" />
+                            Activar Premium ⭐
+                          </Link>
+                        )}
+                      </>
                     )}
                     
                     <button
